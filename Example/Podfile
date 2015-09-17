@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'StartAppsKit_Example', :exclusive => true do
+  pod "StartAppsKit", :path => "../"
+end
+
+target 'StartAppsKit_Tests', :exclusive => true do
+  pod "StartAppsKit", :path => "../"
+
+  
+end
