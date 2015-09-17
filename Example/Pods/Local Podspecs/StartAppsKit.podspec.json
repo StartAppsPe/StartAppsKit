@@ -1,0 +1,25 @@
+{
+  "name": "StartAppsKit",
+  "version": "0.1.0",
+  "summary": "A short description of StartAppsKit.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/StartAppsKit",
+  "license": "MIT",
+  "authors": {
+    "Gabriel Lanata": "gabriellanata@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/StartAppsKit.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "StartAppsKit": [
+      "Pod/Assets/*.png"
+    ]
+  }
+}
