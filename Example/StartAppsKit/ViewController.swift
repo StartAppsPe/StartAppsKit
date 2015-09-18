@@ -15,7 +15,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        print(owner: "LoadAction", items: "Cache Loaded = Error", level: LogLevel.Error)
+        print(owner: "LoadAction", items: "Cache Loaded = Error", level: .Error)
     }
 
     override func didReceiveMemoryWarning() {
