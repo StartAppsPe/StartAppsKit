@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "StartAppsKit"
-s.version          = "0.1.0"
+s.version          = "0.1.2"
 s.summary          = "A library that does everything."
 
 s.description      = <<-DESC
