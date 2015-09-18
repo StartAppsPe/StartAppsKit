@@ -9,6 +9,6 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  StartAppsKit: a2800efad476e04b1b11ae2e9ef91ebe12da6558
+  StartAppsKit: 0f8fe65ccb6a0955f1717619fa02219932676730
 
-COCOAPODS: 0.38.2
+COCOAPODS: 0.39.0.beta.4

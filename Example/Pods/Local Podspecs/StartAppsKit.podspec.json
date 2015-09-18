@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "summary": "A short description of StartAppsKit.",
   "description": "",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/StartAppsKit",
+  "homepage": "https://github.com/StartAppsPe/StartAppsKit",
   "license": "MIT",
   "authors": {
     "Gabriel Lanata": "gabriellanata@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/StartAppsKit.git",
+    "git": "https://github.com/StartAppsPe/StartAppsKit.git",
     "tag": "0.1.0"
   },
   "platforms": {

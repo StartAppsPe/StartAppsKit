@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import StartAppsKit
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        print(owner: "LoadAction", items: "Cache Loaded = Error", level: LogLevel.Error)
     }
 
     override func didReceiveMemoryWarning() {

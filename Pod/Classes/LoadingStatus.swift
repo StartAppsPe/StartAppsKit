@@ -6,8 +6,4 @@
 //  Copyright © 2015 StartApps. All rights reserved.
 //
 
-import UIKit
-
-class LoadingStatus: NSObject {
-
-}
+import Foundation
