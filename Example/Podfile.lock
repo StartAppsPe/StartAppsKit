@@ -1,5 +1,5 @@
 PODS:
-  - StartAppsKit (0.1.0)
+  - StartAppsKit (0.1.1)
 
 DEPENDENCIES:
   - StartAppsKit (from `../`)
@@ -9,6 +9,6 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  StartAppsKit: 0f8fe65ccb6a0955f1717619fa02219932676730
+  StartAppsKit: d17ca898b2fccd542505e28c523f1b8c2f62884d
 
 COCOAPODS: 0.39.0.beta.4

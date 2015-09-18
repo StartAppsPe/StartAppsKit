@@ -1,6 +1,6 @@
 {
   "name": "StartAppsKit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "A short description of StartAppsKit.",
   "description": "",
   "homepage": "https://github.com/StartAppsPe/StartAppsKit",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/StartAppsPe/StartAppsKit.git",
-    "tag": "0.1.0"
+    "tag": "0.1.1"
   },
   "platforms": {
     "ios": "8.0"
