@@ -1,22 +1,26 @@
 {
   "name": "StartAppsKit",
   "version": "0.1.0",
-  "summary": "A short description of StartAppsKit.",
-  "description": "",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/StartAppsKit",
+  "summary": "A library that does everything.",
+  "description": "A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.",
+  "homepage": "https://github.com/StartAppsPe/StartAppsKit",
   "license": "MIT",
   "authors": {
     "Gabriel Lanata": "gabriellanata@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/StartAppsKit.git",
+    "git": "https://github.com/StartAppsPe/StartAppsKit.git",
     "tag": "0.1.0"
   },
   "platforms": {
     "ios": "8.0"
   },
   "requires_arc": true,
-  "source_files": "Pod/Classes/**/*",
+  "source_files": [
+    "StartAppsKit",
+    "Pod/Classes/*",
+    "Pod/Classes/**/*"
+  ],
   "resource_bundles": {
     "StartAppsKit": [
       "Pod/Assets/*.png"
