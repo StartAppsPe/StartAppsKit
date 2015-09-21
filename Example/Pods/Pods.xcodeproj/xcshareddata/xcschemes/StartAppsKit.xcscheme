@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '2A6B87D53329D978D1D92C71'
+               BlueprintIdentifier = '415F6AFE682A7043A0D805A4'
                BlueprintName = 'StartAppsKit'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'StartAppsKit.framework'>

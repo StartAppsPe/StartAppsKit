@@ -23,12 +23,28 @@ s.source           = { :git => "https://github.com/StartAppsPe/StartAppsKit.git"
 s.platform     = :ios, "8.0"
 s.requires_arc = true
 
-s.source_files = "StartAppsKit", "Pod/Classes/*", "Pod/Classes/**/*"
+s.source_files = "Pod/Classes/**/*"
 s.resource_bundles = {
 "StartAppsKit" => ["Pod/Assets/*.png"]
 }
 
 # s.public_header_files = "Pod/Classes/**/*.h"
-# s.frameworks = "UIKit", "MapKit"
+s.frameworks = "UIKit"
 # s.dependency "AFNetworking", "~> 2.3"
+
+s.subspec "Extensions" do |sp|
+sp.source_files = "Pod/Classes/Extensions"
+end
+
+s.subspec "Logging" do |sp|
+sp.source_files = "Pod/Classes/Logging"
+sp.dependency 'StartAppsKit/Extensions'
+end
+
+s.subspec "LoadActions" do |sp|
+sp.source_files = "Pod/Classes/LoadActions"
+sp.dependency 'StartAppsKit/Extensions'
+sp.dependency 'StartAppsKit/Logging'
+end
+
 end

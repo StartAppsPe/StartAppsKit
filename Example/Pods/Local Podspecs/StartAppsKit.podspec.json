@@ -1,6 +1,6 @@
 {
   "name": "StartAppsKit",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "summary": "A library that does everything.",
   "description": "A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.",
   "homepage": "https://github.com/StartAppsPe/StartAppsKit",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/StartAppsPe/StartAppsKit.git",
-    "tag": "0.1.0"
+    "tag": "0.1.2"
   },
   "platforms": {
     "ios": "8.0"

@@ -9,7 +9,10 @@
 public extension Array {
     
     public func find(isElement: (Element) -> Bool) -> Element? {
-        return filter(isElement).first
+        if let index = indexOf(isElement) {
+            return self[index]
+        }
+        return nil
     }
     
     public func performEach(action: (Element) -> Void) {

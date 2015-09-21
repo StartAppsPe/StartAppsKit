@@ -13,28 +13,22 @@ public enum LoadingStatus {
     case Ready, Loading, Paging
 }
 
-public protocol LoadActionDelegate {
-    
+public protocol LoadActionDelegate: AnyObject {
     func loadActionUpdated<L: LoadActionType>(loadAction: L)
 }
 
-public protocol LoadActionType {
+public protocol LoadActionType: AnyObject {
     
     typealias T
     
     typealias LoadedDataReturnType = (loadedData: T?) -> Bool
-    typealias LoadedResultType     = (result: LoadedDataErrorType) -> Void
+    typealias LoadedResultType     = (forced: Bool, result: LoadedDataErrorType) -> Void
     typealias LoadedDataErrorType  = (loadedData: T?, error: ErrorType?) -> Void
     
     var status: LoadingStatus { get }
     var error:  ErrorType?    { get }
     var data:   T?            { get }
     var loadedDate: NSDate?   { get }
-    
-    var limitOnce:                Bool                  { get }
-    var shouldUpdateCacheClosure: LoadedDataReturnType? { get }
-    var loadCacheClosure:         LoadedResultType?     { get }
-    var loadMainClosure:          LoadedResultType!     { get }
     
     var delegates: [LoadActionDelegate] { get set }
     
@@ -45,8 +39,16 @@ public protocol LoadActionType {
 
 public extension LoadActionType {
     
-    public mutating func addDelegate(delegate: LoadActionDelegate) {
-        delegates.append(delegate)
+    public func addDelegate(delegate: LoadActionDelegate) {
+        if delegates.indexOf({ $0 === delegate }) == nil {
+            delegates.append(delegate)
+        }
+    }
+    
+    public func removeDelegate(delegate: LoadActionDelegate) {
+        if let index = delegates.indexOf({ $0 === delegate }) {
+            delegates.removeAtIndex(index)
+        }
     }
     
 }
