@@ -88,7 +88,7 @@ public class GroupLoadAction<U>: LoadAction<U> {
     */
     private func loadActionUpdated(loadedData loadedData: T?, error: ErrorType?) {
         for action in actions {
-            action.data
+            //action.data
         }
     }
     
