@@ -108,7 +108,7 @@ public class CacheLoadAction<U>: LoadAction<U> {
         shouldUpdateCache: LoadedDataReturnType? = nil,
         loadCache:         LoadedResultType? = nil,
         load:              LoadedResultType,
-        delegates:        [LoadActionDelegate]? = nil,
+        delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         super.init(

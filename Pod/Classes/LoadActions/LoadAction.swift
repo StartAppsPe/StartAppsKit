@@ -90,12 +90,12 @@ public class LoadAction<U>: LoadActionType {
     public init(
         limitOnce:         Bool = false,
         load:              LoadedResultType,
-        delegates:        [LoadActionDelegate]? = nil,
+        delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         self.limitOnce   = limitOnce
         self.loadClosure = load
-        self.delegates   = delegates ?? []
+        self.delegates   = delegates
     }
     
 }

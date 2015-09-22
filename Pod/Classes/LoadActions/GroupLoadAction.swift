@@ -87,8 +87,12 @@ public class GroupLoadAction<U>: LoadAction<U> {
     - parameter completition: Closure called when operation finished
     */
     private func loadActionUpdated(loadedData loadedData: T?, error: ErrorType?) {
+        self.error = nil
         for action in actions {
-            //action.data
+            if let actionError = action.error {
+                self.error = actionError
+                break
+            }
         }
     }
     
@@ -105,7 +109,7 @@ public class GroupLoadAction<U>: LoadAction<U> {
         limitOnce:         Bool = false,
         order:             GroupLoadOrder = .Parallel,
         actions:          [LoadAction<U>],
-        delegates:        [LoadActionDelegate]? = nil,
+        delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         self.order = order
