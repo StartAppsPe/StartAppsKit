@@ -27,3 +27,10 @@ Gabriel Lanata, gabriellanata@gmail.com
 ## License
 
 StartAppsKit is available under the MIT license. See the LICENSE file for more info.
+
+
+
+## cd /Users/Gabriel/Dropbox/Projects/StartAppsKit 
+## pod lib lint --verbose
+
+## cd example

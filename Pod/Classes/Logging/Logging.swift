@@ -8,28 +8,38 @@
 
 import Foundation
 
-public var _LogLevelCurrent = LogLevel.Warning
-public var _LogIndentation  = 20
+public var _PrintLevelCurrent = PrintLevel.Verbose
+public var _PrintIndentation1 = 15
+public var _PrintIndentation2 = 100
 
-public enum LogLevel: Int {
+public enum PrintLevel: Int {
     case None = 0, Fatal, Error, Warning, Info, Debug, Verbose
-    public static var current: LogLevel {
-        set { _LogLevelCurrent = newValue }
-        get { return _LogLevelCurrent }
+    public static var current: PrintLevel {
+        set { _PrintLevelCurrent = newValue }
+        get { return _PrintLevelCurrent }
     }
-    public static var indentation: Int {
-        set { _LogIndentation = newValue }
-        get { return _LogIndentation }
+    public static var indentation1: Int {
+        set { _PrintIndentation1 = newValue }
+        get { return _PrintIndentation1 }
+    }
+    public static var indentation2: Int {
+        set { _PrintIndentation2 = newValue }
+        get { return _PrintIndentation2 }
     }
 }
 
-public func print(owner owner: String, items: Any..., separator: String = ", ", terminator: String = "\n", level: LogLevel) {
-    if level.rawValue <= LogLevel.current.rawValue {
-        let indentationCount = max(LogLevel.indentation-owner.length(), 0)
-        var indentation = ""
-        for _ in 0..<indentationCount {
-            indentation += " "
-        }
-        print("\(owner):\(indentation)", items, separator: separator, terminator: terminator)
+public func print(owner owner: String, items: Any..., separator: String = ", ", terminator: String = "\n", level: PrintLevel) {
+    guard level.rawValue < PrintLevel.current.rawValue else { return }
+    var printString = "\(owner): "
+    let indentationCount = max(PrintLevel.indentation1-printString.length(), 0)
+    let indentation = String(count:indentationCount, repeatedValue:" " as Character)
+    var itemsString = String(items[0])
+    for i in 1..<items.count { itemsString.appendContentsOf("\(separator)\(String(items[i]))") }
+    printString.appendContentsOf("\(indentation)\(itemsString)")
+    if level.rawValue <= PrintLevel.Warning.rawValue {
+        let indentation2Count = max(PrintLevel.indentation2-printString.length(), 0)
+        let indentation2 = String(count:indentation2Count, repeatedValue:" " as Character)
+        printString.appendContentsOf("\(indentation2)\(level)")
     }
+    print(printString, terminator: terminator)
 }

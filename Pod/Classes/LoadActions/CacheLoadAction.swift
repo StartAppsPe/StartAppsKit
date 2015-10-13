@@ -34,9 +34,7 @@ public class CacheLoadAction<U>: LoadAction<U> {
             if forced || self.shouldUpdateCacheClosure?(loadedData: self.data) ?? true {
                 
                 // Update delegates if did load data from cache before
-                if let _ = loadedData {
-                    self.delegates.performEach({ $0.loadActionUpdated(self) })
-                }
+                if let _ = loadedData { self.sendDelegateUpdates() }
                 
                 // Load data from main
                 self.loadMain(forced: forced) { (loadedData, error) -> () in

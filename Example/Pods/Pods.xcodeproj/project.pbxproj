@@ -17,7 +17,7 @@
 		588C29B5C68F889B764E998F288B6206 /* StartAppsKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 392495D02FA270369A2A21B17F9FAD15 /* StartAppsKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		67DD5A13F07567BC676CE84453D4CBB2 /* Pods-StartAppsKit_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D2320CCB678B4856A5CDA2B36089C96E /* Pods-StartAppsKit_Example-dummy.m */; };
 		67F2A8A66C7948C3B2ED8402DD8844FD /* ImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E6936A9DFE2BF6235487936070956 /* ImageExtensions.swift */; };
-		7D391662EB285933DF84BC5B8FF7745A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4DFDF51F963456B19FE58011D1A20F /* ArrayExtensions.swift */; };
+		7D391662EB285933DF84BC5B8FF7745A /* CollectionTypeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4DFDF51F963456B19FE58011D1A20F /* CollectionTypeExtensions.swift */; };
 		897F1F5718A19CB7BFFC5566C4D3DFB1 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93D191ACB3EB2573DC5F0DEE1918C1A /* ViewExtensions.swift */; };
 		91564CEC594F4C70495A9EA845B1AC48 /* DeviceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642A8D50ADF67D6D5B235C783760920B /* DeviceExtensions.swift */; };
 		92239FDB4402CA55F3CFEA5C4621FFA7 /* StartAppsKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C0DFBBBCC50D8693CBCCB90DDBC1694B /* StartAppsKit.bundle */; };
@@ -29,6 +29,7 @@
 		C03C0F771BACC07C00D1B320 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03C0F761BACC07C00D1B320 /* Logging.swift */; settings = {ASSET_TAGS = (); }; };
 		C03C0F7A1BACC40D00D1B320 /* GroupLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03C0F791BACC40D00D1B320 /* GroupLoadAction.swift */; settings = {ASSET_TAGS = (); }; };
 		C03C0F7E1BB105BF00D1B320 /* CacheLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03C0F7D1BB105BF00D1B320 /* CacheLoadAction.swift */; settings = {ASSET_TAGS = (); }; };
+		C06BA14A1BC99ADE0031F9BA /* HashingExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06BA1491BC99ADE0031F9BA /* HashingExtensions.swift */; settings = {ASSET_TAGS = (); }; };
 		C537D8436D1054E25140C7C7BA93D9E7 /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F484AB7E2F57CF9CD08E7AEF828C2DEA /* ColorExtensions.swift */; };
 		E40F8523E78D9C9FFF0D6D8FAA66EC02 /* StartAppsKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E711C58956360701B61D4966CC438F6 /* StartAppsKit-dummy.m */; };
 		EF6CE6FF272AFFE0F062946031F54152 /* TimerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7086F823429C40E3684EA45992EE7F2C /* TimerExtensions.swift */; };
@@ -71,7 +72,7 @@
 		4132EC4E943EBDF0A8F03F28DE37E818 /* Pods-StartAppsKit_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-StartAppsKit_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		4139885265097F2AEA72EF75F433CA45 /* Pods-StartAppsKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-StartAppsKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		4409750555C151CFB93B34ECC509C0EE /* DateExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
-		4F4DFDF51F963456B19FE58011D1A20F /* ArrayExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
+		4F4DFDF51F963456B19FE58011D1A20F /* CollectionTypeExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionTypeExtensions.swift; sourceTree = "<group>"; };
 		564908E305C79B69682032F8504D0B85 /* Pods-StartAppsKit_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-StartAppsKit_Tests-frameworks.sh"; sourceTree = "<group>"; };
 		642A8D50ADF67D6D5B235C783760920B /* DeviceExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceExtensions.swift; sourceTree = "<group>"; };
 		67D17E913961613B5B08057938EAA5AF /* StringExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
@@ -93,6 +94,7 @@
 		C03C0F761BACC07C00D1B320 /* Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = Logging/Logging.swift; sourceTree = "<group>"; };
 		C03C0F791BACC40D00D1B320 /* GroupLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GroupLoadAction.swift; path = LoadActions/GroupLoadAction.swift; sourceTree = "<group>"; };
 		C03C0F7D1BB105BF00D1B320 /* CacheLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CacheLoadAction.swift; path = LoadActions/CacheLoadAction.swift; sourceTree = "<group>"; };
+		C06BA1491BC99ADE0031F9BA /* HashingExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HashingExtensions.swift; path = Hashing/HashingExtensions.swift; sourceTree = "<group>"; };
 		C0DFBBBCC50D8693CBCCB90DDBC1694B /* StartAppsKit.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StartAppsKit.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7E71619B9FCBEB1C7D66FE2BF24EAAE /* Pods-StartAppsKit_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-StartAppsKit_Example.modulemap"; sourceTree = "<group>"; };
 		CCDD954317FDE79306F1977730A50010 /* Pods-StartAppsKit_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-StartAppsKit_Example-umbrella.h"; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 		113463C32640C0EFF44C558F8FF0604D /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C06BA1471BC99AB80031F9BA /* Hashing */,
 				C03C0F6F1BACC06700D1B320 /* Logging */,
 				C03C0F6E1BACC06000D1B320 /* LoadActions */,
 				2DA27A1FD5A1B1C6DD0B3167260EA74D /* Extensions */,
@@ -156,7 +159,7 @@
 		2DA27A1FD5A1B1C6DD0B3167260EA74D /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				4F4DFDF51F963456B19FE58011D1A20F /* ArrayExtensions.swift */,
+				4F4DFDF51F963456B19FE58011D1A20F /* CollectionTypeExtensions.swift */,
 				F484AB7E2F57CF9CD08E7AEF828C2DEA /* ColorExtensions.swift */,
 				4409750555C151CFB93B34ECC509C0EE /* DateExtensions.swift */,
 				642A8D50ADF67D6D5B235C783760920B /* DeviceExtensions.swift */,
@@ -284,6 +287,14 @@
 				C03C0F761BACC07C00D1B320 /* Logging.swift */,
 			);
 			name = Logging;
+			sourceTree = "<group>";
+		};
+		C06BA1471BC99AB80031F9BA /* Hashing */ = {
+			isa = PBXGroup;
+			children = (
+				C06BA1491BC99ADE0031F9BA /* HashingExtensions.swift */,
+			);
+			name = Hashing;
 			sourceTree = "<group>";
 		};
 		D5FD1AF914D812B3FE4AD8EA29D7019A /* Development Pods */ = {
@@ -482,7 +493,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D391662EB285933DF84BC5B8FF7745A /* ArrayExtensions.swift in Sources */,
+				7D391662EB285933DF84BC5B8FF7745A /* CollectionTypeExtensions.swift in Sources */,
+				C06BA14A1BC99ADE0031F9BA /* HashingExtensions.swift in Sources */,
 				C03C0F771BACC07C00D1B320 /* Logging.swift in Sources */,
 				C03C0F7E1BB105BF00D1B320 /* CacheLoadAction.swift in Sources */,
 				C03C0F731BACC07700D1B320 /* LoadAction.swift in Sources */,
@@ -580,10 +592,11 @@
 				GCC_PREFIX_HEADER = "Target Support Files/StartAppsKit/StartAppsKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/StartAppsKit/StartAppsKit.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = pe.startapps.kit;
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -607,13 +620,14 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-StartAppsKit_Example/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Pods-StartAppsKit_Example/Pods-StartAppsKit_Example.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Example";
 				PRODUCT_NAME = Pods_StartAppsKit_Example;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -688,13 +702,14 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-StartAppsKit_Tests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Pods-StartAppsKit_Tests/Pods-StartAppsKit_Tests.modulemap";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Tests";
 				PRODUCT_NAME = Pods_StartAppsKit_Tests;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -718,13 +733,14 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-StartAppsKit_Tests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Pods-StartAppsKit_Tests/Pods-StartAppsKit_Tests.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Tests";
 				PRODUCT_NAME = Pods_StartAppsKit_Tests;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -759,13 +775,14 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				INFOPLIST_FILE = "Target Support Files/Pods-StartAppsKit_Example/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Pods-StartAppsKit_Example/Pods-StartAppsKit_Example.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Example";
 				PRODUCT_NAME = Pods_StartAppsKit_Example;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -789,10 +806,11 @@
 				GCC_PREFIX_HEADER = "Target Support Files/StartAppsKit/StartAppsKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/StartAppsKit/StartAppsKit.modulemap";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = pe.startapps.kit;
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

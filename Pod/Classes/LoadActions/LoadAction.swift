@@ -14,25 +14,27 @@ public class LoadAction<U>: LoadActionType {
     public typealias T = U
     
     public typealias LoadedDataReturnType = (loadedData: T?) -> Bool
-    public typealias LoadedResultType     = (forced: Bool, result: LoadedDataErrorType) -> Void
     public typealias LoadedDataErrorType  = (loadedData: T?, error: ErrorType?) -> Void
+    public typealias LoadedResultType     = (forced: Bool, result: LoadedDataErrorType) -> Void
     
-    public var status: LoadingStatus = .Ready
-    public var error:  ErrorType?
-    public var data:   T?
-    public var loadedDate: NSDate?
+    public var updatedValues: [LoadActionValues] = []
     
-    public var limitOnce:   Bool = false
-    public var loadClosure: LoadedResultType!
-    
-    public var delegates: [LoadActionDelegate]
-    
-    /**
-    Loads new data forced replacing the previous stored data
-    */
-    public func loadNew() {
-        load(forced: true, completition: nil)
+    public var status: LoadingStatus = .Ready {
+        didSet { updatedValues.appendUnique(.Status) }
     }
+    public var error:  ErrorType? {
+        didSet { updatedValues.appendUnique(.Error) }
+    }
+    public var data:   T? {
+        didSet { updatedValues.appendUnique(.Data) }
+    }
+    public var date:   NSDate? {
+        didSet { updatedValues.appendUnique(.Date) }
+    }
+    
+    public var limitOnce:    Bool = false
+    public var loadClosure:  LoadedResultType!
+    public var delegates:   [LoadActionDelegate]
     
     /**
     Loads data giving the option of paging or loading new.
@@ -45,14 +47,14 @@ public class LoadAction<U>: LoadActionType {
         
         // Bail if already processing
         guard status == .Ready else {
-            delegates.performEach({ $0.loadActionUpdated(self) })
+            sendDelegateUpdates()
             completition?(loadedData: self.data, error: self.error)
             return
         }
         
         // Adjust loading status to loading kind
         status = .Loading
-        delegates.performEach({ $0.loadActionUpdated(self) })
+        sendDelegateUpdates()
         
         // Load data from main
         loadClosure(forced: forced) { (loadedData, error) -> () in
@@ -68,11 +70,11 @@ public class LoadAction<U>: LoadActionType {
             // Update data and error
             self.data  = loadedData
             self.error = error
-            if error == nil { self.loadedDate = NSDate() }
+            if error == nil { self.date = NSDate() }
             
             // Adjust loading status to loaded kind and call completition
             self.status = .Ready
-            self.delegates.performEach({ $0.loadActionUpdated(self) })
+            self.sendDelegateUpdates()
             completition?(loadedData: self.data, error: self.error)
         }
         
@@ -88,10 +90,10 @@ public class LoadAction<U>: LoadActionType {
     - parameter delegates: Array containing objects that react to updated data
     */
     public init(
-        limitOnce:         Bool = false,
-        load:              LoadedResultType,
-        delegates:        [LoadActionDelegate] = [],
-        dummy:             (() -> ())? = nil)
+        limitOnce:  Bool = false,
+        load:       LoadedResultType,
+        delegates: [LoadActionDelegate] = [],
+        dummy:      (() -> ())? = nil)
     {
         self.limitOnce   = limitOnce
         self.loadClosure = load

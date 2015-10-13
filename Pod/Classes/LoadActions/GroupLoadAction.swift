@@ -13,12 +13,15 @@ public enum GroupLoadOrder {
     case Parallel, Sequential, SequentialForced
 }
 
-public class GroupLoadAction<U>: LoadAction<U> {
+public class GroupLoadAction<U, R>: LoadAction<U> {
+    
+    public typealias LoadedActionsResultType = (actions: [LoadAction<R>], result: LoadedDataErrorType) -> Void
     
     public var order:    GroupLoadOrder
-    public var actions: [LoadAction<U>]
+    public var actions: [LoadAction<R>]
+    public var actionUpdatedClosure: LoadedActionsResultType?
     
-    private var actionsToLoad: [LoadAction<U>] = []
+    private var actionsToLoad: [LoadAction<R>] = []
     
     /**
     Loads data giving the option of paging or loading new.
@@ -51,12 +54,15 @@ public class GroupLoadAction<U>: LoadAction<U> {
         if let actionToLoad = actionsToLoad.first {
             actionsToLoad.removeAtIndex(0)
             actionToLoad.load(forced: forced) { (loadedData, error) -> Void in
-                if error == nil || self.order != .SequentialForced {
-                    self.loadSequential(forced: forced, completition: completition)
-                } else {
-                    self.actionsToLoad = []
-                    completition?(loadedData: self.data, error: self.error)
-                }
+                self.loadActionUpdated(loadAction: actionToLoad, completition: { (loadedData, error) -> Void in
+                    if error == nil || self.order != .SequentialForced {
+                        if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
+                        self.loadSequential(forced: forced, completition: completition)
+                    } else {
+                        self.actionsToLoad = []
+                        completition?(loadedData: self.data, error: self.error)
+                    }
+                })
             }
         } else {
             completition?(loadedData: self.data, error: self.error)
@@ -73,9 +79,13 @@ public class GroupLoadAction<U>: LoadAction<U> {
         for actionToLoad in actionsToLoad {
             actionsToLoad.removeAtIndex(0)
             actionToLoad.load(forced: forced) { (loadedData, error) -> Void in
-                if self.actions.indexOf({ $0.status != LoadingStatus.Ready }) == nil {
-                    completition?(loadedData: self.data, error: self.error)
-                }
+                self.loadActionUpdated(loadAction: actionToLoad, completition: { (loadedData, error) -> Void in
+                    if self.actions.find({ $0.status != .Ready }) == nil {
+                        completition?(loadedData: self.data, error: self.error)
+                    } else {
+                        self.sendDelegateUpdates()
+                    }
+                })
             }
         }
     }
@@ -86,13 +96,25 @@ public class GroupLoadAction<U>: LoadAction<U> {
     - parameter forced: If true forces main load
     - parameter completition: Closure called when operation finished
     */
-    private func loadActionUpdated(loadedData loadedData: T?, error: ErrorType?) {
-        self.error = nil
-        for action in actions {
-            if let actionError = action.error {
-                self.error = actionError
-                break
-            }
+    
+    private func loadActionUpdated(loadAction loadAction: LoadAction<R>, completition: LoadedDataErrorType?) {
+        
+        // Get error
+        error = actions.find({ $0.error != nil })?.error
+        
+        // Get data
+        if let actionUpdatedClosure = actionUpdatedClosure {
+            actionUpdatedClosure(actions: actions, result: { (loadedData, error) -> Void in
+                self.data  = loadedData
+                if let error = error {
+                    self.error = error
+                }
+                completition?(loadedData: self.data, error: self.error)
+            })
+        } else {
+            //Todo, create auto appending to generic array
+            data = actions.reverse().find({ $0.data as? T != nil })?.data as? T
+            completition?(loadedData: self.data, error: self.error)
         }
     }
     
@@ -108,12 +130,14 @@ public class GroupLoadAction<U>: LoadAction<U> {
     public init(
         limitOnce:         Bool = false,
         order:             GroupLoadOrder = .Parallel,
-        actions:          [LoadAction<U>],
+        actions:          [LoadAction<R>],
+        actionUpdated:     LoadedActionsResultType? = nil,
         delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         self.order = order
         self.actions = actions
+        self.actionUpdatedClosure = actionUpdated
         super.init(
             limitOnce: limitOnce,
             load: { (forced, result) -> Void in

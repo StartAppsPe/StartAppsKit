@@ -64,6 +64,7 @@ public extension UIDevice {
         case "iPad4,9":   return "iPad Mini 3"
         case "iPad5,3":   return "iPad Air 2"
         case "iPad5,4":   return "iPad Air 2"
+        case "iPad6,8":   return "iPad Pro"
         case "i386":      return "Simulator"
         case "x86_64":    return "Simulator"
         default:          return platform

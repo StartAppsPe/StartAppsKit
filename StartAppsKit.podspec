@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "StartAppsKit"
-s.version          = "0.1.2"
+s.version          = "0.1.3"
 s.summary          = "A library that does everything."
 
 s.description      = <<-DESC
@@ -45,6 +45,17 @@ s.subspec "LoadActions" do |sp|
 sp.source_files = "Pod/Classes/LoadActions"
 sp.dependency 'StartAppsKit/Extensions'
 sp.dependency 'StartAppsKit/Logging'
+end
+
+#s.subspec "LoadActions-Facebook" do |sp|
+#sp.dependency 'StartAppsKit/LoadActions'
+#sp.dependency 'Facebook-iOS-SDK'
+#end
+
+s.subspec "Hashing" do |sp|
+sp.source_files = "Pod/Classes/Hashing"
+sp.dependency 'CommonCrypto', '~> 1.1'
+#sp.frameworks = "CommonCrypto"
 end
 
 end

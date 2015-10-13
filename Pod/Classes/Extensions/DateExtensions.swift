@@ -17,9 +17,7 @@ let TimeIntervalWeek:   NSTimeInterval = 604800
 let TimeIntervalYear:   NSTimeInterval = 31556926
 
 let DateComponents: NSCalendarUnit = [
-    NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day,
-    NSCalendarUnit.WeekOfYear, NSCalendarUnit.Weekday, NSCalendarUnit.WeekdayOrdinal,
-    NSCalendarUnit.Hour, NSCalendarUnit.Minute, NSCalendarUnit.Second
+    .Year, .Month, .Day, .WeekOfYear, .Weekday, .WeekdayOrdinal, .Hour, .Minute, .Second
 ]
 
 public extension NSDate {
@@ -92,7 +90,7 @@ public extension NSDate {
     }
     
     public func shortDateString(locale locale: String? = nil) -> String {
-        return stringWithFormat("dd/MM/yyyy", locale: locale)
+        return stringWithFormat((locale?.containsString("es") ?? false ? "dd/MM/yyyy" : "MM/dd/yyyy"), locale: locale)
     }
     
     public func mediumDateString(locale locale: String? = nil) -> String {
@@ -100,7 +98,7 @@ public extension NSDate {
     }
     
     public func longDateString(locale locale: String? = nil) -> String {
-        return stringWithFormat("EEEE d 'de' MMMM", locale: locale)
+        return stringWithFormat((locale?.containsString("es") ?? false ? "EEEE d 'de' MMMM" : "EEEE d MMMM"), locale: locale)
     }
     
     public func timeString(locale locale: String? = nil) -> String {
@@ -111,28 +109,51 @@ public extension NSDate {
         return stringWithFormat("H:mm", locale: locale)
     }
     
-    public func timeAgoString(exact: Bool = false) -> String {
+    public func timeAgoString(exact: Bool = false, locale: String? = nil) -> String {
         var timeAgoValue: Int!
         var timeAgoUnit:  String!
         let secondsAgo = NSTimeInterval(secondsBeforeNow()) 
         if (secondsAgo < TimeIntervalMinute) { // Smaller than a minute
-            if !exact || secondsAgo < 1 { return "Ahora" }
+            if !exact || secondsAgo < 1 { return (locale?.containsString("es") ?? false ? "Ahora" : "Now") }
             timeAgoValue = Int(secondsAgo)
-            timeAgoUnit  = "segundo"
+            timeAgoUnit  = (locale?.containsString("es") ?? false ? "segundo" : "seconds")
         } else if (secondsAgo < TimeIntervalHour) { // Smaller than an hour
             timeAgoValue = Int(floor(secondsAgo/(TimeIntervalMinute)))
-            timeAgoUnit  = "minuto"
+            timeAgoUnit  = (locale?.containsString("es") ?? false ? "minuto" : "minute")
         } else if (secondsAgo < TimeIntervalDay) { // Smaller than a day
             timeAgoValue = Int(floor(secondsAgo/(TimeIntervalHour)))
-            timeAgoUnit  = "hora"
-        } else if (secondsAgo < TimeIntervalDay*2) { // Smaller than two days
-            return "Ayer"
-        } else { // Bigger than two days
+            timeAgoUnit  = (locale?.containsString("es") ?? false ? "hora" : "hour")
+        } else { // Bigger than a day
             timeAgoValue = Int(floor(secondsAgo/(TimeIntervalDay)))
-            timeAgoUnit  = "día"
+            timeAgoUnit  = (locale?.containsString("es") ?? false ? "día" : "day")
         }
         let timeAgoPlural = (timeAgoValue == 1 ? "" : "s")
-        return "Hace \(timeAgoValue) \(timeAgoUnit)\(timeAgoPlural)"
+        if (locale?.containsString("es") ?? false) {
+            return "Hace \(timeAgoValue) \(timeAgoUnit)\(timeAgoPlural)"
+        } else {
+            return "\(timeAgoValue) \(timeAgoUnit)\(timeAgoPlural) ago"
+        }
+        
+    }
+    
+    public func tinyTimeAgoString(locale: String? = nil) -> String {
+        var timeAgoValue: Int!
+        var timeAgoUnit:  String!
+        let secondsAgo = NSTimeInterval(secondsBeforeNow())
+        if (secondsAgo < TimeIntervalMinute) { // Smaller than a minute
+            timeAgoValue = Int(secondsAgo)
+            timeAgoUnit  = "s"
+        } else if (secondsAgo < TimeIntervalHour) { // Smaller than an hour
+            timeAgoValue = Int(floor(secondsAgo/(TimeIntervalMinute)))
+            timeAgoUnit  = "m"
+        } else if (secondsAgo < TimeIntervalDay) { // Smaller than a day
+            timeAgoValue = Int(floor(secondsAgo/(TimeIntervalHour)))
+            timeAgoUnit  = "h"
+        } else { // Bigger than two days
+            timeAgoValue = Int(floor(secondsAgo/(TimeIntervalDay)))
+            timeAgoUnit  = "d"
+        }
+        return "\(timeAgoValue)\(timeAgoUnit)"
     }
     
     /********************************************************************************************************/
@@ -212,8 +233,14 @@ public extension NSDate {
     }
     
     public func isBetweenDates(dateStart dateStart: NSDate, dateEnd: NSDate, including: Bool) -> Bool {
-        if including && isSameDayAsDate(dateStart) { return true }
-        if including && isSameDayAsDate(dateEnd)   { return true }
+        if including && isEqualToDate(dateStart) { return true }
+        if including && isEqualToDate(dateEnd)   { return true }
+        return isLaterThanDate(dateStart) && isEarlierThanDate(dateEnd)
+    }
+    
+    public func isBetweenDays(dateStart dateStart: NSDate, dateEnd: NSDate, including: Bool) -> Bool {
+        if isSameDayAsDate(dateStart) { return including }
+        if isSameDayAsDate(dateEnd)   { return including }
         return isLaterThanDate(dateStart) && isEarlierThanDate(dateEnd)
     }
     
