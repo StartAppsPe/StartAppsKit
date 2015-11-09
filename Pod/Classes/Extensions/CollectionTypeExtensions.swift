@@ -9,7 +9,7 @@
 public extension CollectionType {
     
     public func performEach(action: (Self.Generator.Element) -> Void) {
-        for obj in self { action(obj) }
+        for element in self { action(element) }
     }
     
     @warn_unused_result
@@ -26,27 +26,35 @@ public extension CollectionType where Generator.Element : Equatable {
     
     @warn_unused_result
     public func distinct() -> [Self.Generator.Element] {
-        var rtn: [Self.Generator.Element] = []
-        for x in self {
-            if !rtn.contains(x) {
-                rtn.append(x)
+        var distinctElements: [Self.Generator.Element] = []
+        for element in self {
+            if !distinctElements.contains(element) {
+                distinctElements.append(element)
             }
         }
-        return rtn
+        return distinctElements
     }
 }
 
 public extension RangeReplaceableCollectionType where Generator.Element: Equatable {
     
-    mutating func appendUnique(newElement: Self.Generator.Element) {
-        if !contains(newElement) {
-            append(newElement)
+    mutating func appendUnique(element: Self.Generator.Element) {
+        if !contains(element) {
+            append(element)
         }
     }
     
     mutating func remove(element: Self.Generator.Element) {
         if let index = indexOf(element) {
-            self.removeAtIndex(index)
+            removeAtIndex(index)
+        }
+    }
+    
+    mutating func toggle(element: Self.Generator.Element) {
+        if let index = indexOf(element) {
+            removeAtIndex(index)
+        } else {
+            append(element)
         }
     }
     
