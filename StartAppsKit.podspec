@@ -52,6 +52,12 @@ end
 #sp.dependency 'Facebook-iOS-SDK'
 #end
 
+#s.subspec "LoadActions-Parse" do |sp|
+sp.source_files = "Pod/Classes/Parse"
+sp.dependency 'StartAppsKit/LoadActions'
+sp.dependency 'Parse'
+#end
+
 s.subspec "Hashing" do |sp|
 sp.source_files = "Pod/Classes/Hashing"
 sp.dependency 'CommonCrypto', '~> 1.1'
