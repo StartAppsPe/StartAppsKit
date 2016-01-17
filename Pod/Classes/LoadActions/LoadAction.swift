@@ -13,11 +13,12 @@ public class LoadAction<U>: LoadActionType {
     
     public typealias T = U
     
-    public typealias LoadedDataReturnType = (loadedData: T?) -> Bool
-    public typealias LoadedDataErrorType  = (loadedData: T?, error: ErrorType?) -> Void
-    public typealias LoadedResultType     = (forced: Bool, result: LoadedDataErrorType) -> Void
+    public typealias ResultType     = Result<T, ErrorType>
+    public typealias ResultClosure  = (result: ResultType) -> Void
+    public typealias LoadedResult   = (forced: Bool, completition: ResultClosure) -> Void
     
     public var updatedValues: [LoadActionValues] = []
+    public var delegates:   [LoadActionDelegate] = []
     
     public var status: LoadingStatus = .Ready {
         didSet { updatedValues.appendUnique(.Status) }
@@ -26,15 +27,13 @@ public class LoadAction<U>: LoadActionType {
         didSet { updatedValues.appendUnique(.Error) }
     }
     public var data:   T? {
-        didSet { updatedValues.appendUnique(.Data) }
+        didSet { updatedValues.appendUnique(.Data); date = NSDate() }
     }
     public var date:   NSDate? {
         didSet { updatedValues.appendUnique(.Date) }
     }
     
-    public var limitOnce:    Bool = false
-    public var loadClosure:  LoadedResultType!
-    public var delegates:   [LoadActionDelegate]
+    public var loadClosure:  LoadedResult!
     
     /**
     Loads data giving the option of paging or loading new.
@@ -42,60 +41,55 @@ public class LoadAction<U>: LoadActionType {
     - parameter forced: If true forces main load
     - parameter completition: Closure called when operation finished
     */
-    public func load(forced forced: Bool, completition: LoadedDataErrorType?) {
-        print(owner: "LoadAction", items: "Load Called", level: .Info)
-        
-        // Bail if already processing
-        guard status == .Ready else {
-            sendDelegateUpdates()
-            completition?(loadedData: self.data, error: self.error)
-            return
-        }
+    public func load(forced forced: Bool, completition: ResultClosure?) {
+        print(owner: "LoadAction", items: "Load Began", level: .Info)
         
         // Adjust loading status to loading kind
         status = .Loading
         sendDelegateUpdates()
         
-        // Load data from main
-        loadClosure(forced: forced) { (loadedData, error) -> () in
+        // Load data
+        loadClosure(forced: forced) { (result) -> () in
             
-            // Print messages
-            if let error = error {
+            switch result {
+            case .Success(let loadedData):
+                print(owner: "LoadAction", items: "Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
+                self.data = loadedData
+            case .Failure(let error):
                 print(owner: "LoadAction", items: "Loaded = Error \(error)", level: .Error)
-            } else {
-                let loadedSomething = (loadedData != nil ? "Found" : "Empty")
-                print(owner: "LoadAction", items: "Loaded = Data \(loadedSomething)", level: .Info)
+                self.error = error
             }
-            
-            // Update data and error
-            self.data  = loadedData
-            self.error = error
-            if error == nil { self.date = NSDate() }
             
             // Adjust loading status to loaded kind and call completition
             self.status = .Ready
             self.sendDelegateUpdates()
-            completition?(loadedData: self.data, error: self.error)
+            completition?(result: result)
         }
         
+    }
+    
+    public func loadAny(forced forced: Bool, completition: ((result: Result<Any, ErrorType>) -> Void)?) {
+        load(forced: forced) { (resultGeneric) -> Void in
+            switch resultGeneric {
+            case .Success(let loadedData):
+                completition?(result: Result.Success(loadedData))
+            case .Failure(let error):
+                completition?(result: Result.Failure(error))
+            }
+        }
     }
     
     /**
     Quick initializer with all closures
     
-    - parameter limitOnce: Only load one time automatically (does allow reload when called specifically)
-    - parameter shouldUpdateCache: Load from cache before loading from web
-    - parameter loadCache: Closure to load from cache, must call result closure when finished
     - parameter load: Closure to load from web, must call result closure when finished
     - parameter delegates: Array containing objects that react to updated data
     */
     public init(
-        limitOnce:  Bool = false,
-        load:       LoadedResultType,
+        load:       LoadedResult,
         delegates: [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
-        self.limitOnce   = limitOnce
         self.loadClosure = load
         self.delegates   = delegates
     }

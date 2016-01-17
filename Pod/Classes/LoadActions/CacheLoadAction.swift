@@ -8,11 +8,17 @@
 
 import Foundation
 
-public class CacheLoadAction<U>: LoadAction<U> {
+public class CacheLoadAction<T>: LoadAction<T> {
     
-    public var shouldUpdateCacheClosure: LoadedDataReturnType?
-    public var loadCacheClosure:         LoadedResultType?
-    public var loadMainClosure:          LoadedResultType!
+    public typealias ResultType    = Result<T, ErrorType>
+    public typealias ResultClosure = (result: ResultType) -> Void
+    public typealias LoadedResult  = (forced: Bool, completition: ResultClosure) -> Void
+    
+    public typealias ShouldUpdateCacheClosure = (action: CacheLoadAction<T>) -> Bool
+    
+    public var shouldUpdateCacheClosure: ShouldUpdateCacheClosure?
+    public var loadCacheClosure:         LoadedResult?
+    public var loadMainClosure:          LoadedResult!
     
     /**
     Loads data giving the option of paging or loading new.
@@ -20,29 +26,32 @@ public class CacheLoadAction<U>: LoadAction<U> {
     - parameter forced: If true forces main load
     - parameter completition: Closure called when operation finished
     */
-    private func loadInner(forced forced: Bool, completition: LoadedDataErrorType?) {
+    private func loadInner(forced forced: Bool, completition: ResultClosure?) {
   
         // Load data from cache first to populate the view, if cache is disabled it will pass through
-        loadCache(forced: forced) { (loadedData, error) -> () in
+        loadCache(forced: forced) { (result) -> Void in
+            var cacheError: ErrorType?
             
-            // Update data if not empty
-            if let loadedData = loadedData {
+            switch result {
+            case .Success(let loadedData):
                 self.data = loadedData
+            case .Failure(let error):
+                cacheError = error
             }
             
             // Check if should update cache
-            if forced || self.shouldUpdateCacheClosure?(loadedData: self.data) ?? true {
+            if forced || cacheError != nil || self.shouldUpdateCacheClosure?(action: self) ?? true {
                 
                 // Update delegates if did load data from cache before
-                if let _ = loadedData { self.sendDelegateUpdates() }
+                self.sendDelegateUpdates()
                 
                 // Load data from main
-                self.loadMain(forced: forced) { (loadedData, error) -> () in
-                    completition?(loadedData: self.data, error: self.error)
+                self.loadMain(forced: forced) { (result) -> () in
+                    completition?(result: result)
                 }
                 
             } else {
-                completition?(loadedData: self.data, error: self.error)
+                completition?(result: Result.Success(self.data))
                 
             }
             
@@ -55,21 +64,21 @@ public class CacheLoadAction<U>: LoadAction<U> {
     
     - parameter completition: Closure called when operation finished
     */
-    private func loadCache(forced forced: Bool, completition: LoadedDataErrorType?) {
+    private func loadCache(forced forced: Bool, completition: ResultClosure?) {
         if let loadCacheClosure = loadCacheClosure {
-            print(owner: "LoadAction", items: "Cache Load", level: .Info)
-            loadCacheClosure(forced: forced) { (loadedData, error) -> () in
-                if let error = error {
-                    print(owner: "LoadAction", items: "Cache Loaded = Error \(error)", level: .Error)
-                    completition?(loadedData: nil, error: error)
-                } else {
-                    let loadedSomething = (loadedData != nil ? "Found" : "Empty")
-                    print(owner: "LoadAction", items: "Cache Loaded = Data \(loadedSomething)", level: .Info)
-                    completition?(loadedData: loadedData, error: nil)
+            print(owner: "LoadAction[Cache]", items: "Cache Load", level: .Info)
+            loadCacheClosure(forced: forced) { (result) -> Void in
+                switch result {
+                case .Success(let loadedData):
+                    print(owner: "LoadAction[Cache]", items: "Cache Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
+                    completition?(result: Result.Success(loadedData))
+                case .Failure(let error):
+                    print(owner: "LoadAction[Cache]", items: "Cache Loaded = Error \(error)", level: .Error)
+                    completition?(result: Result.Failure(error))
                 }
             }
         } else {
-            completition?(loadedData: nil, error: nil)
+            completition?(result: Result.Success(self.data))
         }
     }
     
@@ -78,16 +87,16 @@ public class CacheLoadAction<U>: LoadAction<U> {
     
     - parameter completition: Closure called when operation finished
     */
-    private func loadMain(forced forced: Bool, completition: LoadedDataErrorType?) {
+    private func loadMain(forced forced: Bool, completition: ResultClosure?) {
         print(owner: "LoadAction", items: "Main Load", level: .Info)
-        loadMainClosure(forced: forced) { (loadedData, error) -> () in
-            if let error = error {
-                print(owner: "LoadAction", items: "Main Loaded = Error \(error)", level: .Error)
-                completition?(loadedData: nil, error: error)
-            } else {
-                let loadedSomething = (loadedData != nil ? "Found" : "Empty")
-                print(owner: "LoadAction", items: "Main Loaded = Data \(loadedSomething)", level: .Info)
-                completition?(loadedData: loadedData, error: nil)
+        loadMainClosure(forced: forced) { (result) -> () in
+            switch result {
+            case .Success(let loadedData):
+                print(owner: "LoadAction[Cache]", items: "Main Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
+                completition?(result: Result.Success(loadedData))
+            case .Failure(let error):
+                print(owner: "LoadAction[Cache]", items: "Main Loaded = Error \(error)", level: .Error)
+                completition?(result: Result.Failure(error))
             }
         }
     }
@@ -102,15 +111,16 @@ public class CacheLoadAction<U>: LoadAction<U> {
     - parameter delegates: Array containing objects that react to updated data
     */
     public init(
-        limitOnce:         Bool = false,
-        shouldUpdateCache: LoadedDataReturnType? = nil,
-        loadCache:         LoadedResultType? = nil,
-        load:              LoadedResultType,
+        shouldUpdateCache: ShouldUpdateCacheClosure? = nil,
+        loadCache:         LoadedResult? = nil,
+        load:              LoadedResult,
         delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
+        self.shouldUpdateCacheClosure = shouldUpdateCache
+        self.loadCacheClosure         = loadCache
+        self.loadMainClosure          = load
         super.init(
-            limitOnce: limitOnce,
             load: { (forced, result) -> Void in
             },
             delegates: delegates

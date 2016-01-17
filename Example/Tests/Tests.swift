@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-import StartAppsKit
+//import StartAppsKit
 
 class Tests: XCTestCase {
     

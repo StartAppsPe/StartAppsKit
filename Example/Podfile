@@ -1,12 +1,16 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'StartAppsKit_Example', :exclusive => true do
+target 'StartAppsKit_Example' do
   pod "StartAppsKit", :path => "../"
 end
 
-target 'StartAppsKit_Tests', :exclusive => true do
+target 'StartAppsKit_Tests' do
   pod "StartAppsKit", :path => "../"
+end
 
-  
+post_install do |installer|
+    installer.pods_project.build_configuration_list.build_configurations.each do |configuration|
+        configuration.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+    end
 end

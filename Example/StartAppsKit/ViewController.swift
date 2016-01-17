@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         print(owner: "Hola", items: "Chau1", "Chau2", "Chau3", level: .Error)
-        print(owner: "Calendar", items: "Bien", level: .Error)
+        //print(owner: "Calendar", items: "Bien", level: .Error)
     }
 
     override func didReceiveMemoryWarning() {

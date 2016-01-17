@@ -7,7 +7,7 @@
 //  Version 2.0
 //
 
-import Foundation
+/*import Foundation
 import Parse
 
 public class SAParseLoadAction<T: CustomStringConvertible>: SALoadAction<T> {
@@ -148,4 +148,4 @@ extension CLLocation {
     
     var geoPoint: PFGeoPoint { return PFGeoPoint(location: self) }
     
-}
+}*/

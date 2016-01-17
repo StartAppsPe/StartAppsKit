@@ -16,6 +16,7 @@ public extension NSDecimalNumber {
     
     var twoDecimalString: String {
         let numberFormatter = NSNumberFormatter()
+        numberFormatter.minimumIntegerDigits  = 1
         numberFormatter.minimumFractionDigits = 2
         numberFormatter.maximumFractionDigits = 2
         return numberFormatter.stringFromNumber(self)!

@@ -12,46 +12,27 @@ public protocol SAViewControllerSubclass {
     
     /*OPTIONAL*/ var viewControllerSubclass: SAViewControllerSubclass! { get }
     
-    /*OPTIONAL*/ var loadActions:           SALoadActions { get }
     /*OPTIONAL*/ var activityIndicatorView: UIActivityIndicatorView? { get }
-    /*OPTIONAL*/ var reloadBarButton:       UIBarButtonItem? { get }
-    /*OPTIONAL*/ var reloadButton:          UIButton? { get }
-    /*OPTIONAL*/ var newBarButton:          UIBarButtonItem? { get }
-    /*OPTIONAL*/ var newButton:             UIButton? { get }
-    /*OPTIONAL*/ func reloadButtonPressed(sender: AnyObject)
-    /*OPTIONAL*/ func innerSetupView()
     
-    /*REQUIRED*/ func createLoadActions() -> SALoadActions
-    /*REQUIRED*/ func setupView()
+    /*REQUIRED*/ func loadAction() -> LoadActionLoadableType?
     /*REQUIRED*/ func updateView()
     
 }
 
-public class SAViewController: UIViewController, SALoadActionsDelegate {
+public class SAViewController: UIViewController, LoadActionDelegate {
     
-    @IBOutlet public var activityIndicatorView: UIActivityIndicatorView?
-    
-    @IBOutlet public weak var reloadBarButton: UIBarButtonItem?
-    @IBOutlet public weak var reloadButton:    UIButton?
-    @IBOutlet public weak var newBarButton:    UIBarButtonItem?
-    @IBOutlet public weak var newButton:       UIButton?
-    
-    public var loadActions = SALoadActions()
+    private var isFirstLoad = true
     
     public var viewControllerSubclass: SAViewControllerSubclass!
     
-    public func loadDataNew() {
-        loadData(forced: true)
+    public func loadNew() {
+        viewControllerSubclass.loadAction()?.loadNew()
     }
     
-    public func loadData(forced forced: Bool) {
-        loadActions.load(forced)
+    public func load(forced forced: Bool) {
+        viewControllerSubclass.loadAction()?.loadAny(forced: forced, completition: nil)
     }
-    
-    public func newObject() {
-        // Do nothing, subclass
-    }
-    
+
     /********************************************************************************************************/
     // MARK: View Management Methods
     /********************************************************************************************************/
@@ -63,47 +44,39 @@ public class SAViewController: UIViewController, SALoadActionsDelegate {
         viewControllerSubclass = self as? SAViewControllerSubclass
         
         // Perform setup
-        loadActions = viewControllerSubclass.createLoadActions()
-        loadActions.delegate = self
-        
-        // Setup view
-        viewControllerSubclass.innerSetupView()
-        viewControllerSubclass.setupView()
-        
-        // Update view
-        viewControllerSubclass.updateView()
-        
-        // Load data
-        loadData(forced: false)
+        viewControllerSubclass.loadAction()?.addDelegate(self)
     }
     
-    public func innerSetupView() {
-        // Subclass
+    public override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if isFirstLoad {
+            isFirstLoad = false
+            
+            // Update view
+            viewControllerSubclass.updateView()
+            
+            // Load data
+            load(forced: false)
+        }
+        
     }
     
     /********************************************************************************************************/
     // MARK: Loading Data Methods
-    /********************************************************************************************************/
+     /********************************************************************************************************/
     
-    public func loadActionsUpdated() {
-        log(owner:"SAViewController", value: "LoadActionsUpdated (loadingStatusAll: \(loadActions.loadingStatus.name()))", level: .Info)
-        switch loadActions.loadingStatus {
-        case .Loading:
-            activityIndicatorView?.startAnimating()
-        case .Reloading:
-            activityIndicatorView?.startAnimating()
-        default:
-            activityIndicatorView?.stopAnimating()
+    @IBOutlet public var activityIndicatorView: UIActivityIndicatorView? {
+        didSet {
+            if let activityIndicatorView = activityIndicatorView {
+                viewControllerSubclass.loadAction()?.addDelegate(activityIndicatorView)
+            }
         }
+    }
+    
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: [LoadActionValues]) {
+        print(owner:"SAViewController", items: "LoadActionsUpdated (Status: \(loadAction.status))", level: .Info)
         viewControllerSubclass.updateView()
-    }
-    
-    @IBAction public func reloadButtonPressed(sender: AnyObject) {
-        loadData(forced: true)
-    }
-    
-    @IBAction public func newButtonPressed(sender: AnyObject) {
-        newObject()
     }
     
 }

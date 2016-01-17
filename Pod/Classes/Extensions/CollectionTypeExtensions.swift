@@ -38,19 +38,31 @@ public extension CollectionType where Generator.Element : Equatable {
 
 public extension RangeReplaceableCollectionType where Generator.Element: Equatable {
     
-    mutating func appendUnique(element: Self.Generator.Element) {
+    public mutating func appendUnique(element: Self.Generator.Element) {
         if !contains(element) {
             append(element)
         }
     }
     
-    mutating func remove(element: Self.Generator.Element) {
+    public mutating func appendIfExists(element: Self.Generator.Element?) {
+        if let element = element {
+            append(element)
+        }
+    }
+    
+    public mutating func appendUniqueIfExists(element: Self.Generator.Element?) {
+        if let element = element where !contains(element) {
+            append(element)
+        }
+    }
+    
+    public mutating func remove(element: Self.Generator.Element) {
         if let index = indexOf(element) {
             removeAtIndex(index)
         }
     }
     
-    mutating func toggle(element: Self.Generator.Element) {
+    public mutating func toggle(element: Self.Generator.Element) {
         if let index = indexOf(element) {
             removeAtIndex(index)
         } else {

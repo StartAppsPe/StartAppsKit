@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+/*
 public protocol SAStaticTableViewControllerSubclass: SASectionedTableViewControllerSubclass {
     
     /*OPTIONAL*/ var staticTableViewControllerSubclass: SAStaticTableViewControllerSubclass! { get }
@@ -92,4 +92,4 @@ public class SAStaticTableViewController: SATableViewController {
         return nil
     }
     
-}
+}*/

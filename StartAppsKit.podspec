@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "StartAppsKit"
-s.version          = "0.1.3"
+s.version          = "0.2.0"
 s.summary          = "A library that does everything."
 
 s.description      = <<-DESC
@@ -30,7 +30,6 @@ s.resource_bundles = {
 
 # s.public_header_files = "Pod/Classes/**/*.h"
 s.frameworks = "UIKit"
-# s.dependency "AFNetworking", "~> 2.3"
 
 s.subspec "Extensions" do |sp|
 sp.source_files = "Pod/Classes/Extensions"
@@ -52,11 +51,11 @@ end
 #sp.dependency 'Facebook-iOS-SDK'
 #end
 
-#s.subspec "LoadActions-Parse" do |sp|
+s.subspec "LoadActions-Parse" do |sp|
 sp.source_files = "Pod/Classes/Parse"
 sp.dependency 'StartAppsKit/LoadActions'
-sp.dependency 'Parse'
-#end
+sp.dependency 'Parse', '~> 1.1'
+end
 
 s.subspec "Hashing" do |sp|
 sp.source_files = "Pod/Classes/Hashing"
