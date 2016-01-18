@@ -335,6 +335,7 @@
 		BF694D9C3FCE9CD89EE4AEFD47D0BE48 /* PFRESTObjectBatchCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = AB6AB3C1097C98093EE996BDED6E74E9 /* PFRESTObjectBatchCommand.m */; };
 		C0037D5C0B3ED055F189FF93205B5E07 /* PFPropertyInfo_Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = ED92EF123FF91F4D43C03316D32B7595 /* PFPropertyInfo_Runtime.m */; };
 		C06A3DC748F0978C027E5CCFA8085013 /* PFQueryController.m in Sources */ = {isa = PBXBuildFile; fileRef = D597D00E08584C8CB788D8F91DBA3B7E /* PFQueryController.m */; };
+		C09139C21C4DA669007FB13B /* ButtonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09139C11C4DA669007FB13B /* ButtonExtensions.swift */; };
 		C09F26B8BE9D501A28DA8C324E4C0F91 /* PFRESTObjectCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 668BB84080A03FEC931259CB2E244E1A /* PFRESTObjectCommand.m */; };
 		C127769DE95620170E0C7BA309E7645B /* PFFileDataStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 124957FD3AE0C64FFD866BB7CB73AFDF /* PFFileDataStream.m */; };
 		C2CE13939588E68A5B7CA05DC68530BA /* PFObjectState.m in Sources */ = {isa = PBXBuildFile; fileRef = FB4D70AFAAC9353796EB83919F2A0937 /* PFObjectState.m */; };
@@ -896,6 +897,7 @@
 		BED146863C6F2384D1C3DABAD5AAB946 /* PFOfflineQueryLogic.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PFOfflineQueryLogic.m; path = Parse/Internal/LocalDataStore/OfflineQueryLogic/PFOfflineQueryLogic.m; sourceTree = "<group>"; };
 		BF662BBB52C8A80DFC74746A9BC8E32D /* PFUserFileCodingLogic.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PFUserFileCodingLogic.m; path = Parse/Internal/User/Coder/File/PFUserFileCodingLogic.m; sourceTree = "<group>"; };
 		C05068A9FC7F6A196E57124CDE0CE6E8 /* PFKeyValueCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PFKeyValueCache.m; path = Parse/Internal/KeyValueCache/PFKeyValueCache.m; sourceTree = "<group>"; };
+		C09139C11C4DA669007FB13B /* ButtonExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonExtensions.swift; sourceTree = "<group>"; };
 		C24F091D1C68226ED8EEEC862690DF93 /* Bolts-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Bolts-prefix.pch"; sourceTree = "<group>"; };
 		C25AF9849573117104ED989016FF34A1 /* PFObjectFileCoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PFObjectFileCoder.h; path = Parse/Internal/Object/Coder/File/PFObjectFileCoder.h; sourceTree = "<group>"; };
 		C25F203032E44C7085122286F4E2128F /* PFObjectFileCodingLogic.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PFObjectFileCodingLogic.h; path = Parse/Internal/Object/Coder/File/PFObjectFileCodingLogic.h; sourceTree = "<group>"; };
@@ -1705,6 +1707,7 @@
 			isa = PBXGroup;
 			children = (
 				0C80094EF8171FEEA927A6CCAC1E5083 /* CollectionTypeExtensions.swift */,
+				C09139C11C4DA669007FB13B /* ButtonExtensions.swift */,
 				BCBA1D66A0BD9AF2636E838CBCFE38BB /* ColorExtensions.swift */,
 				105F7EAC0D1A3DE78B0B19182B79CD56 /* DateExtensions.swift */,
 				135E490265DE3AF6A1BFB861090F3ECB /* DeviceExtensions.swift */,
@@ -2419,6 +2422,7 @@
 				2C237048716A2A2A73AD05FA83D7F9CA /* CacheLoadAction.swift in Sources */,
 				85DEB9CF13F814555C87E26F0759132B /* CollectionTypeExtensions.swift in Sources */,
 				1F76AE9DEFE6C1B245B9C15A0839BDAA /* ColorExtensions.swift in Sources */,
+				C09139C21C4DA669007FB13B /* ButtonExtensions.swift in Sources */,
 				7FE3B4F58A5294C47496FDE48D3B7987 /* DateExtensions.swift in Sources */,
 				D3AF9F7D59855B6982EF95E7DAB94752 /* DeviceExtensions.swift in Sources */,
 				F09BF37BB9DD27BB93B12CAF8800D4ED /* ErrorExtensions.swift in Sources */,
