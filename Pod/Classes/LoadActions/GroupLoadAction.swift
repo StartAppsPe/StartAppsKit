@@ -60,7 +60,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
         if let actionToLoad = actionsToLoad.first {
             actionsToLoad.removeAtIndex(0)
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
-                if result.succeeded() || self.order != .SequentialForced {
+                if result.succeeded || self.order != .SequentialForced {
                     if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
                     self.loadSequential(forced: forced, completition: completition)
                 } else {

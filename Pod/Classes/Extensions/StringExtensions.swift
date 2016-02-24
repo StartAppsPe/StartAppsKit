@@ -10,7 +10,7 @@ import Foundation
 
 public extension String {
     
-    public func length() -> Int {
+    public var length: Int {
         return self.characters.count
     }
     
@@ -41,7 +41,7 @@ public extension String {
     }
     
     public func substring(start start: Int) -> String {
-        return self.substring(range: start..<length())
+        return self.substring(range: start..<self.length)
     }
     
     public func substring(end end: Int) -> String {
@@ -54,7 +54,7 @@ public extension String {
     
     public func clean(minSize: Int = 0) -> String? {
         let trimmed = trim()
-        return (trimmed.length() > minSize ? trimmed : nil)
+        return (trimmed.length > minSize ? trimmed : nil)
     }
     
     public func urlEncode() -> String {
@@ -80,6 +80,38 @@ public extension String {
         return NSAttributedString(string: self, attributes: [NSParagraphStyleAttributeName : paragraphStyle, NSBaselineOffsetAttributeName : 0])
     }
     
+    public func indexOf(target: String) -> Int {
+        let range = self.rangeOfString(target)
+        if let range = range {
+            return self.startIndex.distanceTo(range.startIndex)
+        } else {
+            return -1
+        }
+    }
+    
+    public func indexOf(target: String, startIndex: Int) -> Int {
+        let startRange = self.startIndex.advancedBy(startIndex)
+        let range = self.rangeOfString(target, options: NSStringCompareOptions.LiteralSearch, range: Range<String.Index>(start: startRange, end: self.endIndex))
+        if let range = range {
+            return self.startIndex.distanceTo(range.startIndex)
+        } else {
+            return -1
+        }
+    }
+    
+    public func lastIndexOf(target: String) -> Int {
+        var index = -1
+        var stepIndex = self.indexOf(target)
+        while stepIndex > -1 {
+            index = stepIndex
+            if stepIndex + target.length < self.length {
+                stepIndex = indexOf(target, startIndex: stepIndex + target.length)
+            } else {
+                stepIndex = -1
+            }
+        }
+        return index
+    }
 }
 
 public extension NSAttributedString {

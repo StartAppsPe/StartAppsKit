@@ -12,21 +12,34 @@
     "git": "https://github.com/StartAppsPe/StartAppsKit.git",
     "tag": "0.2.0"
   },
+  "module_name": "StartAppsKit",
   "platforms": {
     "ios": "8.0"
   },
   "requires_arc": true,
-  "source_files": "Pod/Classes/**/*",
-  "resource_bundles": {
-    "StartAppsKit": [
-      "Pod/Assets/*.png"
-    ]
-  },
-  "frameworks": "UIKit",
+  "default_subspecs": "Default",
   "subspecs": [
     {
+      "name": "Default",
+      "dependencies": {
+        "StartAppsKit/ViewControllers": [
+
+        ],
+        "StartAppsKit/LoadActions": [
+
+        ],
+        "StartAppsKit/Extensions": [
+
+        ],
+        "StartAppsKit/Logging": [
+
+        ]
+      }
+    },
+    {
       "name": "Extensions",
-      "source_files": "Pod/Classes/Extensions"
+      "source_files": "Pod/Classes/Extensions",
+      "frameworks": "UIKit"
     },
     {
       "name": "Logging",
@@ -38,6 +51,16 @@
       }
     },
     {
+      "name": "ViewControllers",
+      "source_files": "Pod/Classes/ViewControllers",
+      "dependencies": {
+        "StartAppsKit/LoadActions": [
+
+        ]
+      },
+      "frameworks": "UIKit"
+    },
+    {
       "name": "LoadActions",
       "source_files": "Pod/Classes/LoadActions",
       "dependencies": {
@@ -46,6 +69,9 @@
         ],
         "StartAppsKit/Logging": [
 
+        ],
+        "SwiftyJSON": [
+          "~> 2.3"
         ]
       }
     },

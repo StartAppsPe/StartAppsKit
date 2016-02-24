@@ -6,7 +6,7 @@
 //
 //
 
-import UIKit
+import Foundation
 
 public class StaticLoadAction: LoadAction<SATableObjectsSection> {
     

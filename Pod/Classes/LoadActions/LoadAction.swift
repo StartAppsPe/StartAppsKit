@@ -13,9 +13,9 @@ public class LoadAction<U>: LoadActionType {
     
     public typealias T = U
     
-    public typealias ResultType     = Result<T, ErrorType>
-    public typealias ResultClosure  = (result: ResultType) -> Void
-    public typealias LoadedResult   = (forced: Bool, completition: ResultClosure) -> Void
+    public typealias LoadResultType     = Result<T, ErrorType>
+    public typealias LoadResultClosure  = (result: LoadResultType) -> Void
+    public typealias LoadResult   = (forced: Bool, completition: LoadResultClosure) -> Void
     
     public var updatedValues: [LoadActionValues] = []
     public var delegates:   [LoadActionDelegate] = []
@@ -33,7 +33,7 @@ public class LoadAction<U>: LoadActionType {
         didSet { updatedValues.appendUnique(.Date) }
     }
     
-    public var loadClosure:  LoadedResult!
+    public var loadClosure:    LoadResult!
     
     /**
     Loads data giving the option of paging or loading new.
@@ -41,7 +41,7 @@ public class LoadAction<U>: LoadActionType {
     - parameter forced: If true forces main load
     - parameter completition: Closure called when operation finished
     */
-    public func load(forced forced: Bool, completition: ResultClosure?) {
+    public func load(forced forced: Bool, completition: LoadResultClosure?) {
         print(owner: "LoadAction", items: "Load Began", level: .Info)
         
         // Adjust loading status to loading kind
@@ -52,12 +52,12 @@ public class LoadAction<U>: LoadActionType {
         loadClosure(forced: forced) { (result) -> () in
             
             switch result {
-            case .Success(let loadedData):
-                print(owner: "LoadAction", items: "Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
-                self.data = loadedData
             case .Failure(let error):
                 print(owner: "LoadAction", items: "Loaded = Error \(error)", level: .Error)
                 self.error = error
+            case .Success(let loadedData):
+                print(owner: "LoadAction", items: "Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
+                self.data = loadedData
             }
             
             // Adjust loading status to loaded kind and call completition
@@ -86,12 +86,12 @@ public class LoadAction<U>: LoadActionType {
     - parameter delegates: Array containing objects that react to updated data
     */
     public init(
-        load:       LoadedResult,
+        load:       LoadResult,
         delegates: [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
-        self.loadClosure = load
-        self.delegates   = delegates
+        self.loadClosure    = load
+        self.delegates      = delegates
     }
     
 }

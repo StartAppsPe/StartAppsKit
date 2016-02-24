@@ -494,7 +494,6 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Demo-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/Gabriel/Dropbox/Projects/StartAppsKit/Example/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Example/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/StartAppsKit/StartAppsKit-bridging.h\n/StartAppsKit-bridging.h\nStartAppsKit-bridging.h";
 			};
 			name = Debug;
 		};
@@ -508,7 +507,6 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "pe.startapps.kit-Demo-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/Gabriel/Dropbox/Projects/StartAppsKit/Example/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Example/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Pods/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/Target Support Files/StartAppsKit/StartAppsKit-bridging.h\n/StartAppsKit/StartAppsKit-bridging.h\n/StartAppsKit-bridging.h\nStartAppsKit-bridging.h";
 			};
 			name = Release;
 		};

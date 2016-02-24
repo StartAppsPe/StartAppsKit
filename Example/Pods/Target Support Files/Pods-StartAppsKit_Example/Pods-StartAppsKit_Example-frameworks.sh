@@ -84,14 +84,10 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-StartAppsKit_Example/Bolts.framework"
-  install_framework "Pods-StartAppsKit_Example/CommonCrypto.framework"
-  install_framework "Pods-StartAppsKit_Example/Parse.framework"
   install_framework "Pods-StartAppsKit_Example/StartAppsKit.framework"
+  install_framework "Pods-StartAppsKit_Example/SwiftyJSON.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-StartAppsKit_Example/Bolts.framework"
-  install_framework "Pods-StartAppsKit_Example/CommonCrypto.framework"
-  install_framework "Pods-StartAppsKit_Example/Parse.framework"
   install_framework "Pods-StartAppsKit_Example/StartAppsKit.framework"
+  install_framework "Pods-StartAppsKit_Example/SwiftyJSON.framework"
 fi

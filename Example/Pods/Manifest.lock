@@ -1,79 +1,33 @@
->-
-  PODS:
-  - >-
-    Bolts/Tasks (1.6.0)
-  - >-
-    CommonCrypto (1.1)
-  - >-
-    Parse (1.12.0):
-    - >-
-      Bolts/Tasks (~> 1.5)
-  - >-
-    StartAppsKit (0.2.0):
-    - >-
-      StartAppsKit/Extensions (= 0.2.0)
-    - >-
-      StartAppsKit/Hashing (= 0.2.0)
-    - >-
-      StartAppsKit/LoadActions (= 0.2.0)
-    - >-
-      StartAppsKit/LoadActions-Parse (= 0.2.0)
-    - >-
-      StartAppsKit/Logging (= 0.2.0)
-  - >-
-    StartAppsKit/Extensions (0.2.0)
-  - >-
-    StartAppsKit/Hashing (0.2.0):
-    - >-
-      CommonCrypto (~> 1.1)
-  - >-
-    StartAppsKit/LoadActions (0.2.0):
-    - >-
-      StartAppsKit/Extensions
-    - >-
-      StartAppsKit/Logging
-  - >-
-    StartAppsKit/LoadActions-Parse (0.2.0):
-    - >-
-      Parse (~> 1.1)
-    - >-
-      StartAppsKit/LoadActions
-  - >-
-    StartAppsKit/Logging (0.2.0):
-    - >-
-      StartAppsKit/Extensions
+PODS:
+  - StartAppsKit (0.2.0):
+    - StartAppsKit/Default (= 0.2.0)
+  - StartAppsKit/Default (0.2.0):
+    - StartAppsKit/Extensions
+    - StartAppsKit/LoadActions
+    - StartAppsKit/Logging
+    - StartAppsKit/ViewControllers
+  - StartAppsKit/Extensions (0.2.0)
+  - StartAppsKit/LoadActions (0.2.0):
+    - StartAppsKit/Extensions
+    - StartAppsKit/Logging
+    - SwiftyJSON (~> 2.3)
+  - StartAppsKit/Logging (0.2.0):
+    - StartAppsKit/Extensions
+  - StartAppsKit/ViewControllers (0.2.0):
+    - StartAppsKit/LoadActions
+  - SwiftyJSON (2.3.2)
 
->-
-  DEPENDENCIES:
-  - >-
-    StartAppsKit (from `../`)
+DEPENDENCIES:
+  - StartAppsKit (from `../`)
 
->-
-  EXTERNAL SOURCES:
-  >-
-    StartAppsKit:
-    :path: >-
-      ../
+EXTERNAL SOURCES:
+  StartAppsKit:
+    :path: "../"
 
->-
-  SPEC CHECKSUMS:
-  >-
-    Bolts: >-
-    f52a250053bb517ca874523c3913776359ab3def
-  >-
-    CommonCrypto: >-
-    e18c8416332cca5efe80c197f2a522d471c42626
-  >-
-    Parse: >-
-    de2c52a9a1421b91ae7594ab8ce191afd184f19b
-  >-
-    StartAppsKit: >-
-    0e2ae193de1e8ca6fe027caf5d1df21a4d221348
+SPEC CHECKSUMS:
+  StartAppsKit: 27478f585938bac6e586c783edfdec327d443109
+  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
 
->-
-  PODFILE CHECKSUM: >-
-  9852af86788649a72bce506d6c610266bbf0acab
+PODFILE CHECKSUM: f80e0bcd83881a2a0a5c9053f5ef824128ae5907
 
->-
-  COCOAPODS: >-
-  1.0.0.beta.2
+COCOAPODS: 1.0.0.beta.2

@@ -15,7 +15,7 @@ public protocol SAViewControllerSubclass {
     /*OPTIONAL*/ var activityIndicatorView: UIActivityIndicatorView? { get }
     
     /*REQUIRED*/ func loadAction() -> LoadActionLoadableType?
-    /*REQUIRED*/ func updateView()
+    /*OPTIONAL*/ func updateView()
     
 }
 
@@ -35,7 +35,7 @@ public class SAViewController: UIViewController, LoadActionDelegate {
 
     /********************************************************************************************************/
     // MARK: View Management Methods
-    /********************************************************************************************************/
+     /********************************************************************************************************/
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +45,10 @@ public class SAViewController: UIViewController, LoadActionDelegate {
         
         // Perform setup
         viewControllerSubclass.loadAction()?.addDelegate(self)
+    }
+    
+    public func updateView() {
+        // Override in subclass
     }
     
     public override func viewWillAppear(animated: Bool) {

@@ -10,12 +10,23 @@
 import Foundation
 
 public enum Result<T, E> {
-    case Success(T?)
-    case Failure(E)
-    func succeeded() -> Bool {
+    case Success(T?), Failure(E)
+    var succeeded: Bool {
         switch self {
         case .Success(_): return true
         case .Failure(_): return false
+        }
+    }
+    var data: T? {
+        switch self {
+        case .Success(let data): return data
+        case .Failure(_): return nil
+        }
+    }
+    var error: E? {
+        switch self {
+        case .Success(_): return nil
+        case .Failure(let error): return error
         }
     }
 }
