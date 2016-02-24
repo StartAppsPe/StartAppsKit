@@ -1,7 +1,9 @@
 PODS:
   - StartAppsKit (0.2.0):
     - StartAppsKit/Default (= 0.2.0)
+  - StartAppsKit/Animations (0.2.0)
   - StartAppsKit/Default (0.2.0):
+    - StartAppsKit/Animations
     - StartAppsKit/Extensions
     - StartAppsKit/LoadActions
     - StartAppsKit/Logging
@@ -11,8 +13,7 @@ PODS:
     - StartAppsKit/Extensions
     - StartAppsKit/Logging
     - SwiftyJSON (~> 2.3)
-  - StartAppsKit/Logging (0.2.0):
-    - StartAppsKit/Extensions
+  - StartAppsKit/Logging (0.2.0)
   - StartAppsKit/ViewControllers (0.2.0):
     - StartAppsKit/LoadActions
   - SwiftyJSON (2.3.2)
@@ -25,9 +26,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  StartAppsKit: 27478f585938bac6e586c783edfdec327d443109
+  StartAppsKit: 60c5cdf24e0e62fb1f520015d79233b5b49a34d6
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
 
 PODFILE CHECKSUM: f80e0bcd83881a2a0a5c9053f5ef824128ae5907
 
-COCOAPODS: 1.0.0.beta.2
+COCOAPODS: 1.0.0.beta.3

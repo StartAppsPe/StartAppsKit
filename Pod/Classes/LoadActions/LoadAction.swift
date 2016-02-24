@@ -18,22 +18,22 @@ public class LoadAction<U>: LoadActionType {
     public typealias LoadResult   = (forced: Bool, completition: LoadResultClosure) -> Void
     
     public var updatedValues: [LoadActionValues] = []
-    public var delegates:   [LoadActionDelegate] = []
+    public var delegates: [LoadActionDelegate] = []
     
     public var status: LoadingStatus = .Ready {
         didSet { updatedValues.appendUnique(.Status) }
     }
-    public var error:  ErrorType? {
+    public var error: ErrorType? {
         didSet { updatedValues.appendUnique(.Error) }
     }
-    public var data:   T? {
+    public var data: T? {
         didSet { updatedValues.appendUnique(.Data); date = NSDate() }
     }
-    public var date:   NSDate? {
+    public var date: NSDate? {
         didSet { updatedValues.appendUnique(.Date) }
     }
     
-    public var loadClosure:    LoadResult!
+    public var loadClosure: LoadResult!
     
     /**
     Loads data giving the option of paging or loading new.

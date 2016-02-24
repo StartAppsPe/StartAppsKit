@@ -32,6 +32,7 @@ s.subspec 'Default' do |sp|
 sp.dependency 'StartAppsKit/ViewControllers'
 sp.dependency 'StartAppsKit/LoadActions'
 sp.dependency 'StartAppsKit/Extensions'
+sp.dependency 'StartAppsKit/Animations'
 sp.dependency 'StartAppsKit/Logging'
 end
 
@@ -40,9 +41,13 @@ sp.source_files = 'Pod/Classes/Extensions'
 sp.frameworks = 'UIKit'
 end
 
+s.subspec 'Animations' do |sp|
+sp.source_files = 'Pod/Classes/Animations'
+sp.frameworks = 'UIKit'
+end
+
 s.subspec 'Logging' do |sp|
 sp.source_files = 'Pod/Classes/Logging'
-sp.dependency 'StartAppsKit/Extensions'
 end
 
 s.subspec 'ViewControllers' do |sp|

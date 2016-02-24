@@ -31,6 +31,9 @@
         "StartAppsKit/Extensions": [
 
         ],
+        "StartAppsKit/Animations": [
+
+        ],
         "StartAppsKit/Logging": [
 
         ]
@@ -42,13 +45,13 @@
       "frameworks": "UIKit"
     },
     {
+      "name": "Animations",
+      "source_files": "Pod/Classes/Animations",
+      "frameworks": "UIKit"
+    },
+    {
       "name": "Logging",
-      "source_files": "Pod/Classes/Logging",
-      "dependencies": {
-        "StartAppsKit/Extensions": [
-
-        ]
-      }
+      "source_files": "Pod/Classes/Logging"
     },
     {
       "name": "ViewControllers",

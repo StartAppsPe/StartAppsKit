@@ -15,11 +15,11 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
     public typealias UrlRequestResult        = (forced: Bool, completition: UrlRequestResultClosure) -> Void
     
-    public typealias ProcessJsonResultType       = Result<T, ErrorType>
-    public typealias ProcessJsonResultClosure    = (result: ProcessJsonResultType) -> Void
-    public typealias ProcessJsonResult           = (forced: Bool, loadedJson: JSON, completition: ProcessJsonResultClosure) -> Void
+    public typealias ProcessJsonResultType    = Result<T, ErrorType>
+    public typealias ProcessJsonResultClosure = (result: ProcessJsonResultType) -> Void
+    public typealias ProcessJsonResult        = (forced: Bool, loadedJson: JSON, completition: ProcessJsonResultClosure) -> Void
     
-    public var processJsonClosure:    ProcessJsonResult?
+    public var processJsonClosure: ProcessJsonResult?
     
     /**
      Processes data giving the option of paging or loading new.
@@ -30,12 +30,10 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
     private func processData(forced forced: Bool, loadedData: NSData, completition: LoadResultClosure?) {
         var error: NSError?
         let json = JSON(data: loadedData, error: &error)
-        print("Here",10)
         if let error = error {
             completition?(result: Result.Failure(error))
         } else if let processJsonClosure = self.processJsonClosure {
             processJsonClosure(forced: forced, loadedJson: json) { (result) -> Void in
-                print("Here",11)
                 switch result {
                 case .Success(let processedData):
                     completition?(result: Result.Success(processedData))

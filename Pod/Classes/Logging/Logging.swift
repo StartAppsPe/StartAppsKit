@@ -29,7 +29,7 @@ public enum PrintLevel: Int {
 }
 
 public func print(owner owner: String, items: Any..., separator: String = ", ", terminator: String = "\n", level: PrintLevel) {
-    guard level.rawValue < PrintLevel.current.rawValue else { return }
+    guard level.rawValue <= PrintLevel.current.rawValue else { return }
     var printString = "\(owner): "
     let indentationCount = max(PrintLevel.indentation1-printString.length, 0)
     let indentation = String(count:indentationCount, repeatedValue:" " as Character)
