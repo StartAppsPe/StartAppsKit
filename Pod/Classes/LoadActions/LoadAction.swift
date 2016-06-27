@@ -17,20 +17,20 @@ public class LoadAction<U>: LoadActionType {
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
     public typealias LoadResult   = (forced: Bool, completition: LoadResultClosure) -> Void
     
-    public var updatedValues: [LoadActionValues] = []
+    public var updatedValues: Set<LoadActionValues> = []
     public var delegates: [LoadActionDelegate] = []
     
     public var status: LoadingStatus = .Ready {
-        didSet { updatedValues.appendUnique(.Status) }
+        didSet { updatedValues.insert(.Status) }
     }
     public var error: ErrorType? {
-        didSet { updatedValues.appendUnique(.Error) }
+        didSet { updatedValues.insert(.Error) }
     }
     public var data: T? {
-        didSet { updatedValues.appendUnique(.Data); date = NSDate() }
+        didSet { updatedValues.insert(.Data); date = NSDate() }
     }
     public var date: NSDate? {
-        didSet { updatedValues.appendUnique(.Date) }
+        didSet { updatedValues.insert(.Date) }
     }
     
     public var loadClosure: LoadResult!

@@ -22,9 +22,9 @@ s.module_name      = 'StartAppsKit'
 s.platform     = :ios, '8.0'
 s.requires_arc = true
 
-#s.resource_bundles = {
-#'StartAppsKit' => ['Pod/Assets/*.png']
-#}
+s.resource_bundles = {
+    'StartAppsKit' => ['Pod/Assets/*']
+}
 
 s.default_subspec = 'Default'
 

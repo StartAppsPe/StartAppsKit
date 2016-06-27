@@ -84,7 +84,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
             actionsToLoad.removeAtIndex(0)
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
-                    if self.actions.find({ $0.error != nil }) == nil {
+                    if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
                         completition?(result: Result.Failure(self.error!))
                     } else {
                         completition?(result: Result.Success(self.data))
@@ -103,7 +103,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter completition: Closure called when operation finished
      */
     
-    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: [LoadActionValues]) {
+    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
         
         // Get error
         if let processErrorClosure = processErrorClosure {

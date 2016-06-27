@@ -17,6 +17,11 @@
     "ios": "8.0"
   },
   "requires_arc": true,
+  "resource_bundles": {
+    "StartAppsKit": [
+      "Pod/Assets/*"
+    ]
+  },
   "default_subspecs": "Default",
   "subspecs": [
     {

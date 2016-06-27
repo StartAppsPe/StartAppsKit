@@ -20,6 +20,34 @@ public extension CollectionType {
         return nil
     }
     
+    @warn_unused_result
+    public func shuffled() -> [Generator.Element] {
+        var list = Array(self)
+        list.shuffle()
+        return list
+    }
+    
+}
+
+public extension CollectionType where Index == Int  {
+    
+    public var random: Self.Generator.Element? {
+        return self[Int(arc4random_uniform(UInt32(count)))]
+    }
+    
+}
+
+public extension MutableCollectionType where Index == Int  {
+    
+    public mutating func shuffle() {
+        if count < 2 { return }
+        for i in 0..<count - 1 {
+            let j = Int(arc4random_uniform(UInt32(count - i))) + i
+            guard i != j else { continue }
+            swap(&self[i], &self[j])
+        }
+    }
+    
 }
 
 public extension CollectionType where Generator.Element : Equatable {
@@ -34,6 +62,21 @@ public extension CollectionType where Generator.Element : Equatable {
         }
         return distinctElements
     }
+    
+}
+
+public extension Set {
+    
+    public mutating func toggle(element: Element) -> Bool {
+        if contains(element) {
+            remove(element)
+            return false
+        } else {
+            insert(element)
+            return true
+        }
+    }
+    
 }
 
 public extension RangeReplaceableCollectionType where Generator.Element: Equatable {
@@ -70,4 +113,21 @@ public extension RangeReplaceableCollectionType where Generator.Element: Equatab
         }
     }
     
+}
+
+public extension Range where Element : Comparable {
+    
+    public func contains(element element: Element) -> Bool {
+        return self ~= element
+    }
+    
+    public func contains(range range: Range) -> Bool {
+        return self ~= range
+    }
+    
+}
+
+@warn_unused_result
+public func ~=<I : ForwardIndexType where I : Comparable>(pattern: Range<I>, value: Range<I>) -> Bool {
+    return pattern ~= value.startIndex || pattern ~= value.endIndex || value ~= pattern.startIndex || value ~= pattern.endIndex
 }

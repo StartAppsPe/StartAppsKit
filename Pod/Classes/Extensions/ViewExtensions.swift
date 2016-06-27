@@ -8,52 +8,53 @@
 
 import UIKit
 
-//public class MessageViewController: UIViewController {
-//    
-//    public var message: String?
-//    
-//    public init(title: String?, message: String? = nil) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.title = title
-//        self.message = message
-//    }
-//
-//    required public init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//    
-//    public override func loadView() {
-//        super.loadView()
-//        self.view = UIView()
-//    }
-//    
-//    public func show(overView: UIView) {
-//        self.view.frame = overView.frame
-//        overView.superview?.addSubview(self.view)
-//    }
-//    
-//    public lazy var titleLabel = UILabel
-//    
-//    public func updateView() {
-//        
-//    }
-//    
-//}
+// If rhs not nil, set value. lhs is not replaced if rhs is nil.
+infix operator ?= { associativity right precedence 90 assignment }
+public func ?=<T>(inout lhs: T?, @autoclosure rhs: () -> T?) {
+    if let nv = rhs() { lhs = nv }
+}
+
+// If lhs is nil, set value. rhs is not called if lhs is not nil.
+infix operator |= { associativity right precedence 90 assignment }
+public func |=<T>(inout lhs: T?, @autoclosure rhs: () -> T?) {
+    if lhs == nil { lhs = rhs() }
+}
 
 
-public extension UIView {
+public extension UIActivityIndicatorView {
     
-    public func shake(times: Int = 2, distance: Int = 10) {
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.duration = 0.03*NSTimeInterval(times)
-        animation.repeatCount = Float(times)
-        animation.autoreverses = true
-        animation.fromValue = NSValue(CGPoint: CGPointMake(self.center.x - CGFloat(distance), self.center.y))
-        animation.toValue = NSValue(CGPoint: CGPointMake(self.center.x + CGFloat(distance), self.center.y))
-        self.layer.addAnimation(animation, forKey: "position")
+    var animating: Bool {
+        get {
+            return isAnimating()
+        }
+        set {
+            if newValue {
+                startAnimating()
+            } else {
+                stopAnimating()
+            }
+        }
     }
     
 }
+
+extension UIRefreshControl {
+    
+    var animating: Bool {
+        get {
+            return refreshing
+        }
+        set {
+            if newValue {
+                beginRefreshing()
+            } else {
+                endRefreshing()
+            }
+        }
+    }
+    
+}
+
 
 
 public extension UIView {
@@ -63,7 +64,11 @@ public extension UIView {
             return layer.cornerRadius
         }
         set {
-            layer.cornerRadius  = newValue
+            if newValue == -1 {
+                layer.cornerRadius = self.bounds.size.width/2
+            } else {
+                layer.cornerRadius = newValue
+            }
             updateLayerEffects()
         }
     }
@@ -88,6 +93,26 @@ public extension UIView {
         }
     }
     
+    @IBInspectable public var borderColor: UIColor? {
+        get {
+            return (layer.borderColor != nil ? UIColor(CGColor: layer.borderColor!) : nil)
+        }
+        set {
+            layer.borderColor = newValue?.CGColor
+            updateLayerEffects()
+        }
+    }
+    
+    @IBInspectable public var borderWidth: CGFloat {
+        get {
+            return layer.borderWidth
+        }
+        set {
+            layer.borderWidth = newValue
+            updateLayerEffects()
+        }
+    }
+    
     public func updateLayerEffects() {
         if shadowOpacity != 0 {
             layer.shadowOffset  = CGSizeMake(0, 0);
@@ -95,6 +120,64 @@ public extension UIView {
         } else if cornerRadius != 0 {
             layer.masksToBounds = true
         }
+    }
+    
+}
+
+
+
+public extension UIViewController {
+    
+    public func insertChild(viewController viewController: UIViewController, inView: UIView) {
+        // Add view controller
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        var newFrame = viewController.view.frame
+        newFrame.size.width = inView.bounds.width
+        viewController.view.layoutIfNeeded()
+        viewController.view.updateConstraintsIfNeeded()
+        viewController.view.frame = newFrame
+        viewController.view.backgroundColor = UIColor.clearColor()
+        
+        addChildViewController(viewController)
+        viewController.willMoveToParentViewController(self)
+        inView.addSubview(viewController.view)
+        viewController.didMoveToParentViewController(self)
+        
+        inView.addConstraint(
+            NSLayoutConstraint(item: viewController.view,
+                attribute: .Top, relatedBy: .Equal,
+                toItem: inView, attribute: .Top,
+                multiplier: 1.0, constant: 0.0
+            )
+        )
+        inView.addConstraint(
+            NSLayoutConstraint(item: viewController.view,
+                attribute: .Leading, relatedBy: .Equal,
+                toItem: inView, attribute: .Leading,
+                multiplier: 1.0, constant: 0.0
+            )
+        )
+        inView.addConstraint(
+            NSLayoutConstraint(item: viewController.view,
+                attribute: .Bottom, relatedBy: .Equal,
+                toItem: inView, attribute: .Bottom,
+                multiplier: 1.0, constant: 0.0
+            )
+        )
+        inView.addConstraint(
+            NSLayoutConstraint(item: viewController.view,
+                attribute: .Trailing, relatedBy: .Equal,
+                toItem: inView, attribute: .Trailing,
+                multiplier: 1.0, constant: 0.0
+            )
+        )
+    }
+    
+    public func removeChild(viewController viewController: UIViewController) {
+        viewController.removeFromParentViewController()
+        viewController.willMoveToParentViewController(nil)
+        viewController.view?.removeFromSuperview()
+        viewController.didMoveToParentViewController(nil)
     }
     
 }

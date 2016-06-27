@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Universidad de Lima. All rights reserved.
 //
 
-import UIKit
-/*
+/*import UIKit
+
 public protocol SAStaticTableViewControllerSubclass: SASectionedTableViewControllerSubclass {
     
     /*OPTIONAL*/ var staticTableViewControllerSubclass: SAStaticTableViewControllerSubclass! { get }

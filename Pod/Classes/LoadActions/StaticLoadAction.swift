@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class StaticLoadAction: LoadAction<SATableObjectsSection> {
+public class StaticLoadAction: LoadAction<[SATableObjectsSection]> {
     
     public typealias ResultType    = Result<T, ErrorType>
     public typealias ResultClosure = (result: ResultType) -> Void

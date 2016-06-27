@@ -11,14 +11,27 @@ import UIKit
 
 // Section Management
 public class SATableObjectsSection {
-    var header:  String?
-    var objects: [SATableObjectType]!
-    func append(object: SATableObjectType) {
+    public var header:  String?
+    public var objects: [SATableObjectType]!
+    public func append(object: SATableObjectType) {
         objects.append(object)
     }
-    init(header: String? = nil, objects: [SATableObjectType]? = nil) {
+    public init(header: String? = nil, objects: [SATableObjectType]? = nil) {
         self.header = header
         self.objects = objects ?? [SATableObject]()
+    }
+    public func dequeueGenericCell(tableView tableView: UITableView, indexPath: NSIndexPath) -> SATableViewCell {
+        return objects[indexPath.row].dequeueGenericCell(tableView: tableView, indexPath: indexPath)
+    }
+    public func didSelect(tableView tableView: UITableView, indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        let cell = dequeueGenericCell(tableView: tableView, indexPath: indexPath)
+        objects[indexPath.row].didSelect(cell: cell)
+    }
+    public func didAction(tableView tableView: UITableView, indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        let cell = dequeueGenericCell(tableView: tableView, indexPath: indexPath)
+        objects[indexPath.row].didAction(cell: cell)
     }
 }
 public func += (inout left: [SATableObjectsSection], right: SATableObjectsSection?) {
@@ -76,7 +89,7 @@ public class SATableViewCell: UITableViewCell {
     public class func cellIdentifier() -> String { return "SATableViewCell" }
     public override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        tableObject.didSelect(cell: self)
+        tableObject?.didSelect(cell: self)
     }
 }
 
@@ -118,8 +131,17 @@ public class SASliderTableViewCell: SATitleTableViewCell, SATableViewCellActiona
 }
 
 // TextField Cell
+public class SASegmentedTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
+    @IBOutlet public weak var segmentedControl: UISegmentedControl? {
+        didSet { segmentedControl?.addTarget(self, action: "didAction:", forControlEvents: .ValueChanged) }
+    }
+    public override class func cellIdentifier() -> String { return "SASegmentedTableViewCell" }
+    public func didAction(sender: AnyObject!) { tableObject.didAction(cell: self) }
+}
+
+// TextField Cell
 public class SATextFieldTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
-    @IBOutlet weak var textField: UITextField? {
+    @IBOutlet public weak var textField: UITextField? {
         didSet { textField?.addTarget(self, action: "didAction:", forControlEvents: .EditingChanged) }
     }
     public override class func cellIdentifier() -> String { return "SATextFieldTableViewCell" }
@@ -128,7 +150,7 @@ public class SATextFieldTableViewCell: SATitleTableViewCell, SATableViewCellActi
 
 // TextView Cell
 public class SATextViewTableViewCell: SATitleTableViewCell, UITextViewDelegate {
-    @IBOutlet weak var textView: UITextView? {
+    @IBOutlet public weak var textView: UITextView? {
         didSet { textView?.delegate = self }
     }
     public override class func cellIdentifier() -> String { return "SATextViewTableViewCell" }

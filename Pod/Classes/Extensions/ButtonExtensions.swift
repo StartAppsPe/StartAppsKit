@@ -88,6 +88,13 @@ public extension UIButton {
         }
     }
     
+    override public var enabled: Bool {
+        didSet {
+            if backgroundColorOriginal == nil { backgroundColorOriginal = backgroundColor }
+            backgroundColor = backgroundColorOriginal?.colorWithAlpha(enabled ? 1.0 : 0.5)
+        }
+    }
+    
     private var backgroundColorOriginal: UIColor? {
         get { return objc_getAssociatedObject(self, &_bcak) as? UIColor }
         set { objc_setAssociatedObject(self, &_bcak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
@@ -122,6 +129,14 @@ public extension UIButton {
 
 public extension UIBarButtonItem {
     
+    public convenience init(barButtonSystemItem systemItem: UIBarButtonSystemItem, action: ((sender: AnyObject) -> Void)?) {
+        self.init(barButtonSystemItem: systemItem, target: nil, action: "performAction")
+        if let action = action {
+            self.closuresWrapper = ClosureWrapper(action: action)
+            self.target = self
+        }
+    }
+    
     public convenience init(image: UIImage?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
         self.init(image: image, style: style, target: nil, action: "performAction")
         if let action = action {
@@ -135,6 +150,38 @@ public extension UIBarButtonItem {
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
+        }
+    }
+    
+    public func performAction() {
+        self.closuresWrapper?.action(sender: self)
+    }
+    
+    private var closuresWrapper: ClosureWrapper? {
+        get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
+        set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+}
+
+public extension UIRefreshControl {
+    
+    public convenience init(color: UIColor? = nil, action: ((sender: AnyObject) -> Void)?) {
+        self.init()
+        setAction(action)
+        if let color = color {
+            tintColor = color
+        }
+    }
+    
+    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+        if let action = action {
+            self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
+            self.addTarget(self, action: "performAction", forControlEvents: .ValueChanged)
+            self.closuresWrapper = ClosureWrapper(action: action)
+        } else {
+            self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
+            self.closuresWrapper = nil
         }
     }
     

@@ -40,7 +40,7 @@ public enum LoadActionValues {
 }
 
 public protocol LoadActionDelegate: AnyObject {
-    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: [LoadActionValues])
+    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>)
 }
 
 public protocol LoadActionLoadableType: AnyObject {
@@ -55,11 +55,11 @@ public protocol LoadActionLoadableType: AnyObject {
     func loadNew()
     func loadAny(forced forced: Bool, completition: ((result: Result<Any, ErrorType>) -> Void)?)
     
-    var updatedValues: [LoadActionValues] { get set }
+    var updatedValues: Set<LoadActionValues> { get set }
     
     func addDelegate(delegate: LoadActionDelegate)
     func removeDelegate(delegate: LoadActionDelegate)
-    func sendDelegateUpdates()
+    func sendDelegateUpdates(forced: Bool)
 
 }
 
@@ -90,19 +90,16 @@ public extension LoadActionType {
         return data
     }
     
-    public func sendDelegateUpdates() {
-        guard updatedValues.count > 0 else { return }
+    public func sendDelegateUpdates(forced: Bool = false) {
+        guard forced || updatedValues.count > 0 else { return }
         delegates.performEach({ $0.loadActionUpdated(loadAction: self, updatedValues: self.updatedValues) })
         updatedValues = []
     }
     
-}
-
-public extension LoadActionLoadableType {
-    
     public func addDelegate(delegate: LoadActionDelegate) {
         if !delegates.contains({ $0 === delegate }) {
             delegates.append(delegate)
+            delegate.loadActionUpdated(loadAction: self, updatedValues: [])
         }
     }
     

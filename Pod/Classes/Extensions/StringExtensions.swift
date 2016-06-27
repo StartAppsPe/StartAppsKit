@@ -48,6 +48,13 @@ public extension String {
         return self.substring(range: 0..<end)
     }
     
+    public func substring(start: String, end: String) -> String? {
+        if let startRange = rangeOfString(start), endRange = rangeOfString(end) where startRange.endIndex <= endRange.startIndex {
+            return self[startRange.endIndex..<endRange.startIndex]
+        }
+        return nil
+    }
+    
     public func trim() -> String {
         return stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
     }
@@ -62,10 +69,12 @@ public extension String {
     }
     
     public mutating func capitalizeFirst() {
+        guard length > 0 else { return }
         self.replaceRange(startIndex...startIndex, with: String(self[startIndex]).capitalizedString)
     }
     
     public func capitalizedFirstString() -> String {
+        guard length > 0 else { return self }
         return self.stringByReplacingCharactersInRange(startIndex...startIndex, withString: String(self[startIndex]).capitalizedString)
     }
     

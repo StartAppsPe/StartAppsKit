@@ -5,7 +5,7 @@
 //  Created by Gabriel Lanata on 12/10/15.
 //  Copyright (c) 2015 StartApps. All rights reserved.
 //
-
+/*
 import UIKit
 
 public protocol SATableViewControllerSubclass: SAViewControllerSubclass {
@@ -107,7 +107,7 @@ public class SATableViewController: SAViewController, UITableViewDataSource, UIT
      // MARK: Loading Data Methods
      /********************************************************************************************************/
     
-    public override func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: [LoadActionValues]) {
+    public override func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
         switch loadAction.status {
         case .Loading, .Paging:
             // Do not stop refreshControl if started
@@ -329,4 +329,4 @@ public class SATableViewController: SAViewController, UITableViewDataSource, UIT
         tableViewControllerSubclass.didSelectObject(tableView: tableView, object: object, indexPath: indexPath)
     }
     
-}
+}*/
