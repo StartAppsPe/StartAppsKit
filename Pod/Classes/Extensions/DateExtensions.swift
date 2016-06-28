@@ -308,6 +308,10 @@ public extension NSDate {
         return calendar.dateFromComponents(components)!
     }
     
+    public func dateAtStartOfWeek(locale locale: String? = nil) -> NSDate {
+        return self.dateBySubtractingDays(self.weekday(locale: locale)).dateAtStartOfDay(locale: locale)
+    }
+    
     /********************************************************************************************************/
     // MARK: Decomposing Date Methods
     /********************************************************************************************************/
@@ -363,6 +367,10 @@ public extension NSDate {
     
     public func month(locale locale: String? = nil) -> Int {
         return components(locale: locale).month
+    }
+    
+    public func monthName(locale locale: String? = nil) -> String {
+        return stringWithFormat("MMMM", locale: locale)
     }
     
     public func year(locale locale: String? = nil) -> Int {
