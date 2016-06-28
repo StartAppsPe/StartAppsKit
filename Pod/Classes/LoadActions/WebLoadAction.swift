@@ -20,7 +20,7 @@ public class WebLoadAction<T>: LoadAction<T> {
     public typealias ProcessDataResultClosure = (result: ProcessDataResultType) -> Void
     public typealias ProcessDataResult        = (forced: Bool, loadedData: NSData, completition: ProcessDataResultClosure) -> Void
     
-    public var urlRequestClosure:  UrlRequestResult!
+    public var urlRequestClosure:  UrlRequestResult
     public var processDataClosure: ProcessDataResult?
     
     /**
