@@ -15,7 +15,7 @@ public class LoadAction<T>: LoadActionType {
     
     public typealias LoadResultType     = Result<T, ErrorType>
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
-    public typealias LoadResult         = (forced: Bool, completion: LoadResultClosure) -> Void
+    public typealias LoadResult         = (completion: LoadResultClosure) -> Void
     
     public var updatedProperties: Set<LoadActionProperties> = []
     public var delegates: [LoadActionDelegate] = []
@@ -38,10 +38,9 @@ public class LoadAction<T>: LoadActionType {
     /**
     Loads value giving the option of paging or loading new.
     
-    - parameter forced: If true forces main load
     - parameter completion: Closure called when operation finished
     */
-    public func load(forced forced: Bool, completion: LoadResultClosure?) {
+    public func load(completion completion: LoadResultClosure?) {
         print(owner: "LoadAction", items: "Load Began", level: .Info)
         
         // Adjust loading status to loading kind
@@ -49,7 +48,7 @@ public class LoadAction<T>: LoadActionType {
         sendDelegateUpdates()
         
         // Load value
-        loadClosure(forced: forced) { (result) -> () in
+        loadClosure() { (result) -> () in
             
             switch result {
             case .Failure(let error):
@@ -68,8 +67,8 @@ public class LoadAction<T>: LoadActionType {
         
     }
     
-    public func loadAny(forced forced: Bool, completion: ((result: Result<Any, ErrorType>) -> Void)?) {
-        load(forced: forced) { (resultGeneric) -> Void in
+    public func loadAny(completion completion: ((result: Result<Any, ErrorType>) -> Void)?) {
+        load() { (resultGeneric) -> Void in
             switch resultGeneric {
             case .Success(let loadedValue):
                 completion?(result: Result.Success(loadedValue))

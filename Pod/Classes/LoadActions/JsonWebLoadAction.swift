@@ -13,11 +13,11 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
     
     public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
-    public typealias UrlRequestResult        = (forced: Bool, completion: UrlRequestResultClosure) -> Void
+    public typealias UrlRequestResult        = (completion: UrlRequestResultClosure) -> Void
     
     public typealias ProcessJsonResultType    = Result<T, ErrorType>
     public typealias ProcessJsonResultClosure = (result: ProcessJsonResultType) -> Void
-    public typealias ProcessJsonResult        = (forced: Bool, loadedJson: JSON, completion: ProcessJsonResultClosure) -> Void
+    public typealias ProcessJsonResult        = (loadedJson: JSON, completion: ProcessJsonResultClosure) -> Void
     
     public var processJsonClosure: ProcessJsonResult?
     
@@ -27,13 +27,13 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func processData(forced forced: Bool, loadedData: NSData, completion: LoadResultClosure?) {
+    private func processData(loadedData loadedData: NSData, completion: LoadResultClosure?) {
         var error: NSError?
         let json = JSON(data: loadedData, error: &error)
         if let error = error {
             completion?(result: Result.Failure(error))
         } else if let processJsonClosure = self.processJsonClosure {
-            processJsonClosure(forced: forced, loadedJson: json) { (result) -> Void in
+            processJsonClosure(loadedJson: json) { (result) -> Void in
                 switch result {
                 case .Success(let processedData):
                     completion?(result: Result.Success(processedData))
@@ -64,11 +64,11 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
         self.processJsonClosure = process
         super.init(
             urlRequest: urlRequest,
-            process: {  _,_,_ in },
+            process: {  _,_ in },
             delegates:  delegates
         )
-        processDataClosure = { (forced, loadedData, result) -> Void in
-            self.processData(forced: forced, loadedData: loadedData, completion: result)
+        processDataClosure = { (loadedData, result) -> Void in
+            self.processData(loadedData: loadedData, completion: result)
         }
     }
 }

@@ -14,11 +14,11 @@ public class WebLoadAction<T>: LoadAction<T> {
     
     public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
-    public typealias UrlRequestResult        = (forced: Bool, completion: UrlRequestResultClosure) -> Void
+    public typealias UrlRequestResult        = (completion: UrlRequestResultClosure) -> Void
     
     public typealias ProcessDataResultType    = Result<T, ErrorType>
     public typealias ProcessDataResultClosure = (result: ProcessDataResultType) -> Void
-    public typealias ProcessDataResult        = (forced: Bool, loadedData: NSData, completion: ProcessDataResultClosure) -> Void
+    public typealias ProcessDataResult        = (loadedData: NSData, completion: ProcessDataResultClosure) -> Void
     
     public var urlRequestClosure:  UrlRequestResult
     public var processDataClosure: ProcessDataResult?
@@ -29,8 +29,8 @@ public class WebLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadInner(forced forced: Bool, completion: LoadResultClosure) {
-        urlRequestClosure(forced: forced) { (result) -> Void in
+    private func loadInner(completion completion: LoadResultClosure) {
+        urlRequestClosure() { (result) -> Void in
             switch result {
             case .Failure(let error):
                 completion(result: .Failure(error))
@@ -51,7 +51,7 @@ public class WebLoadAction<T>: LoadAction<T> {
                         completion(result: .Failure(error))
                         return
                     }
-                    self.processData(forced: forced, loadedData: loadedData, completion: completion)
+                    self.processData(loadedData: loadedData, completion: completion)
                 }).resume()
             }
         }
@@ -63,9 +63,9 @@ public class WebLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func processData(forced forced: Bool, loadedData: NSData, completion: LoadResultClosure) {
+    private func processData(loadedData loadedData: NSData, completion: LoadResultClosure) {
         if let processClosure = self.processDataClosure {
-            processClosure(forced: forced, loadedData: loadedData) { (result) -> Void in
+            processClosure(loadedData: loadedData) { (result) -> Void in
                 switch result {
                 case .Success(let processedData):
                     completion(result: .Success(processedData))
@@ -96,11 +96,11 @@ public class WebLoadAction<T>: LoadAction<T> {
         self.urlRequestClosure  = urlRequest
         self.processDataClosure = process
         super.init(
-            load:      { _,_ in },
+            load:      { _ in },
             delegates: delegates
         )
-        loadClosure = { (forced, result) -> Void in
-            self.loadInner(forced: forced, completion: result)
+        loadClosure = { (result) -> Void in
+            self.loadInner(completion: result)
         }
     }
 }

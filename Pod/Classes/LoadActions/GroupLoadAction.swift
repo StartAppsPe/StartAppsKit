@@ -15,9 +15,9 @@ public enum GroupLoadOrder {
 
 public class GroupLoadAction<T>: LoadAction<T> {
     
-    public typealias ResultType    = Result<T, ErrorType>
-    public typealias ResultClosure = (result: ResultType) -> Void
-    public typealias LoadedResult  = (forced: Bool, completion: ResultClosure) -> Void
+    public typealias LoadedResultType    = Result<T, ErrorType>
+    public typealias LoadedResultClosure = (result: LoadedResultType) -> Void
+    public typealias LoadedResult        = (completion: LoadedResultClosure) -> Void
     
     public typealias ProcessValue  = (actions: [LoadActionLoadableType]) -> T?
     public typealias ProcessError  = (actions: [LoadActionLoadableType]) -> ErrorType?
@@ -35,7 +35,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadInner(forced forced: Bool, completion: ResultClosure?) {
+    private func loadInner(completion completion: LoadedResultClosure) {
         
         // Copy load actions
         actionsToLoad = actions
@@ -43,9 +43,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
         // choose loading function
         switch order {
         case .Sequential, .SequentialForced:
-            loadSequential(forced: forced, completion: completion)
+            loadSequential(completion: completion)
         case .Parallel:
-            loadParallel(forced: forced, completion: completion)
+            loadParallel(completion: completion)
         }
         
     }
@@ -56,19 +56,19 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadSequential(forced forced: Bool, completion: ResultClosure?) {
+    private func loadSequential(completion completion: LoadedResultClosure) {
         if let actionToLoad = actionsToLoad.popFirst() {
-            actionToLoad.loadAny(forced: forced) { (result) -> Void in
+            actionToLoad.loadAny() { (result) -> Void in
                 if result.isSuccess || self.order != .SequentialForced {
                     if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
-                    self.loadSequential(forced: forced, completion: completion)
+                    self.loadSequential(completion: completion)
                 } else {
                     self.actionsToLoad = []
-                    completion?(result: Result.Failure(self.error!))
+                    completion(result: Result.Failure(self.error!))
                 }
             }
         } else {
-            completion?(result: Result.Success(self.value!))
+            completion(result: Result.Success(self.value!))
         }
     }
     
@@ -78,14 +78,14 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadParallel(forced forced: Bool, completion: ResultClosure?) {
+    private func loadParallel(completion completion: LoadedResultClosure) {
         while let actionToLoad = actionsToLoad.popFirst() {
-            actionToLoad.loadAny(forced: forced) { (result) -> Void in
+            actionToLoad.loadAny() { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
-                        completion?(result: Result.Failure(self.error!))
+                        completion(result: Result.Failure(self.error!))
                     } else {
-                        completion?(result: Result.Success(self.value!))
+                        completion(result: Result.Success(self.value!))
                     }
                 } else {
                     self.sendDelegateUpdates()
@@ -140,12 +140,12 @@ public class GroupLoadAction<T>: LoadAction<T> {
         self.processValueClosure = processValue
         self.processErrorClosure = processError
         super.init(
-            load: { (forced, result) -> Void in
+            load: { (result) -> Void in
             },
             delegates: delegates
         )
-        loadClosure = { (forced, result) -> Void in
-            self.loadInner(forced: forced, completion: result)
+        loadClosure = { (result) -> Void in
+            self.loadInner(completion: result)
         }
     }
     

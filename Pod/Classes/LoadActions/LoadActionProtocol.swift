@@ -72,7 +72,7 @@ public protocol LoadActionLoadableType: AnyObject {
     var delegates: [LoadActionDelegate] { get set }
     
     func loadNew()
-    func loadAny(forced forced: Bool, completion: ((result: Result<Any, ErrorType>) -> Void)?)
+    func loadAny(completion completion: ((result: Result<Any, ErrorType>) -> Void)?)
     
     var updatedProperties: Set<LoadActionProperties> { get set }
     
@@ -88,11 +88,11 @@ public protocol LoadActionType: LoadActionLoadableType {
     
     typealias LoadedResultType    = Result<T, ErrorType>
     typealias LoadedResultClosure = (result: LoadedResultType) -> Void
-    typealias LoadedResult        = (forced: Bool, completion: LoadedResultClosure?) -> Void
+    typealias LoadedResult        = (completion: LoadedResultClosure?) -> Void
     
     var value: T? { get }
     
-    func load(forced forced: Bool, completion: LoadedResultClosure?)
+    func load(completion completion: LoadedResultClosure?)
     
 }
 
@@ -102,7 +102,7 @@ public extension LoadActionType {
      Loads new data forced replacing the previous stored data
      */
     public func loadNew() {
-        load(forced: true, completion: nil)
+        load(completion: nil)
     }
     
     public var valueAny: Any? {
