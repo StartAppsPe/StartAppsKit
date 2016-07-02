@@ -101,7 +101,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter completion: Closure called when operation finished
      */
     
-    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updated: Set<LoadActionProperties>) {
         
         // Get error
         if let processErrorClosure = processErrorClosure {

@@ -15,22 +15,22 @@ public class LoadAction<T>: LoadActionType {
     
     public typealias LoadResultType     = Result<T, ErrorType>
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
-    public typealias LoadResult   = (forced: Bool, completion: LoadResultClosure) -> Void
+    public typealias LoadResult         = (forced: Bool, completion: LoadResultClosure) -> Void
     
-    public var updatedValues: Set<LoadActionValues> = []
+    public var updatedProperties: Set<LoadActionProperties> = []
     public var delegates: [LoadActionDelegate] = []
     
     public var status: LoadingStatus = .Ready {
-        didSet { updatedValues.insert(.Status) }
+        didSet { updatedProperties.insert(.Status) }
     }
     public var error: ErrorType? {
-        didSet { updatedValues.insert(.Error) }
+        didSet { updatedProperties.insert(.Error) }
     }
     public var value: T? {
-        didSet { updatedValues.insert(.Value); date = NSDate() }
+        didSet { updatedProperties.insert(.Value); date = NSDate() }
     }
     public var date: NSDate? {
-        didSet { updatedValues.insert(.Date) }
+        didSet { updatedProperties.insert(.Date) }
     }
     
     public var loadClosure: LoadResult!

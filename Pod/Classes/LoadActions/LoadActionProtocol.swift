@@ -54,12 +54,12 @@ public enum LoadingStatus {
     case Ready, Loading, Paging
 }
 
-public enum LoadActionValues {
+public enum LoadActionProperties {
     case Status, Error, Value, Date
 }
 
 public protocol LoadActionDelegate: AnyObject {
-    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>)
+    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>)
 }
 
 public protocol LoadActionLoadableType: AnyObject {
@@ -74,7 +74,7 @@ public protocol LoadActionLoadableType: AnyObject {
     func loadNew()
     func loadAny(forced forced: Bool, completion: ((result: Result<Any, ErrorType>) -> Void)?)
     
-    var updatedValues: Set<LoadActionValues> { get set }
+    var updatedProperties: Set<LoadActionProperties> { get set }
     
     func addDelegate(delegate: LoadActionDelegate)
     func removeDelegate(delegate: LoadActionDelegate)
@@ -110,15 +110,15 @@ public extension LoadActionType {
     }
     
     public func sendDelegateUpdates(forced: Bool = false) {
-        guard forced || updatedValues.count > 0 else { return }
-        delegates.performEach({ $0.loadActionUpdated(loadAction: self, updatedValues: self.updatedValues) })
-        updatedValues = []
+        guard forced || updatedProperties.count > 0 else { return }
+        delegates.performEach({ $0.loadActionUpdated(loadAction: self, updatedProperties: self.updatedProperties) })
+        updatedProperties = []
     }
     
     public func addDelegate(delegate: LoadActionDelegate) {
         if !delegates.contains({ $0 === delegate }) {
             delegates.append(delegate)
-            delegate.loadActionUpdated(loadAction: self, updatedValues: [])
+            delegate.loadActionUpdated(loadAction: self, updatedProperties: [])
         }
     }
     

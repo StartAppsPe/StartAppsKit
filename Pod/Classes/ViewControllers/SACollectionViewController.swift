@@ -107,7 +107,7 @@ public class SACollectionViewController: SAViewController, UICollectionViewDataS
      // MARK: Loading Data Methods
      /********************************************************************************************************/
     
-    public override func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    public override func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         switch loadAction.status {
         case .Loading, .Paging:
             // Do not stop refreshControl if started
@@ -117,7 +117,7 @@ public class SACollectionViewController: SAViewController, UICollectionViewDataS
         case .Ready:
             refreshControl?.endRefreshing()
         }
-        super.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
+        super.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
         collectionView?.reloadData()
     }
     

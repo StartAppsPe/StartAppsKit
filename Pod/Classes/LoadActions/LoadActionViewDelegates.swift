@@ -10,7 +10,7 @@ import UIKit
 
 extension UIActivityIndicatorView: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         switch loadAction.status {
         case .Loading: self.startAnimating()
         case .Ready:   self.stopAnimating()
@@ -22,7 +22,7 @@ extension UIActivityIndicatorView: LoadActionDelegate {
 
 extension UIButton: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         switch loadAction.status {
         case .Loading:
             activityIndicatorView?.startAnimating()
@@ -44,7 +44,7 @@ extension UIButton: LoadActionDelegate {
 
 extension UIRefreshControl: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         switch loadAction.status {
         case .Loading:
             animating = true
@@ -110,7 +110,7 @@ public class SALoadActionStatusView: UIView, LoadActionDelegate {
         return loadingStatusView!
     }
 
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         var params: SALoadActionStatusViewParams?
         if let value = loadAction.valueAny where (value as? NSArray)?.count ?? 1 > 0  {
             // No params
@@ -193,15 +193,15 @@ public extension UIScrollView {
 
 extension UIScrollView: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
-        refreshControl?.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
+    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        refreshControl?.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
         if let tableView = self as? UITableView {
-            tableView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
+            tableView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
             tableView.separatorColor = (loadAction.value != nil ? UIColor.grayColor() : UIColor.clearColor())
             tableView.reloadData()
         }
         if let collectionView = self as? UICollectionView {
-            collectionView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
+            collectionView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
             collectionView.reloadData()
         }
     }
