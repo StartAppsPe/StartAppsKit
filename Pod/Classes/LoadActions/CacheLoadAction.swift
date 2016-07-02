@@ -12,7 +12,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
     
     public typealias UseCacheResultType     = Result<Bool, ErrorType>
     public typealias UseCacheResultClosure  = (result: UseCacheResultType) -> Void
-    public typealias UseCacheResult         = (loadAction: CacheLoadAction<T>, completition: UseCacheResultClosure) -> Void
+    public typealias UseCacheResult         = (loadAction: CacheLoadAction<T>, completion: UseCacheResultClosure) -> Void
     
     public var useCacheClosure: UseCacheResult
     public var cacheLoadAction: LoadAction<T>
@@ -22,22 +22,22 @@ public class CacheLoadAction<T>: LoadAction<T> {
     Loads data giving the option of paging or loading new.
     
     - parameter forced: If true forces main load
-    - parameter completition: Closure called when operation finished
+    - parameter completion: Closure called when operation finished
     */
-    private func loadInner(forced forced: Bool, completition: LoadResultClosure) {
+    private func loadInner(forced forced: Bool, completion: LoadResultClosure) {
         guard forced == false else {
-            loadBase(forced: forced, completition: completition)
+            loadBase(forced: forced, completion: completion)
             return
         }
         useCacheClosure(loadAction: self) { (useCacheResult) in
             switch useCacheResult {
             case .Failure(let error):
-                completition(result: Result.Failure(error))
+                completion(result: Result.Failure(error))
             case .Success(let useCache):
                 if useCache {
-                    self.loadCache(forced: forced, completition: completition)
+                    self.loadCache(forced: forced, completion: completion)
                 } else {
-                    self.loadBase(forced: forced, completition: completition)
+                    self.loadBase(forced: forced, completion: completion)
                 }
             }
         }
@@ -47,21 +47,21 @@ public class CacheLoadAction<T>: LoadAction<T> {
     /**
     Loads new data from cache and updates the action
     
-    - parameter completition: Closure called when operation finished
+    - parameter completion: Closure called when operation finished
     */
-    private func loadCache(forced forced: Bool, completition: LoadResultClosure) {
+    private func loadCache(forced forced: Bool, completion: LoadResultClosure) {
         print(owner: "LoadAction[Cache]", items: "Cache Load", level: .Info)
-        cacheLoadAction.load(forced: forced, completition: completition)
+        cacheLoadAction.load(forced: forced, completion: completion)
     }
     
     /**
     Loads new data from base and updates the action
     
-    - parameter completition: Closure called when operation finished
+    - parameter completion: Closure called when operation finished
     */
-    private func loadBase(forced forced: Bool, completition: LoadResultClosure) {
+    private func loadBase(forced forced: Bool, completion: LoadResultClosure) {
         print(owner: "LoadAction[Cache]", items: "Base Load", level: .Info)
-        baseLoadAction.load(forced: forced, completition: completition)
+        baseLoadAction.load(forced: forced, completion: completion)
     }
     
     /**
@@ -87,8 +87,8 @@ public class CacheLoadAction<T>: LoadAction<T> {
             load:      { _,_ in },
             delegates: delegates
         )
-        loadClosure = { (forced, completition) -> Void in
-            self.loadInner(forced: forced, completition: completition)
+        loadClosure = { (forced, completion) -> Void in
+            self.loadInner(forced: forced, completion: completion)
         }
     }
     

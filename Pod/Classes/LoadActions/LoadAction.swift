@@ -15,7 +15,7 @@ public class LoadAction<T>: LoadActionType {
     
     public typealias LoadResultType     = Result<T, ErrorType>
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
-    public typealias LoadResult   = (forced: Bool, completition: LoadResultClosure) -> Void
+    public typealias LoadResult   = (forced: Bool, completion: LoadResultClosure) -> Void
     
     public var updatedValues: Set<LoadActionValues> = []
     public var delegates: [LoadActionDelegate] = []
@@ -39,9 +39,9 @@ public class LoadAction<T>: LoadActionType {
     Loads value giving the option of paging or loading new.
     
     - parameter forced: If true forces main load
-    - parameter completition: Closure called when operation finished
+    - parameter completion: Closure called when operation finished
     */
-    public func load(forced forced: Bool, completition: LoadResultClosure?) {
+    public func load(forced forced: Bool, completion: LoadResultClosure?) {
         print(owner: "LoadAction", items: "Load Began", level: .Info)
         
         // Adjust loading status to loading kind
@@ -60,21 +60,21 @@ public class LoadAction<T>: LoadActionType {
                 self.value = loadedValue
             }
             
-            // Adjust loading status to loaded kind and call completition
+            // Adjust loading status to loaded kind and call completion
             self.status = .Ready
             self.sendDelegateUpdates()
-            completition?(result: result)
+            completion?(result: result)
         }
         
     }
     
-    public func loadAny(forced forced: Bool, completition: ((result: Result<Any, ErrorType>) -> Void)?) {
+    public func loadAny(forced forced: Bool, completion: ((result: Result<Any, ErrorType>) -> Void)?) {
         load(forced: forced) { (resultGeneric) -> Void in
             switch resultGeneric {
             case .Success(let loadedValue):
-                completition?(result: Result.Success(loadedValue))
+                completion?(result: Result.Success(loadedValue))
             case .Failure(let error):
-                completition?(result: Result.Failure(error))
+                completion?(result: Result.Failure(error))
             }
         }
     }

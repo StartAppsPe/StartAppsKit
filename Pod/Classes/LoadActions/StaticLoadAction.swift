@@ -12,7 +12,7 @@ import Foundation
 //    
 //    public typealias ResultType    = Result<T, ErrorType>
 //    public typealias ResultClosure = (result: ResultType) -> Void
-//    public typealias LoadedResult  = (forced: Bool, completition: ResultClosure) -> Void
+//    public typealias LoadedResult  = (forced: Bool, completion: ResultClosure) -> Void
 //    
 //    /**
 //     Quick initializer with all closures

@@ -13,11 +13,11 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
     
     public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
-    public typealias UrlRequestResult        = (forced: Bool, completition: UrlRequestResultClosure) -> Void
+    public typealias UrlRequestResult        = (forced: Bool, completion: UrlRequestResultClosure) -> Void
     
     public typealias ProcessJsonResultType    = Result<T, ErrorType>
     public typealias ProcessJsonResultClosure = (result: ProcessJsonResultType) -> Void
-    public typealias ProcessJsonResult        = (forced: Bool, loadedJson: JSON, completition: ProcessJsonResultClosure) -> Void
+    public typealias ProcessJsonResult        = (forced: Bool, loadedJson: JSON, completion: ProcessJsonResultClosure) -> Void
     
     public var processJsonClosure: ProcessJsonResult?
     
@@ -25,27 +25,27 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
      Processes data giving the option of paging or loading new.
      
      - parameter forced: If true forces main load
-     - parameter completition: Closure called when operation finished
+     - parameter completion: Closure called when operation finished
      */
-    private func processData(forced forced: Bool, loadedData: NSData, completition: LoadResultClosure?) {
+    private func processData(forced forced: Bool, loadedData: NSData, completion: LoadResultClosure?) {
         var error: NSError?
         let json = JSON(data: loadedData, error: &error)
         if let error = error {
-            completition?(result: Result.Failure(error))
+            completion?(result: Result.Failure(error))
         } else if let processJsonClosure = self.processJsonClosure {
             processJsonClosure(forced: forced, loadedJson: json) { (result) -> Void in
                 switch result {
                 case .Success(let processedData):
-                    completition?(result: Result.Success(processedData))
+                    completion?(result: Result.Success(processedData))
                 case .Failure(let error):
-                    completition?(result: Result.Failure(error))
+                    completion?(result: Result.Failure(error))
                 }
             }
         } else if let processedData = loadedData as? T {
-            completition?(result: Result.Success(processedData))
+            completion?(result: Result.Success(processedData))
         } else {
             print(owner: "LoadAction[JSON]", items: "ProcessClosure not defined when return type is different than JSON", level: .Error)
-            completition?(result: Result.Failure(NSError(domain: "LoadAction[JSON]", code: 837, description: "ProcessClosure not defined when return type is different than JSON")))
+            completion?(result: Result.Failure(NSError(domain: "LoadAction[JSON]", code: 837, description: "ProcessClosure not defined when return type is different than JSON")))
         }
     }
     
@@ -68,7 +68,7 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
             delegates:  delegates
         )
         processDataClosure = { (forced, loadedData, result) -> Void in
-            self.processData(forced: forced, loadedData: loadedData, completition: result)
+            self.processData(forced: forced, loadedData: loadedData, completion: result)
         }
     }
 }

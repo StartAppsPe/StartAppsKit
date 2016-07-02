@@ -17,7 +17,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
     
     public typealias ResultType    = Result<T, ErrorType>
     public typealias ResultClosure = (result: ResultType) -> Void
-    public typealias LoadedResult  = (forced: Bool, completition: ResultClosure) -> Void
+    public typealias LoadedResult  = (forced: Bool, completion: ResultClosure) -> Void
     
     public typealias ProcessValue  = (actions: [LoadActionLoadableType]) -> T?
     public typealias ProcessError  = (actions: [LoadActionLoadableType]) -> ErrorType?
@@ -33,9 +33,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
      Loads data giving the option of paging or loading new.
      
      - parameter forced: If true forces main load
-     - parameter completition: Closure called when operation finished
+     - parameter completion: Closure called when operation finished
      */
-    private func loadInner(forced forced: Bool, completition: ResultClosure?) {
+    private func loadInner(forced forced: Bool, completion: ResultClosure?) {
         
         // Copy load actions
         actionsToLoad = actions
@@ -43,9 +43,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
         // choose loading function
         switch order {
         case .Sequential, .SequentialForced:
-            loadSequential(forced: forced, completition: completition)
+            loadSequential(forced: forced, completion: completion)
         case .Parallel:
-            loadParallel(forced: forced, completition: completition)
+            loadParallel(forced: forced, completion: completion)
         }
         
     }
@@ -54,21 +54,21 @@ public class GroupLoadAction<T>: LoadAction<T> {
      Loads data giving the option of paging or loading new.
      
      - parameter forced: If true forces main load
-     - parameter completition: Closure called when operation finished
+     - parameter completion: Closure called when operation finished
      */
-    private func loadSequential(forced forced: Bool, completition: ResultClosure?) {
+    private func loadSequential(forced forced: Bool, completion: ResultClosure?) {
         if let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
                 if result.isSuccess || self.order != .SequentialForced {
                     if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
-                    self.loadSequential(forced: forced, completition: completition)
+                    self.loadSequential(forced: forced, completion: completion)
                 } else {
                     self.actionsToLoad = []
-                    completition?(result: Result.Failure(self.error!))
+                    completion?(result: Result.Failure(self.error!))
                 }
             }
         } else {
-            completition?(result: Result.Success(self.value!))
+            completion?(result: Result.Success(self.value!))
         }
     }
     
@@ -76,16 +76,16 @@ public class GroupLoadAction<T>: LoadAction<T> {
      Loads data giving the option of paging or loading new.
      
      - parameter forced: If true forces main load
-     - parameter completition: Closure called when operation finished
+     - parameter completion: Closure called when operation finished
      */
-    private func loadParallel(forced forced: Bool, completition: ResultClosure?) {
+    private func loadParallel(forced forced: Bool, completion: ResultClosure?) {
         while let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
-                        completition?(result: Result.Failure(self.error!))
+                        completion?(result: Result.Failure(self.error!))
                     } else {
-                        completition?(result: Result.Success(self.value!))
+                        completion?(result: Result.Success(self.value!))
                     }
                 } else {
                     self.sendDelegateUpdates()
@@ -98,7 +98,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      Loads data giving the option of paging or loading new.
      
      - parameter forced: If true forces main load
-     - parameter completition: Closure called when operation finished
+     - parameter completion: Closure called when operation finished
      */
     
     func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
@@ -145,7 +145,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
             delegates: delegates
         )
         loadClosure = { (forced, result) -> Void in
-            self.loadInner(forced: forced, completition: result)
+            self.loadInner(forced: forced, completion: result)
         }
     }
     
