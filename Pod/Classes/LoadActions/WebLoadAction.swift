@@ -29,13 +29,13 @@ public class WebLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completition: Closure called when operation finished
      */
-    private func loadInner(forced forced: Bool, completition: LoadResultClosure?) {
+    private func loadInner(forced forced: Bool, completition: LoadResultClosure) {
         urlRequestClosure(forced: forced) { (result) -> Void in
             switch result {
             case .Failure(let error):
-                completition?(result: .Failure(error))
+                completition(result: .Failure(error))
             case .Success(let urlRequest):
-                session.dataTaskWithRequest(urlRequest!, completionHandler: { (loadedData, urlResponse, error) -> Void in
+                session.dataTaskWithRequest(urlRequest, completionHandler: { (loadedData, urlResponse, error) -> Void in
                     if let error = error {
                         var newError = error
                         switch error.code {
@@ -43,24 +43,41 @@ public class WebLoadAction<T>: LoadAction<T> {
                             newError = NSError(domain: "LoadAction[Web]", code: error.code, description: "No hay conexión a internet")
                         default: ()
                         }
-                        completition?(result: .Failure(newError))
-                    } else if let processClosure = self.processDataClosure {
-                        processClosure(forced: forced, loadedData: loadedData!) { (result) -> Void in
-                            switch result {
-                            case .Success(let processedData):
-                                completition?(result: .Success(processedData))
-                            case .Failure(let error):
-                                completition?(result: .Failure(error))
-                            }
-                        }
-                    } else if let processedData = loadedData as? T {
-                        completition?(result: .Success(processedData))
-                    } else {
-                        print(owner: "LoadAction[Web]", items: "ProcessClosure not defined when return type is different than NSData", level: .Error)
-                        completition?(result: .Failure(NSError(domain: "LoadAction[Web]", code: 837, description: "ProcessClosure not defined when return type is different than NSData")))
+                        completition(result: .Failure(newError))
+                        return
                     }
+                    guard let loadedData = loadedData else {
+                        let error = NSError(domain: "", code: 33, description: "")
+                        completition(result: .Failure(error))
+                        return
+                    }
+                    self.processData(forced: forced, loadedData: loadedData, completition: completition)
                 }).resume()
             }
+        }
+    }
+    
+    /**
+     Processes data giving the option of paging or loading new.
+     
+     - parameter forced: If true forces main load
+     - parameter completition: Closure called when operation finished
+     */
+    private func processData(forced forced: Bool, loadedData: NSData, completition: LoadResultClosure) {
+        if let processClosure = self.processDataClosure {
+            processClosure(forced: forced, loadedData: loadedData) { (result) -> Void in
+                switch result {
+                case .Success(let processedData):
+                    completition(result: .Success(processedData))
+                case .Failure(let error):
+                    completition(result: .Failure(error))
+                }
+            }
+        } else if let processedData = loadedData as? T {
+            completition(result: .Success(processedData))
+        } else {
+            print(owner: "LoadAction[Web]", items: "ProcessClosure not defined when return type is different than NSData", level: .Error)
+            completition(result: .Failure(NSError(domain: "LoadAction[Web]", code: 837, description: "ProcessClosure not defined when return type is different than NSData")))
         }
     }
     
@@ -71,16 +88,15 @@ public class WebLoadAction<T>: LoadAction<T> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        urlRequest:  UrlRequestResult,
-        process:     ProcessDataResult,
+        urlRequest: UrlRequestResult,
+        process:    ProcessDataResult?,
         delegates:  [LoadActionDelegate] = [],
-        dummy:       (() -> ())? = nil)
+        dummy:      (() -> ())? = nil)
     {
         self.urlRequestClosure  = urlRequest
         self.processDataClosure = process
         super.init(
-            load: { (forced, result) -> Void in
-            },
+            load:      { _,_ in },
             delegates: delegates
         )
         loadClosure = { (forced, result) -> Void in

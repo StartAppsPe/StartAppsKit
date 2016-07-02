@@ -112,7 +112,7 @@ public class SALoadActionStatusView: UIView, LoadActionDelegate {
 
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedValues: Set<LoadActionValues>) {
         var params: SALoadActionStatusViewParams?
-        if let data = loadAction.dataAny where (data as? NSArray)?.count ?? 1 > 0  {
+        if let value = loadAction.valueAny where (value as? NSArray)?.count ?? 1 > 0  {
             // No params
         } else if loadAction.status == .Loading {
             params = loadingParams
@@ -197,7 +197,7 @@ extension UIScrollView: LoadActionDelegate {
         refreshControl?.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
         if let tableView = self as? UITableView {
             tableView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedValues: updatedValues)
-            tableView.separatorColor = (loadAction.data != nil ? UIColor.grayColor() : UIColor.clearColor())
+            tableView.separatorColor = (loadAction.value != nil ? UIColor.grayColor() : UIColor.clearColor())
             tableView.reloadData()
         }
         if let collectionView = self as? UICollectionView {

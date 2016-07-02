@@ -79,6 +79,19 @@ public extension Set {
     
 }
 
+
+public extension Array {
+    
+    public mutating func popFirst() -> Element? {
+        if let first = first {
+            removeAtIndex(0)
+            return first
+        }
+        return nil
+    }
+    
+}
+
 public extension RangeReplaceableCollectionType where Generator.Element: Equatable {
     
     public mutating func appendUnique(element: Self.Generator.Element) {

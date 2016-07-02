@@ -19,11 +19,11 @@ public class GroupLoadAction<T>: LoadAction<T> {
     public typealias ResultClosure = (result: ResultType) -> Void
     public typealias LoadedResult  = (forced: Bool, completition: ResultClosure) -> Void
     
-    public typealias ProcessData   = (actions: [LoadActionLoadableType]) -> T?
+    public typealias ProcessValue  = (actions: [LoadActionLoadableType]) -> T?
     public typealias ProcessError  = (actions: [LoadActionLoadableType]) -> ErrorType?
 
-    public var processDataClosure:   ProcessData?
-    public var processErrorClosure:  ProcessError?
+    public var processValueClosure: ProcessValue?
+    public var processErrorClosure: ProcessError?
     
     public  var order:          GroupLoadOrder
     public  var actions:       [LoadActionLoadableType]
@@ -57,10 +57,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter completition: Closure called when operation finished
      */
     private func loadSequential(forced forced: Bool, completition: ResultClosure?) {
-        if let actionToLoad = actionsToLoad.first {
-            actionsToLoad.removeAtIndex(0)
+        if let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
-                if result.succeeded || self.order != .SequentialForced {
+                if result.isSuccess || self.order != .SequentialForced {
                     if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
                     self.loadSequential(forced: forced, completition: completition)
                 } else {
@@ -69,7 +68,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
                 }
             }
         } else {
-            completition?(result: .Success(self.data))
+            completition?(result: Result.Success(self.value!))
         }
     }
     
@@ -80,14 +79,13 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter completition: Closure called when operation finished
      */
     private func loadParallel(forced forced: Bool, completition: ResultClosure?) {
-        for actionToLoad in actionsToLoad {
-            actionsToLoad.removeAtIndex(0)
+        while let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny(forced: forced) { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
                         completition?(result: Result.Failure(self.error!))
                     } else {
-                        completition?(result: Result.Success(self.data))
+                        completition?(result: Result.Success(self.value!))
                     }
                 } else {
                     self.sendDelegateUpdates()
@@ -112,11 +110,11 @@ public class GroupLoadAction<T>: LoadAction<T> {
             error = GroupLoadAction.DefaultProcessErrorFirst(actions: actions)
         }
         
-        // Get data
-        if let processDataClosure = processDataClosure {
-            data = processDataClosure(actions: actions)
+        // Get value
+        if let processValueClosure = processValueClosure {
+            value = processValueClosure(actions: actions)
         } else {
-            data = GroupLoadAction.DefaultProcessDataLast(actions: actions)
+            value = GroupLoadAction.DefaultProcessValueLast(actions: actions)
         }
     }
     
@@ -132,14 +130,14 @@ public class GroupLoadAction<T>: LoadAction<T> {
     public init(
         order:             GroupLoadOrder = .Parallel,
         actions:          [LoadActionLoadableType],
-        processData:       ProcessData? = nil,
+        processValue:      ProcessValue? = nil,
         processError:      ProcessError? = nil,
         delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         self.order = order
         self.actions = actions
-        self.processDataClosure = processData
+        self.processValueClosure = processValue
         self.processErrorClosure = processError
         super.init(
             load: { (forced, result) -> Void in
@@ -157,9 +155,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
         }
     }
     
-    class var DefaultProcessDataLast: ProcessData {
+    class var DefaultProcessValueLast: ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
-            return actions.reverse().find({ $0.dataAny as? T != nil })?.dataAny as? T
+            return actions.reverse().find({ $0.valueAny as? T != nil })?.valueAny as? T
         }
     }
     

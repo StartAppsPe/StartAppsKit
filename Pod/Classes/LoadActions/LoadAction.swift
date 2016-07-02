@@ -9,9 +9,9 @@
 
 import Foundation
 
-public class LoadAction<U>: LoadActionType {
+public class LoadAction<T>: LoadActionType {
     
-    public typealias T = U
+    //public typealias T = U
     
     public typealias LoadResultType     = Result<T, ErrorType>
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
@@ -26,8 +26,8 @@ public class LoadAction<U>: LoadActionType {
     public var error: ErrorType? {
         didSet { updatedValues.insert(.Error) }
     }
-    public var data: T? {
-        didSet { updatedValues.insert(.Data); date = NSDate() }
+    public var value: T? {
+        didSet { updatedValues.insert(.Value); date = NSDate() }
     }
     public var date: NSDate? {
         didSet { updatedValues.insert(.Date) }
@@ -36,7 +36,7 @@ public class LoadAction<U>: LoadActionType {
     public var loadClosure: LoadResult!
     
     /**
-    Loads data giving the option of paging or loading new.
+    Loads value giving the option of paging or loading new.
     
     - parameter forced: If true forces main load
     - parameter completition: Closure called when operation finished
@@ -48,16 +48,16 @@ public class LoadAction<U>: LoadActionType {
         status = .Loading
         sendDelegateUpdates()
         
-        // Load data
+        // Load value
         loadClosure(forced: forced) { (result) -> () in
             
             switch result {
             case .Failure(let error):
                 print(owner: "LoadAction", items: "Loaded = Error \(error)", level: .Error)
                 self.error = error
-            case .Success(let loadedData):
-                print(owner: "LoadAction", items: "Loaded = Data \((loadedData != nil ? "Found" : "Empty"))", level: .Info)
-                self.data = loadedData
+            case .Success(let loadedValue):
+                print(owner: "LoadAction", items: "Loaded = Value \(loadedValue)", level: .Info)
+                self.value = loadedValue
             }
             
             // Adjust loading status to loaded kind and call completition
@@ -71,8 +71,8 @@ public class LoadAction<U>: LoadActionType {
     public func loadAny(forced forced: Bool, completition: ((result: Result<Any, ErrorType>) -> Void)?) {
         load(forced: forced) { (resultGeneric) -> Void in
             switch resultGeneric {
-            case .Success(let loadedData):
-                completition?(result: Result.Success(loadedData))
+            case .Success(let loadedValue):
+                completition?(result: Result.Success(loadedValue))
             case .Failure(let error):
                 completition?(result: Result.Failure(error))
             }
@@ -83,7 +83,7 @@ public class LoadAction<U>: LoadActionType {
     Quick initializer with all closures
     
     - parameter load: Closure to load from web, must call result closure when finished
-    - parameter delegates: Array containing objects that react to updated data
+    - parameter delegates: Array containing objects that react to updated value
     */
     public init(
         load:       LoadResult,

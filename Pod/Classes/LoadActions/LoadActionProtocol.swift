@@ -10,20 +10,26 @@
 import Foundation
 
 public enum Result<T, E> {
-    case Success(T?), Failure(E)
-    var succeeded: Bool {
+    case Success(T), Failure(E)
+    public var isSuccess: Bool {
         switch self {
-        case .Success(_): return true
-        case .Failure(_): return false
+        case .Success: return true
+        case .Failure: return false
         }
     }
-    var data: T? {
+    public var isFailure: Bool {
         switch self {
-        case .Success(let data): return data
+        case .Success: return false
+        case .Failure: return true
+        }
+    }
+    public var value: T? {
+        switch self {
+        case .Success(let value): return value
         case .Failure(_): return nil
         }
     }
-    var error: E? {
+    public var error: E? {
         switch self {
         case .Success(_): return nil
         case .Failure(let error): return error
@@ -31,12 +37,25 @@ public enum Result<T, E> {
     }
 }
 
+extension Result: CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .Success:
+            return "Result(SUCCESS)"
+        case .Failure:
+            return "Result(FAILURE)"
+        }
+    }
+    
+}
+
 public enum LoadingStatus {
     case Ready, Loading, Paging
 }
 
 public enum LoadActionValues {
-    case Status, Error, Data, Date
+    case Status, Error, Value, Date
 }
 
 public protocol LoadActionDelegate: AnyObject {
@@ -45,10 +64,10 @@ public protocol LoadActionDelegate: AnyObject {
 
 public protocol LoadActionLoadableType: AnyObject {
     
-    var status:  LoadingStatus { get }
-    var error:   ErrorType?    { get }
-    var date:    NSDate?       { get }
-    var dataAny: Any?          { get }
+    var status:   LoadingStatus { get }
+    var error:    ErrorType?    { get }
+    var date:     NSDate?       { get }
+    var valueAny: Any?          { get }
     
     var delegates: [LoadActionDelegate] { get set }
     
@@ -65,15 +84,15 @@ public protocol LoadActionLoadableType: AnyObject {
 
 public protocol LoadActionType: LoadActionLoadableType {
     
-    typealias T
+    associatedtype T
     
-    typealias ResultType     = Result<T, ErrorType>
-    typealias ResultClosure  = (result: ResultType) -> Void
-    typealias LoadedResult   = (forced: Bool, completition: ResultClosure?) -> Void
+    typealias LoadedResultType    = Result<T, ErrorType>
+    typealias LoadedResultClosure = (result: LoadedResultType) -> Void
+    typealias LoadedResult        = (forced: Bool, completition: LoadedResultClosure?) -> Void
     
-    var data: T? { get }
+    var value: T? { get }
     
-    func load(forced forced: Bool, completition: ResultClosure?)
+    func load(forced forced: Bool, completition: LoadedResultClosure?)
     
 }
 
@@ -86,8 +105,8 @@ public extension LoadActionType {
         load(forced: true, completition: nil)
     }
     
-    var dataAny: Any? {
-        return data
+    public var valueAny: Any? {
+        return value
     }
     
     public func sendDelegateUpdates(forced: Bool = false) {

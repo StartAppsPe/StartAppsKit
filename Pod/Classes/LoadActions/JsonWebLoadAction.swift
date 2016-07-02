@@ -56,17 +56,16 @@ public class JsonWebLoadAction<T>: WebLoadAction<T> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        urlRequest:  UrlRequestResult,
-        process:     ProcessJsonResult,
+        urlRequest: UrlRequestResult,
+        process:    ProcessJsonResult,
         delegates:  [LoadActionDelegate] = [],
-        dummy:       (() -> ())? = nil)
+        dummy:      (() -> ())? = nil)
     {
         self.processJsonClosure = process
         super.init(
             urlRequest: urlRequest,
-            process: { (forced, loadedData, completition) -> Void in
-            },
-            delegates: delegates
+            process: {  _,_,_ in },
+            delegates:  delegates
         )
         processDataClosure = { (forced, loadedData, result) -> Void in
             self.processData(forced: forced, loadedData: loadedData, completition: result)
