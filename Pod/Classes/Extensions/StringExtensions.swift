@@ -37,7 +37,7 @@ public extension String {
     public func substring(range range: Range<Int>) -> String {
         let startIndex = self.startIndex.advancedBy(range.startIndex)
         let endIndex = startIndex.advancedBy(range.endIndex - range.startIndex)
-        return self.substringWithRange(Range(start: startIndex, end: endIndex))
+        return self.substringWithRange(startIndex..<endIndex)
     }
     
     public func substring(start start: Int) -> String {
@@ -100,7 +100,7 @@ public extension String {
     
     public func indexOf(target: String, startIndex: Int) -> Int {
         let startRange = self.startIndex.advancedBy(startIndex)
-        let range = self.rangeOfString(target, options: NSStringCompareOptions.LiteralSearch, range: Range<String.Index>(start: startRange, end: self.endIndex))
+        let range = self.rangeOfString(target, options: NSStringCompareOptions.LiteralSearch, range: Range<String.Index>(startRange..<self.endIndex))
         if let range = range {
             return self.startIndex.distanceTo(range.startIndex)
         } else {

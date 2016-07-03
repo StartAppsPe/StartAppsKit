@@ -29,7 +29,7 @@ public extension NSTimer {
     public class func scheduledTimer(timeInterval: NSTimeInterval, repeats: Bool, actions: () -> ()) -> NSTimer {
         let holder = NSTimerCallbackHolder(callback: actions)
         holder.callback = actions
-        return self.scheduledTimerWithTimeInterval(timeInterval, target: holder, selector: Selector("tick:"), userInfo: nil, repeats: repeats)
+        return self.scheduledTimerWithTimeInterval(timeInterval, target: holder, selector: #selector(NSTimerCallbackHolder.tick(_:)), userInfo: nil, repeats: repeats)
     }
     
 }

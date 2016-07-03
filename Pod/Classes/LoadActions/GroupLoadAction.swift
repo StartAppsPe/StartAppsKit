@@ -83,7 +83,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
             actionToLoad.loadAny() { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
-                        completion(result: Result.Failure(self.error!))
+                        completion(result: Result.Failure(error))
                     } else {
                         completion(result: Result.Success(self.value!))
                     }

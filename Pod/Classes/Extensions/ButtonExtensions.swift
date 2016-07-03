@@ -108,7 +108,7 @@ public extension UIButton {
     public func setAction(action: ((sender: AnyObject) -> Void)?) {
         if let action = action {
             self.removeTarget(self, action: nil, forControlEvents: .TouchUpInside)
-            self.addTarget(self, action: "performAction", forControlEvents: .TouchUpInside)
+            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: .TouchUpInside)
             self.closuresWrapper = ClosureWrapper(action: action)
         } else {
             self.removeTarget(self, action: nil, forControlEvents: .TouchUpInside)
@@ -130,7 +130,7 @@ public extension UIButton {
 public extension UIBarButtonItem {
     
     public convenience init(barButtonSystemItem systemItem: UIBarButtonSystemItem, action: ((sender: AnyObject) -> Void)?) {
-        self.init(barButtonSystemItem: systemItem, target: nil, action: "performAction")
+        self.init(barButtonSystemItem: systemItem, target: nil, action: #selector(UIButton.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
@@ -138,7 +138,7 @@ public extension UIBarButtonItem {
     }
     
     public convenience init(image: UIImage?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
-        self.init(image: image, style: style, target: nil, action: "performAction")
+        self.init(image: image, style: style, target: nil, action: #selector(UIButton.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
@@ -146,7 +146,7 @@ public extension UIBarButtonItem {
     }
     
     public convenience init(title: String?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
-        self.init(title: title, style: style, target: nil, action: "performAction")
+        self.init(title: title, style: style, target: nil, action: #selector(UIButton.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
@@ -177,7 +177,7 @@ public extension UIRefreshControl {
     public func setAction(action: ((sender: AnyObject) -> Void)?) {
         if let action = action {
             self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
-            self.addTarget(self, action: "performAction", forControlEvents: .ValueChanged)
+            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: .ValueChanged)
             self.closuresWrapper = ClosureWrapper(action: action)
         } else {
             self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)

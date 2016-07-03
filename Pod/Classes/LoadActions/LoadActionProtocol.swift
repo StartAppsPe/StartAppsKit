@@ -86,9 +86,9 @@ public protocol LoadActionType: LoadActionLoadableType {
     
     associatedtype T
     
-    typealias LoadedResultType    = Result<T, ErrorType>
-    typealias LoadedResultClosure = (result: LoadedResultType) -> Void
-    typealias LoadedResult        = (completion: LoadedResultClosure?) -> Void
+    associatedtype LoadedResultType    = Result<T, ErrorType>
+    associatedtype LoadedResultClosure = (result: LoadedResultType) -> Void
+    associatedtype LoadedResult        = (completion: LoadedResultClosure?) -> Void
     
     var value: T? { get }
     

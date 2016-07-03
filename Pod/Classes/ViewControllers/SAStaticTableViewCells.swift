@@ -114,7 +114,7 @@ public class SAButtonTableViewCell: SATitleTableViewCell {
 // Switch Cell
 public class SASwitchTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
     @IBOutlet public weak var switchView: UISwitch? {
-        didSet { switchView?.addTarget(self, action: "didAction:", forControlEvents: .ValueChanged) }
+        didSet { switchView?.addTarget(self, action: #selector(SASwitchTableViewCell.didAction(_:)), forControlEvents: .ValueChanged) }
     }
     public override class func cellIdentifier() -> String { return "SASwitchTableViewCell" }
     public func didAction(sender: AnyObject!) { tableObject.didAction(cell: self) }
@@ -123,7 +123,7 @@ public class SASwitchTableViewCell: SATitleTableViewCell, SATableViewCellActiona
 // Slider Cell
 public class SASliderTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
     @IBOutlet public weak var sliderView: UISlider? {
-        didSet { sliderView?.addTarget(self, action: "didAction:", forControlEvents: .ValueChanged) }
+        didSet { sliderView?.addTarget(self, action: #selector(SASwitchTableViewCell.didAction(_:)), forControlEvents: .ValueChanged) }
     }
     @IBOutlet public weak var valueLabel: UILabel?
     public override class func cellIdentifier() -> String { return "SASliderTableViewCell" }
@@ -133,7 +133,7 @@ public class SASliderTableViewCell: SATitleTableViewCell, SATableViewCellActiona
 // TextField Cell
 public class SASegmentedTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
     @IBOutlet public weak var segmentedControl: UISegmentedControl? {
-        didSet { segmentedControl?.addTarget(self, action: "didAction:", forControlEvents: .ValueChanged) }
+        didSet { segmentedControl?.addTarget(self, action: #selector(SASwitchTableViewCell.didAction(_:)), forControlEvents: .ValueChanged) }
     }
     public override class func cellIdentifier() -> String { return "SASegmentedTableViewCell" }
     public func didAction(sender: AnyObject!) { tableObject.didAction(cell: self) }
@@ -142,7 +142,7 @@ public class SASegmentedTableViewCell: SATitleTableViewCell, SATableViewCellActi
 // TextField Cell
 public class SATextFieldTableViewCell: SATitleTableViewCell, SATableViewCellActionable {
     @IBOutlet public weak var textField: UITextField? {
-        didSet { textField?.addTarget(self, action: "didAction:", forControlEvents: .EditingChanged) }
+        didSet { textField?.addTarget(self, action: #selector(SASwitchTableViewCell.didAction(_:)), forControlEvents: .EditingChanged) }
     }
     public override class func cellIdentifier() -> String { return "SATextFieldTableViewCell" }
     public func didAction(sender: AnyObject!) { tableObject.didAction(cell: self) }
