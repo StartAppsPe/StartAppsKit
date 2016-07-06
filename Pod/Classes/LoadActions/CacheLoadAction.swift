@@ -32,6 +32,10 @@ public class CacheLoadAction<T>: LoadAction<T> {
         super.load(completion: completion)
     }
     
+    public func loadNew() {
+        load(forced: true, completion: nil)
+    }
+    
     private func loadInner(completion completion: LoadResultClosure) {
         guard useForcedNext == false else {
             loadBase(completion: completion)
