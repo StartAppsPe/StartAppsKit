@@ -8,20 +8,19 @@
 
 import Foundation
 
-let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: nil, delegateQueue: NSOperationQueue.mainQueue())
+let session = NSURLSession(
+    configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+    delegate: nil,
+    delegateQueue: NSOperationQueue.mainQueue()
+)
 
-public class WebLoadAction<T>: LoadAction<T> {
+public class WebLoadAction<T>: ProcessLoadAction<NSData, T> {
     
     public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
     public typealias UrlRequestResult        = (completion: UrlRequestResultClosure) -> Void
     
-    public typealias ProcessDataResultType    = Result<T, ErrorType>
-    public typealias ProcessDataResultClosure = (result: ProcessDataResultType) -> Void
-    public typealias ProcessDataResult        = (loadedData: NSData, completion: ProcessDataResultClosure) -> Void
-    
     public var urlRequestClosure:  UrlRequestResult
-    public var processDataClosure: ProcessDataResult?
     
     /**
      Loads data giving the option of paging or loading new.
@@ -29,7 +28,7 @@ public class WebLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadInner(completion completion: LoadResultClosure) {
+    private func loadRawInner(completion completion: LoadRawResultClosure) {
         urlRequestClosure() { (result) -> Void in
             switch result {
             case .Failure(let error):
@@ -51,33 +50,9 @@ public class WebLoadAction<T>: LoadAction<T> {
                         completion(result: .Failure(error))
                         return
                     }
-                    self.processData(loadedData: loadedData, completion: completion)
+                    completion(result: .Success(loadedData))
                 }).resume()
             }
-        }
-    }
-    
-    /**
-     Processes data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func processData(loadedData loadedData: NSData, completion: LoadResultClosure) {
-        if let processClosure = self.processDataClosure {
-            processClosure(loadedData: loadedData) { (result) -> Void in
-                switch result {
-                case .Success(let processedData):
-                    completion(result: .Success(processedData))
-                case .Failure(let error):
-                    completion(result: .Failure(error))
-                }
-            }
-        } else if let processedData = loadedData as? T {
-            completion(result: .Success(processedData))
-        } else {
-            print(owner: "LoadAction[Web]", items: "ProcessClosure not defined when return type is different than NSData", level: .Error)
-            completion(result: .Failure(NSError(domain: "LoadAction[Web]", code: 837, description: "ProcessClosure not defined when return type is different than NSData")))
         }
     }
     
@@ -89,18 +64,18 @@ public class WebLoadAction<T>: LoadAction<T> {
      */
     public init(
         urlRequest: UrlRequestResult,
-        process:    ProcessDataResult?,
+        process:    ProcessResult? = nil,
         delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.urlRequestClosure  = urlRequest
-        self.processDataClosure = process
         super.init(
-            load:      { _ in },
+            loadRaw:   { _ in },
+            process:   process,
             delegates: delegates
         )
-        loadClosure = { (result) -> Void in
-            self.loadInner(completion: result)
+        loadRawClosure = { (result) -> Void in
+            self.loadRawInner(completion: result)
         }
     }
 }
