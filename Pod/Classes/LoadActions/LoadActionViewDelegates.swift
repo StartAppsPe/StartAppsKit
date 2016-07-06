@@ -11,6 +11,7 @@ import UIKit
 extension UIActivityIndicatorView: LoadActionDelegate {
     
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.Status) else { return }
         switch loadAction.status {
         case .Loading: self.startAnimating()
         case .Ready:   self.stopAnimating()
@@ -23,6 +24,7 @@ extension UIActivityIndicatorView: LoadActionDelegate {
 extension UIButton: LoadActionDelegate {
     
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.Status) || updatedProperties.contains(.Error) else { return }
         switch loadAction.status {
         case .Loading:
             activityIndicatorView?.startAnimating()
@@ -45,15 +47,30 @@ extension UIButton: LoadActionDelegate {
 extension UIRefreshControl: LoadActionDelegate {
     
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.Status) else { return }
         switch loadAction.status {
-        case .Loading:
-            animating = true
-        case .Ready, .Paging:
-            animating = false
+        case .Loading:        animating = true
+        case .Ready, .Paging: animating = false
+        }
+    }
+    
+    public convenience init(loadAction loadAction: LoadActionLoadableType) {
+        self.init()
+        setAction(controlEvents: .ValueChanged, loadAction: loadAction)
+    }
+    
+}
+
+extension UIControl {
+    
+    public func setAction(controlEvents controlEvents: UIControlEvents, loadAction loadAction: LoadActionLoadableType) {
+        setAction(controlEvents: controlEvents) { (sender) in
+            loadAction.loadNew()
         }
     }
     
 }
+
 
 public struct SALoadActionStatusViewParams {
     public var activityAnimating: Bool
@@ -144,7 +161,11 @@ public class SALoadActionStatusView: UIView, LoadActionDelegate {
 private var _svak: UInt8 = 0
 private var _rcak: UInt8 = 1
 
-public extension UICollectionView {
+public protocol StatusViewPresentable: class {
+    var backgroundView: UIView? { set get }
+}
+
+public extension StatusViewPresentable {
     
     private func createLoadActionStatusView() -> SALoadActionStatusView {
         let tempView = SALoadActionStatusView.loadFromNib()
@@ -160,21 +181,9 @@ public extension UICollectionView {
     
 }
 
-public extension UITableView {
-    
-    private func createLoadActionStatusView() -> SALoadActionStatusView {
-        let tempView = SALoadActionStatusView.loadFromNib()
-        tempView.backgroundColor = UIColor.clearColor()
-        backgroundView = tempView
-        return tempView
-    }
-    
-    public var loadActionStatusView: SALoadActionStatusView {
-        get { return objc_getAssociatedObject(self, &_svak) as? SALoadActionStatusView ?? createLoadActionStatusView() }
-        set { objc_setAssociatedObject(self, &_svak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
-    }
-    
-}
+extension UICollectionView: StatusViewPresentable { }
+extension UITableView: StatusViewPresentable { }
+
 
 public extension UIScrollView {
     
