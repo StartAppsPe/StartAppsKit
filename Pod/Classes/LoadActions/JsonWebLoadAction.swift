@@ -9,67 +9,34 @@
 import Foundation
 import SwiftyJSON
 
-public class JsonWebLoadAction<T>: WebLoadAction<T> {
+public class JsonLoadAction<T>: ConvertLoadAction<NSData, JSON, T> {
     
-    public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
-    public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
-    public typealias UrlRequestResult        = (completion: UrlRequestResultClosure) -> Void
-    
-    public typealias ProcessJsonResultType    = Result<T, ErrorType>
-    public typealias ProcessJsonResultClosure = (result: ProcessJsonResultType) -> Void
-    public typealias ProcessJsonResult        = (loadedJson: JSON, completion: ProcessJsonResultClosure) -> Void
-    
-    public var processJsonClosure: ProcessJsonResult?
-    
-    /**
-     Processes data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func processData(loadedData loadedData: NSData, completion: LoadResultClosure?) {
+    private func convertInner(loadedValue loadedValue: NSData, completion: ConvertResultClosure) {
         var error: NSError?
-        let json = JSON(data: loadedData, error: &error)
+        let loadedJson = JSON(data: loadedValue, error: &error)
         if let error = error {
-            completion?(result: Result.Failure(error))
-        } else if let processJsonClosure = self.processJsonClosure {
-            processJsonClosure(loadedJson: json) { (result) -> Void in
-                switch result {
-                case .Success(let processedData):
-                    completion?(result: Result.Success(processedData))
-                case .Failure(let error):
-                    completion?(result: Result.Failure(error))
-                }
-            }
-        } else if let processedData = loadedData as? T {
-            completion?(result: Result.Success(processedData))
+            completion(result: Result.Failure(error))
         } else {
-            print(owner: "LoadAction[JSON]", items: "ProcessClosure not defined when return type is different than JSON", level: .Error)
-            completion?(result: Result.Failure(NSError(domain: "LoadAction[JSON]", code: 837, description: "ProcessClosure not defined when return type is different than JSON")))
+            completion(result: Result.Success(loadedJson))
         }
     }
     
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
     public init(
-        urlRequest: UrlRequestResult,
-        process:    ProcessJsonResult,
-        delegates:  [LoadActionDelegate] = [],
-        dummy:      (() -> ())? = nil)
+        baseLoadAction: LoadAction<NSData>,
+        process:        ProcessResult? = nil,
+        delegates:      [LoadActionDelegate] = [],
+        dummy:          (() -> ())? = nil)
     {
-        self.processJsonClosure = process
         super.init(
-            urlRequest: urlRequest,
-            process: {  _,_ in },
-            delegates:  delegates
+            baseLoadAction: baseLoadAction,
+            convert: { _,_ in },
+            process: process,
+            delegates: delegates
         )
-        processDataClosure = { (loadedData, result) -> Void in
-            self.processData(loadedData: loadedData, completion: result)
+        self.convertClosure = { (loadedValue, completion) -> Void in
+            self.convertInner(loadedValue: loadedValue, completion: completion)
         }
     }
+    
 }
 
