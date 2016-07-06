@@ -172,10 +172,10 @@ public class LoadAction<T>: LoadActionType {
             
             switch result {
             case .Failure(let error):
-                print(owner: "LoadAction", items: "Loaded = Error \(error)", level: .Error)
+                print(owner: "LoadAction", items: "Loaded Error (\(error))", level: .Error)
                 self.error = error
             case .Success(let loadedValue):
-                print(owner: "LoadAction", items: "Loaded = Value \(loadedValue)", level: .Info)
+                print(owner: "LoadAction", items: "Loaded Success", level: .Info)
                 self.value = loadedValue
             }
             
