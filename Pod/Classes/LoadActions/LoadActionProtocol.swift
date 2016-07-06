@@ -37,7 +37,7 @@ public enum Result<T, E> {
     }
 }
 
-extension Result: CustomStringConvertible {
+extension Result: CustomStringConvertible, CustomDebugStringConvertible {
     
     public var description: String {
         switch self {
@@ -45,6 +45,15 @@ extension Result: CustomStringConvertible {
             return "Result(SUCCESS)"
         case .Failure:
             return "Result(FAILURE)"
+        }
+    }
+    
+    public var debugDescription: String {
+        switch self {
+        case .Success(let value):
+            return "Result(SUCCESS): \(value)"
+        case .Failure(let error):
+            return "Result(FAILURE): \(error)"
         }
     }
     
