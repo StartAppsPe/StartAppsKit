@@ -102,16 +102,15 @@ public extension UIButton {
     
 }
 
-
-public extension UIButton {
+public extension UIControl {
     
-    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+    public func setAction(controlEvents controlEvents: UIControlEvents, action: ((sender: AnyObject) -> Void)?) {
         if let action = action {
-            self.removeTarget(self, action: nil, forControlEvents: .TouchUpInside)
-            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: .TouchUpInside)
+            self.removeTarget(self, action: nil, forControlEvents: controlEvents)
+            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: controlEvents)
             self.closuresWrapper = ClosureWrapper(action: action)
         } else {
-            self.removeTarget(self, action: nil, forControlEvents: .TouchUpInside)
+            self.removeTarget(self, action: nil, forControlEvents: controlEvents)
             self.closuresWrapper = nil
         }
     }
@@ -123,6 +122,31 @@ public extension UIButton {
     private var closuresWrapper: ClosureWrapper? {
         get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
         set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+}
+
+public extension UIRefreshControl {
+    
+    public convenience init(color: UIColor? = nil, action: ((sender: AnyObject) -> Void)?) {
+        self.init()
+        setAction(action)
+        if let color = color {
+            tintColor = color
+        }
+    }
+    
+    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+        setAction(controlEvents: .ValueChanged, action: action)
+    }
+    
+}
+
+
+public extension UIButton {
+    
+    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+        setAction(controlEvents: .TouchUpInside, action: action)
     }
     
 }
@@ -150,38 +174,6 @@ public extension UIBarButtonItem {
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
-        }
-    }
-    
-    public func performAction() {
-        self.closuresWrapper?.action(sender: self)
-    }
-    
-    private var closuresWrapper: ClosureWrapper? {
-        get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
-        set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-    
-}
-
-public extension UIRefreshControl {
-    
-    public convenience init(color: UIColor? = nil, action: ((sender: AnyObject) -> Void)?) {
-        self.init()
-        setAction(action)
-        if let color = color {
-            tintColor = color
-        }
-    }
-    
-    public func setAction(action: ((sender: AnyObject) -> Void)?) {
-        if let action = action {
-            self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
-            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: .ValueChanged)
-            self.closuresWrapper = ClosureWrapper(action: action)
-        } else {
-            self.removeTarget(self, action: nil, forControlEvents: .ValueChanged)
-            self.closuresWrapper = nil
         }
     }
     
