@@ -102,12 +102,41 @@ public extension UIButton {
     
 }
 
+public extension UIGestureRecognizer {
+    
+    public convenience init(action: ((sender: AnyObject) -> Void)?) {
+        self.init()
+        setAction(action)
+    }
+    
+    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+        if let action = action {
+            self.removeTarget(self, action: nil)
+            self.addTarget(self, action: #selector(UIGestureRecognizer.performAction))
+            self.closuresWrapper = ClosureWrapper(action: action)
+        } else {
+            self.removeTarget(self, action: nil)
+            self.closuresWrapper = nil
+        }
+    }
+    
+    public func performAction() {
+        self.closuresWrapper?.action(sender: self)
+    }
+    
+    private var closuresWrapper: ClosureWrapper? {
+        get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
+        set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+}
+
 public extension UIControl {
     
     public func setAction(controlEvents controlEvents: UIControlEvents, action: ((sender: AnyObject) -> Void)?) {
         if let action = action {
             self.removeTarget(self, action: nil, forControlEvents: controlEvents)
-            self.addTarget(self, action: #selector(UIButton.performAction), forControlEvents: controlEvents)
+            self.addTarget(self, action: #selector(UIControl.performAction), forControlEvents: controlEvents)
             self.closuresWrapper = ClosureWrapper(action: action)
         } else {
             self.removeTarget(self, action: nil, forControlEvents: controlEvents)
@@ -154,7 +183,7 @@ public extension UIButton {
 public extension UIBarButtonItem {
     
     public convenience init(barButtonSystemItem systemItem: UIBarButtonSystemItem, action: ((sender: AnyObject) -> Void)?) {
-        self.init(barButtonSystemItem: systemItem, target: nil, action: #selector(UIButton.performAction))
+        self.init(barButtonSystemItem: systemItem, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
@@ -162,7 +191,7 @@ public extension UIBarButtonItem {
     }
     
     public convenience init(image: UIImage?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
-        self.init(image: image, style: style, target: nil, action: #selector(UIButton.performAction))
+        self.init(image: image, style: style, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
@@ -170,7 +199,7 @@ public extension UIBarButtonItem {
     }
     
     public convenience init(title: String?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
-        self.init(title: title, style: style, target: nil, action: #selector(UIButton.performAction))
+        self.init(title: title, style: style, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
             self.target = self
