@@ -124,53 +124,85 @@ public extension UIView {
     
 }
 
+public extension UIView {
+    
+    func addParallax(amount amount: Int) {
+        let verticalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.y",
+                                                               type: .TiltAlongVerticalAxis)
+        verticalMotionEffect.minimumRelativeValue = -amount
+        verticalMotionEffect.maximumRelativeValue = amount
+        
+        // Set horizontal effect
+        let horizontalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.x",
+                                                                 type: .TiltAlongHorizontalAxis)
+        horizontalMotionEffect.minimumRelativeValue = -amount
+        horizontalMotionEffect.maximumRelativeValue = amount
+        
+        // Create group to combine both
+        let group = UIMotionEffectGroup()
+        group.motionEffects = [horizontalMotionEffect, verticalMotionEffect]
+        
+        // Add both effects to your view
+        self.addMotionEffect(group)
+    }
+    
+}
 
+public extension UIView {
+    
+    public func fillWithSubview(view: UIView, margin: CGFloat = 0.0) {
+        
+        // Add view
+        view.translatesAutoresizingMaskIntoConstraints = false
+        var newFrame = view.frame
+        newFrame.size.width = self.bounds.width
+        view.layoutIfNeeded()
+        view.updateConstraintsIfNeeded()
+        view.frame = newFrame
+        view.backgroundColor = UIColor.clearColor()
+        self.addSubview(view)
+        
+        // Add constraints
+        self.addConstraint(
+            NSLayoutConstraint(item: view,
+                attribute: .Top, relatedBy: .Equal,
+                toItem: self, attribute: .Top,
+                multiplier: 1.0, constant: margin
+            )
+        )
+        self.addConstraint(
+            NSLayoutConstraint(item: view,
+                attribute: .Leading, relatedBy: .Equal,
+                toItem: self, attribute: .Leading,
+                multiplier: 1.0, constant: margin
+            )
+        )
+        self.addConstraint(
+            NSLayoutConstraint(item: view,
+                attribute: .Bottom, relatedBy: .Equal,
+                toItem: self, attribute: .Bottom,
+                multiplier: 1.0, constant: margin
+            )
+        )
+        self.addConstraint(
+            NSLayoutConstraint(item: view,
+                attribute: .Trailing, relatedBy: .Equal,
+                toItem: self, attribute: .Trailing,
+                multiplier: 1.0, constant: margin
+            )
+        )
+        
+    }
+    
+}
 
 public extension UIViewController {
     
     public func insertChild(viewController viewController: UIViewController, inView: UIView) {
-        // Add view controller
-        viewController.view.translatesAutoresizingMaskIntoConstraints = false
-        var newFrame = viewController.view.frame
-        newFrame.size.width = inView.bounds.width
-        viewController.view.layoutIfNeeded()
-        viewController.view.updateConstraintsIfNeeded()
-        viewController.view.frame = newFrame
-        viewController.view.backgroundColor = UIColor.clearColor()
-        
         addChildViewController(viewController)
         viewController.willMoveToParentViewController(self)
-        inView.addSubview(viewController.view)
+        inView.fillWithSubview(viewController.view)
         viewController.didMoveToParentViewController(self)
-        
-        inView.addConstraint(
-            NSLayoutConstraint(item: viewController.view,
-                attribute: .Top, relatedBy: .Equal,
-                toItem: inView, attribute: .Top,
-                multiplier: 1.0, constant: 0.0
-            )
-        )
-        inView.addConstraint(
-            NSLayoutConstraint(item: viewController.view,
-                attribute: .Leading, relatedBy: .Equal,
-                toItem: inView, attribute: .Leading,
-                multiplier: 1.0, constant: 0.0
-            )
-        )
-        inView.addConstraint(
-            NSLayoutConstraint(item: viewController.view,
-                attribute: .Bottom, relatedBy: .Equal,
-                toItem: inView, attribute: .Bottom,
-                multiplier: 1.0, constant: 0.0
-            )
-        )
-        inView.addConstraint(
-            NSLayoutConstraint(item: viewController.view,
-                attribute: .Trailing, relatedBy: .Equal,
-                toItem: inView, attribute: .Trailing,
-                multiplier: 1.0, constant: 0.0
-            )
-        )
     }
     
     public func removeChild(viewController viewController: UIViewController) {
