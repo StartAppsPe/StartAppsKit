@@ -25,7 +25,7 @@ public extension NSTimer {
             callback()
         }
     }
-
+    
     public class func scheduledTimer(timeInterval: NSTimeInterval, repeats: Bool, actions: () -> ()) -> NSTimer {
         let holder = NSTimerCallbackHolder(callback: actions)
         holder.callback = actions
