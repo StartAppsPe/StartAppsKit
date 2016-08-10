@@ -41,6 +41,7 @@
 		A2748B002783EF089283A4E3B27D1258 /* SATableViewControllerOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF66A3D4B199772CC483848E3AE11D0 /* SATableViewControllerOld.swift */; };
 		AFE01B4C0F609FCC3FB16B887180B0A0 /* StartAppsKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09FFFE2B2E200431A16699E936009009 /* StartAppsKit.bundle */; };
 		B58B65B5701EFDA09B10BBB69D0F8794 /* ErrorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBB3F59AEA4FEFA6BD3760F1E653DC3 /* ErrorExtensions.swift */; };
+		C0D76B321D5B87C20050AD30 /* FileLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D76B301D5B87890050AD30 /* FileLoadAction.swift */; };
 		C4477B7DCF3F433466E6A7B431549D43 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67FFCD49AD003C79D3140174B3342095 /* SwiftyJSON.framework */; };
 		CCADDD26E231100E22245D213EEF1A64 /* Pods-StartAppsKit_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EB8EEBDC1D10D14BC243E7D925A65C /* Pods-StartAppsKit_Tests-dummy.m */; };
 		D28292AF0EA8D0D661D086733B69783A /* SACollectionViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C8850C2A8DEAB2CB24D3CDA6B31FE7 /* SACollectionViewCells.swift */; };
@@ -149,6 +150,7 @@
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BBF610E40BDF6E542FA21FF7E5491205 /* SwiftyJSON-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyJSON-prefix.pch"; sourceTree = "<group>"; };
 		BDE506ECE97701EBA44FDBFF401C1A04 /* SwiftyJSON.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = Source/SwiftyJSON.swift; sourceTree = "<group>"; };
+		C0D76B301D5B87890050AD30 /* FileLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileLoadAction.swift; sourceTree = "<group>"; };
 		C4A7931B4880434E5C67468B774853AF /* NumberExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NumberExtensions.swift; sourceTree = "<group>"; };
 		C4A9A658C966F6BB111BEDBDEA1F874A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C7E71619B9FCBEB1C7D66FE2BF24EAAE /* Pods-StartAppsKit_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-StartAppsKit_Example.modulemap"; sourceTree = "<group>"; };
@@ -523,6 +525,7 @@
 				B89FD9BCBC73950307862D1AF95CE26D /* LoadActionViewDelegates.swift */,
 				EFD72A099E75E8BCF210F3F3148518F9 /* StaticLoadAction.swift */,
 				EF73C27280E8C940CB027689ABA99FB7 /* WebLoadAction.swift */,
+				C0D76B301D5B87890050AD30 /* FileLoadAction.swift */,
 			);
 			path = LoadActions;
 			sourceTree = "<group>";
@@ -721,7 +724,7 @@
 		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
@@ -810,6 +813,7 @@
 				4706DE10CAE5905BCE943A42D6F80DE2 /* Logging.swift in Sources */,
 				A234F789FBA51D1FD8417BFEAB1166D0 /* NumberExtensions.swift in Sources */,
 				D28292AF0EA8D0D661D086733B69783A /* SACollectionViewCells.swift in Sources */,
+				C0D76B321D5B87C20050AD30 /* FileLoadAction.swift in Sources */,
 				D2CDE5CB233E4AA57A106C531D21AFE2 /* SACollectionViewController.swift in Sources */,
 				A045DBF7214AC85530F789CD72D5B982 /* SAStaticTableViewCells.swift in Sources */,
 				9D1A1CF55801C7CDD91EF5FD8D4AC4B7 /* SAStaticTableViewController.swift in Sources */,
@@ -922,10 +926,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0396BFF2DDE3DB7CF3CE8667B75FE34B /* StartAppsKit.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/ResourceBundle-StartAppsKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1000,13 +1006,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0396BFF2DDE3DB7CF3CE8667B75FE34B /* StartAppsKit.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/ResourceBundle-StartAppsKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
 			};
