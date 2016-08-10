@@ -46,7 +46,7 @@ public class WebLoadAction<T>: ProcessLoadAction<NSData, T> {
                         return
                     }
                     guard let loadedData = loadedData else {
-                        let error = NSError(domain: "", code: 33, description: "")
+                        let error = NSError(domain: "LoadAction[Web]", code: 33, description: "")
                         completion(result: .Failure(error))
                         return
                     }
