@@ -155,6 +155,11 @@ public class LoadAction<T>: LoadActionType {
     
     public var loadClosure: LoadResult!
     
+    public func loadNew() {
+        load(completion: nil)
+    }
+    
+    
     /**
      Loads value giving the option of paging or loading new.
      

@@ -37,7 +37,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
         super.load(completion: completion)
     }
     
-    public func loadNew() {
+    public override func loadNew() {
         load(forced: true, completion: nil)
     }
     
