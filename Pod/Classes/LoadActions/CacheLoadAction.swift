@@ -14,9 +14,14 @@ public class CacheLoadAction<T>: LoadAction<T> {
     public typealias UseCacheResultClosure  = (result: UseCacheResultType) -> Void
     public typealias UseCacheResult         = (loadAction: CacheLoadAction<T>, completion: UseCacheResultClosure) -> Void
     
-    public var useCacheClosure: UseCacheResult
-    public var cacheLoadAction: LoadAction<T>
-    public var baseLoadAction:  LoadAction<T>
+    public typealias SaveToCacheResultType    = Result<Bool, ErrorType>
+    public typealias SaveToCacheResultClosure = (result: SaveToCacheResultType) -> Void
+    public typealias SaveToCacheResult        = (loadedValue: T, loadAction: CacheLoadAction<T>, completion: SaveToCacheResultClosure) -> Void
+    
+    public var cacheLoadAction:    LoadAction<T>
+    public var baseLoadAction:     LoadAction<T>
+    public var saveToCacheClosure: SaveToCacheResult?
+    public var useCacheClosure:    UseCacheResult
     
     private var useForcedNext: Bool = false
     
@@ -74,7 +79,20 @@ public class CacheLoadAction<T>: LoadAction<T> {
     */
     private func loadBase(completion completion: LoadResultClosure) {
         print(owner: "LoadAction[Cache]", items: "Base Load", level: .Info)
-        baseLoadAction.load(completion: completion)
+        baseLoadAction.load { (result) in
+            switch result {
+            case .Success(let value):
+                if let saveToCacheClosure = self.saveToCacheClosure {
+                    saveToCacheClosure(loadedValue: value, loadAction: self, completion: { (saveToCacheResult) in
+                        completion(result: result)
+                    })
+                } else {
+                    completion(result: result)
+                }
+            case .Failure(_):
+                completion(result: result)
+            }
+        }
     }
     
     /**
@@ -89,13 +107,15 @@ public class CacheLoadAction<T>: LoadAction<T> {
     public init(
         baseLoadAction:  LoadAction<T>,
         cacheLoadAction: LoadAction<T>,
+        saveToCache:     SaveToCacheResult?,
         useCache:        UseCacheResult,
         delegates:       [LoadActionDelegate] = [],
         dummy:           (() -> ())? = nil)
     {
-        self.baseLoadAction  = baseLoadAction
-        self.cacheLoadAction = cacheLoadAction
-        self.useCacheClosure = useCache
+        self.baseLoadAction     = baseLoadAction
+        self.cacheLoadAction    = cacheLoadAction
+        self.saveToCacheClosure = saveToCache
+        self.useCacheClosure    = useCache
         super.init(
             load:      { _ in },
             delegates: delegates
