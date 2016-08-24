@@ -9,9 +9,9 @@
 import Foundation
 import SwiftyJSON
 
-public class JsonLoadAction<T>: ConvertLoadAction<NSData, JSON, T> {
+public class JsonLoadAction: ProcessLoadAction<NSData, JSON> {
     
-    private func convertInner(loadedValue loadedValue: NSData, completion: ConvertResultClosure) {
+    private func processInner(loadedValue loadedValue: NSData, completion: ProcessResultClosure) {
         var error: NSError?
         let loadedJson = JSON(data: loadedValue, error: &error)
         if let error = error {
@@ -23,18 +23,16 @@ public class JsonLoadAction<T>: ConvertLoadAction<NSData, JSON, T> {
     
     public init(
         baseLoadAction: LoadAction<NSData>,
-        process:        ProcessResult? = nil,
         delegates:      [LoadActionDelegate] = [],
         dummy:          (() -> ())? = nil)
     {
         super.init(
             baseLoadAction: baseLoadAction,
-            convert: { _,_ in },
-            process: process,
+            process: { _,_ in },
             delegates: delegates
         )
         self.convertClosure = { (loadedValue, completion) -> Void in
-            self.convertInner(loadedValue: loadedValue, completion: completion)
+            self.processInner(loadedValue: loadedValue, completion: completion)
         }
     }
     

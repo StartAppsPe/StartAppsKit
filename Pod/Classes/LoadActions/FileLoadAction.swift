@@ -8,7 +8,25 @@
 
 import Foundation
 
-public class FileLoadAction<F>: ProcessLoadAction<NSData, F> {
+public class ProcessFileLoadAction<T>: ProcessLoadAction<NSData, T> {
+    
+    public init(
+        filePath:   FileLoadAction.FilePathResult,
+        process:    ProcessResult? = nil,
+        delegates:  [LoadActionDelegate] = [],
+        dummy:      (() -> ())? = nil)
+    {
+        super.init(
+            baseLoadAction: FileLoadAction(filePath: filePath),
+            process:   process,
+            delegates: delegates
+        )
+    }
+    
+}
+
+
+public class FileLoadAction: LoadAction<NSData> {
     
     public typealias FilePathResultType    = Result<String, ErrorType>
     public typealias FilePathResultClosure = (result: FilePathResultType) -> Void
@@ -16,20 +34,14 @@ public class FileLoadAction<F>: ProcessLoadAction<NSData, F> {
     
     public var filePathClosure:  FilePathResult
     
-    /**
-     Loads data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func loadRawInner(completion completion: LoadRawResultClosure) {
+    private func loadInner(completion completion: LoadResultClosure) {
         filePathClosure() { (result) -> Void in
             switch result {
             case .Failure(let error):
                 completion(result: .Failure(error))
             case .Success(let filePath):
                 let fullFilePath = "\(NSHomeDirectory())/Documents/\(filePath)"
-                print(owner: "LoadAction[File]", items: "Loading from filePath", fullFilePath, level: .Info)
+                print(owner: "LoadAction[File]", items: "FilePath: \(fullFilePath)", level: .Info)
                 guard let loadedData = NSData(contentsOfFile: fullFilePath) else {
                     let error = NSError(domain: "LoadAction[File]", code: 421, description: "Archivo no pudo ser leido")
                     completion(result: .Failure(error))
@@ -40,30 +52,24 @@ public class FileLoadAction<F>: ProcessLoadAction<NSData, F> {
         }
     }
     
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
     public init(
         filePath:   FilePathResult,
-        process:    ProcessResult? = nil,
         delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.filePathClosure  = filePath
         super.init(
-            loadRaw:   { _ in },
-            process:   process,
+            load: { _ in },
             delegates: delegates
         )
-        loadRawClosure = { (result) -> Void in
-            self.loadRawInner(completion: result)
+        loadClosure = { (result) -> Void in
+            self.loadInner(completion: result)
         }
     }
     
-    
+}
+
+public extension FileLoadAction {
     
     public typealias FileSaveResultType    = Result<Bool, ErrorType>
     public typealias FileSaveResultClosure = (result: FileSaveResultType) -> Void

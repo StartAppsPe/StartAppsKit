@@ -14,7 +14,24 @@ let session = NSURLSession(
     delegateQueue: NSOperationQueue.mainQueue()
 )
 
-public class WebLoadAction<T>: ProcessLoadAction<NSData, T> {
+public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
+    
+    public init(
+        urlRequest: WebLoadAction.UrlRequestResult,
+        process:    ProcessResult? = nil,
+        delegates:  [LoadActionDelegate] = [],
+        dummy:      (() -> ())? = nil)
+    {
+        super.init(
+            baseLoadAction: WebLoadAction(urlRequest: urlRequest),
+            process:   process,
+            delegates: delegates
+        )
+    }
+    
+}
+
+public class WebLoadAction: LoadAction<NSData> {
     
     public typealias UrlRequestResultType    = Result<NSURLRequest, ErrorType>
     public typealias UrlRequestResultClosure = (result: UrlRequestResultType) -> Void
@@ -22,18 +39,13 @@ public class WebLoadAction<T>: ProcessLoadAction<NSData, T> {
     
     public var urlRequestClosure:  UrlRequestResult
     
-    /**
-     Loads data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func loadRawInner(completion completion: LoadRawResultClosure) {
+    private func loadInner(completion completion: LoadResultClosure) {
         urlRequestClosure() { (result) -> Void in
             switch result {
             case .Failure(let error):
                 completion(result: .Failure(error))
             case .Success(let urlRequest):
+                print(owner: "LoadAction[Web]", items: "Url: \(urlRequest.URL?.absoluteString ?? "-")", level: .Verbose)
                 session.dataTaskWithRequest(urlRequest, completionHandler: { (loadedData, urlResponse, error) -> Void in
                     if let error = error {
                         var newError = error
@@ -56,26 +68,18 @@ public class WebLoadAction<T>: ProcessLoadAction<NSData, T> {
         }
     }
     
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
     public init(
         urlRequest: UrlRequestResult,
-        process:    ProcessResult? = nil,
         delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.urlRequestClosure  = urlRequest
         super.init(
-            loadRaw:   { _ in },
-            process:   process,
+            load: { _ in },
             delegates: delegates
         )
-        loadRawClosure = { (result) -> Void in
-            self.loadRawInner(completion: result)
+        loadClosure = { (result) -> Void in
+            self.loadInner(completion: result)
         }
     }
 }

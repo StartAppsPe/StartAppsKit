@@ -9,90 +9,29 @@
 
 import Foundation
 
-public class ConvertLoadAction<A, B, T>: ProcessLoadAction<B, T> {
+public class ProcessLoadAction<A, T>: LoadAction<T> {
     
-    public typealias ConvertResultType    = Result<B, ErrorType>
-    public typealias ConvertResultClosure = (result: ConvertResultType) -> Void
-    public typealias ConvertResult        = (loadedValue: A, completion: ConvertResultClosure) -> Void
+    public typealias ProcessResultType    = Result<T, ErrorType>
+    public typealias ProcessResultClosure = (result: ProcessResultType) -> Void
+    public typealias ProcessResult        = (loadedValue: A, completion: ProcessResultClosure) -> Void
     
-    public var convertClosure: ConvertResult
+    public var convertClosure: ProcessResult
     
     public var baseLoadAction: LoadAction<A>
     
-    private func loadRawInner(completion completion: LoadRawResultClosure) {
+    private func loadInner(completion completion: LoadResultClosure) {
         baseLoadAction.load() { (result) in
             switch result {
             case .Failure(let error):
                 completion(result: Result.Failure(error))
-            case .Success(let value):
-                self.convertClosure(loadedValue: value, completion: completion)
-            }
-        }
-    }
-    
-    public class func automaticConvert() -> ConvertResult {
-        return { (loadedValue: A, completion: ConvertResultClosure) in
-            if let loadedValue = loadedValue as? B {
-                completion(result: Result.Success(loadedValue))
-            } else {
-                let error = NSError(domain: "LoadAction[Convert]", code: 432, description: "Could not automatically convert value")
-                completion(result: Result.Failure(error))
-            }
-        }
-    }
-    
-    public init(
-        baseLoadAction: LoadAction<A>,
-        convert:        ConvertResult?,
-        process:        ProcessResult?,
-        delegates:      [LoadActionDelegate] = [],
-        dummy:          (() -> ())? = nil)
-    {
-        self.baseLoadAction    = baseLoadAction
-        if let convertClosure = convert {
-            self.convertClosure = convertClosure
-        } else {
-            self.convertClosure = ConvertLoadAction<A, B, T>.automaticConvert()
-        }
-        super.init(
-            loadRaw:   { _ in },
-            process:   process,
-            delegates: delegates
-        )
-        self.loadRawClosure = { (completion) -> Void in
-            self.loadRawInner(completion: completion)
-        }
-    }
-    
-}
-
-public class ProcessLoadAction<B, T>: LoadAction<T> {
-    
-    public typealias LoadRawResultType    = Result<B, ErrorType>
-    public typealias LoadRawResultClosure = (result: LoadRawResultType) -> Void
-    public typealias LoadRawResult        = (completion: LoadRawResultClosure) -> Void
-    
-    public typealias ProcessResultType    = Result<T, ErrorType>
-    public typealias ProcessResultClosure = (result: ProcessResultType) -> Void
-    public typealias ProcessResult        = (loadedValue: B, completion: ProcessResultClosure) -> Void
-    
-    public var loadRawClosure: LoadRawResult
-    public var processClosure: ProcessResult
-    
-    
-    private func loadInner(completion completion: LoadResultClosure) {
-        loadRawClosure() { (result) in
-            switch result {
-            case .Failure(let error):
-                completion(result: Result.Failure(error))
             case .Success(let loadedValue):
-                self.processClosure(loadedValue: loadedValue, completion: completion)
+                self.convertClosure(loadedValue: loadedValue, completion: completion)
             }
         }
     }
     
     public class func automaticProcess() -> ProcessResult {
-        return { (loadedValue: B, completion: ProcessResultClosure) in
+        return { (loadedValue: A, completion: ProcessResultClosure) in
             if let loadedValue = loadedValue as? T {
                 completion(result: Result.Success(loadedValue))
             } else {
@@ -109,16 +48,16 @@ public class ProcessLoadAction<B, T>: LoadAction<T> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        loadRaw:   LoadRawResult,
-        process:   ProcessResult?,
-        delegates: [LoadActionDelegate] = [],
-        dummy:     (() -> ())? = nil)
+        baseLoadAction: LoadAction<A>,
+        process:        ProcessResult?,
+        delegates:      [LoadActionDelegate] = [],
+        dummy:          (() -> ())? = nil)
     {
-        self.loadRawClosure = loadRaw
-        if let processClosure = process {
-            self.processClosure = processClosure
+        self.baseLoadAction = baseLoadAction
+        if let convertClosure = process {
+            self.convertClosure = convertClosure
         } else {
-            self.processClosure = ProcessLoadAction<B, T>.automaticProcess()
+            self.convertClosure = ProcessLoadAction<A, T>.automaticProcess()
         }
         super.init(
             load:      { _ in },
