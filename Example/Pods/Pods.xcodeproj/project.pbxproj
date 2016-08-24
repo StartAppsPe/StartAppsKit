@@ -41,6 +41,9 @@
 		A2748B002783EF089283A4E3B27D1258 /* SATableViewControllerOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF66A3D4B199772CC483848E3AE11D0 /* SATableViewControllerOld.swift */; };
 		AFE01B4C0F609FCC3FB16B887180B0A0 /* StartAppsKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09FFFE2B2E200431A16699E936009009 /* StartAppsKit.bundle */; };
 		B58B65B5701EFDA09B10BBB69D0F8794 /* ErrorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBB3F59AEA4FEFA6BD3760F1E653DC3 /* ErrorExtensions.swift */; };
+		C03E50A81D6E292200D53F72 /* CoreDataLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03E50A71D6E292200D53F72 /* CoreDataLoadAction.swift */; };
+		C03E50AA1D6E293000D53F72 /* ProcessLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03E50A91D6E293000D53F72 /* ProcessLoadAction.swift */; };
+		C03E50AC1D6E296F00D53F72 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03E50AB1D6E296F00D53F72 /* CoreDataManager.swift */; };
 		C0D76B321D5B87C20050AD30 /* FileLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D76B301D5B87890050AD30 /* FileLoadAction.swift */; };
 		C4477B7DCF3F433466E6A7B431549D43 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67FFCD49AD003C79D3140174B3342095 /* SwiftyJSON.framework */; };
 		CCADDD26E231100E22245D213EEF1A64 /* Pods-StartAppsKit_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36EB8EEBDC1D10D14BC243E7D925A65C /* Pods-StartAppsKit_Tests-dummy.m */; };
@@ -150,6 +153,9 @@
 		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BBF610E40BDF6E542FA21FF7E5491205 /* SwiftyJSON-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftyJSON-prefix.pch"; sourceTree = "<group>"; };
 		BDE506ECE97701EBA44FDBFF401C1A04 /* SwiftyJSON.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SwiftyJSON.swift; path = Source/SwiftyJSON.swift; sourceTree = "<group>"; };
+		C03E50A71D6E292200D53F72 /* CoreDataLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataLoadAction.swift; sourceTree = "<group>"; };
+		C03E50A91D6E293000D53F72 /* ProcessLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessLoadAction.swift; sourceTree = "<group>"; };
+		C03E50AB1D6E296F00D53F72 /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		C0D76B301D5B87890050AD30 /* FileLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileLoadAction.swift; sourceTree = "<group>"; };
 		C4A7931B4880434E5C67468B774853AF /* NumberExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NumberExtensions.swift; sourceTree = "<group>"; };
 		C4A9A658C966F6BB111BEDBDEA1F874A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -523,9 +529,12 @@
 				32D71B2DB5C54CF8BDAF0C05BC37DF1C /* LoadAction.swift */,
 				8DFCDFF45061DF6CB05672BDE8473822 /* LoadActionProtocol.swift */,
 				B89FD9BCBC73950307862D1AF95CE26D /* LoadActionViewDelegates.swift */,
+				C03E50A91D6E293000D53F72 /* ProcessLoadAction.swift */,
 				EFD72A099E75E8BCF210F3F3148518F9 /* StaticLoadAction.swift */,
 				EF73C27280E8C940CB027689ABA99FB7 /* WebLoadAction.swift */,
 				C0D76B301D5B87890050AD30 /* FileLoadAction.swift */,
+				C03E50A71D6E292200D53F72 /* CoreDataLoadAction.swift */,
+				C03E50AB1D6E296F00D53F72 /* CoreDataManager.swift */,
 			);
 			path = LoadActions;
 			sourceTree = "<group>";
@@ -799,6 +808,7 @@
 				4173C1C15E3B77B8385EC55B535B4D1E /* AnimationSegue.swift in Sources */,
 				30577A7A1573BB14BC9D8E66140F0BF3 /* ButtonExtensions.swift in Sources */,
 				6ECBC3A214E8EA359523F3A4C7F5D09F /* CacheLoadAction.swift in Sources */,
+				C03E50AC1D6E296F00D53F72 /* CoreDataManager.swift in Sources */,
 				5366B646339CE20FC1847632A7DA8803 /* CollectionTypeExtensions.swift in Sources */,
 				DFC35D7327DA4532C9F9AA1F4E461AEE /* ColorExtensions.swift in Sources */,
 				8248B3B98695A0A6574DC6DCE8AEA662 /* DateExtensions.swift in Sources */,
@@ -815,6 +825,7 @@
 				D28292AF0EA8D0D661D086733B69783A /* SACollectionViewCells.swift in Sources */,
 				C0D76B321D5B87C20050AD30 /* FileLoadAction.swift in Sources */,
 				D2CDE5CB233E4AA57A106C531D21AFE2 /* SACollectionViewController.swift in Sources */,
+				C03E50A81D6E292200D53F72 /* CoreDataLoadAction.swift in Sources */,
 				A045DBF7214AC85530F789CD72D5B982 /* SAStaticTableViewCells.swift in Sources */,
 				9D1A1CF55801C7CDD91EF5FD8D4AC4B7 /* SAStaticTableViewController.swift in Sources */,
 				EBA7B56AE02229DC3B54641F45836F99 /* SATableViewCells.swift in Sources */,
@@ -825,6 +836,7 @@
 				5F23C57D4E2B0B8D5581D1375CF5B47D /* StringExtensions.swift in Sources */,
 				505BF54A0DA02B3F01B7CD7EBFB2D781 /* TimerExtensions.swift in Sources */,
 				7DDFF7D702546EA5E5819BEBF78CB402 /* ViewExtensions.swift in Sources */,
+				C03E50AA1D6E293000D53F72 /* ProcessLoadAction.swift in Sources */,
 				58B6DE82A0311053F378C17B44463323 /* WebLoadAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

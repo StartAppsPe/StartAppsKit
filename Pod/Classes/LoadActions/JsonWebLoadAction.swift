@@ -31,7 +31,7 @@ public class JsonLoadAction: ProcessLoadAction<NSData, JSON> {
             process: { _,_ in },
             delegates: delegates
         )
-        self.convertClosure = { (loadedValue, completion) -> Void in
+        self.processClosure = { (loadedValue, completion) -> Void in
             self.processInner(loadedValue: loadedValue, completion: completion)
         }
     }
