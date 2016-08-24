@@ -3,11 +3,17 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'StartAppsKit_Example' do
-  pod "StartAppsKit", :path => "../"
+    pod "StartAppsKit", :path => "../"
+    pod "StartAppsKit/JSON", :path => "../"
+    pod "StartAppsKit/XML", :path => "../"
+    pod "StartAppsKit/Hashing", :path => "../"
 end
 
 target 'StartAppsKit_Tests' do
-  pod "StartAppsKit", :path => "../"
+    pod "StartAppsKit", :path => "../"
+    pod "StartAppsKit/JSON", :path => "../"
+    pod "StartAppsKit/XML", :path => "../"
+    pod "StartAppsKit/Hashing", :path => "../"
 end
 
 post_install do |installer|

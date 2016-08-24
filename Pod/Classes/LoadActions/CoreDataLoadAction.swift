@@ -9,13 +9,13 @@
 import Foundation
 import CoreData
 
-public class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U> {
+public class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U?> {
     
     public var predicate:       NSPredicate?
     public var sortDescriptors: [NSSortDescriptor]?
     
     private func loadInner(completion completion: LoadResultClosure) {
-        if let loadedValue = NSManagedObject.fetchAll(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
+        if let loadedValue = NSManagedObject.fetch(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
             completion(result: Result.Success(loadedValue.first))
         } else {
             let error = NSError(domain: "LoadAction[CoreData]", code: 542, description: "Error when fetching from database")
@@ -48,7 +48,7 @@ public class CoreDataLoadAction<U: NSManagedObject>: LoadAction<[U]> {
     public var sortDescriptors: [NSSortDescriptor]?
     
     private func loadInner(completion completion: LoadResultClosure) {
-        if let loadedValue = NSManagedObject.fetchAll(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
+        if let loadedValue = NSManagedObject.fetch(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
             completion(result: Result.Success(loadedValue))
         } else {
             let error = NSError(domain: "LoadAction[CoreData]", code: 542, description: "Error when fetching from database")

@@ -1,6 +1,6 @@
 {
   "name": "StartAppsKit",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "summary": "A library that does everything.",
   "description": "A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.",
   "homepage": "https://github.com/StartAppsPe/StartAppsKit",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/StartAppsPe/StartAppsKit.git",
-    "tag": "0.2.0"
+    "tag": "0.6.0"
   },
   "module_name": "StartAppsKit",
   "platforms": {
@@ -27,9 +27,6 @@
     {
       "name": "Default",
       "dependencies": {
-        "StartAppsKit/ViewControllers": [
-
-        ],
         "StartAppsKit/LoadActions": [
 
         ],
@@ -59,16 +56,6 @@
       "source_files": "Pod/Classes/Logging"
     },
     {
-      "name": "ViewControllers",
-      "source_files": "Pod/Classes/ViewControllers",
-      "dependencies": {
-        "StartAppsKit/LoadActions": [
-
-        ]
-      },
-      "frameworks": "UIKit"
-    },
-    {
       "name": "LoadActions",
       "source_files": "Pod/Classes/LoadActions",
       "dependencies": {
@@ -77,6 +64,15 @@
         ],
         "StartAppsKit/Logging": [
 
+        ]
+      }
+    },
+    {
+      "name": "JSON",
+      "source_files": "Pod/Classes/JSON",
+      "dependencies": {
+        "StartAppsKit/LoadActions": [
+
         ],
         "SwiftyJSON": [
           "~> 2.3"
@@ -84,14 +80,14 @@
       }
     },
     {
-      "name": "LoadActions-Parse",
-      "source_files": "Pod/Classes/Parse",
+      "name": "XML",
+      "source_files": "Pod/Classes/XML",
       "dependencies": {
         "StartAppsKit/LoadActions": [
 
         ],
-        "Parse": [
-          "~> 1.1"
+        "AEXML": [
+          "~> 3.0"
         ]
       }
     },
@@ -103,6 +99,16 @@
           "~> 1.1"
         ]
       }
+    },
+    {
+      "name": "Legacy",
+      "source_files": "Pod/Classes/ViewControllers",
+      "dependencies": {
+        "StartAppsKit/LoadActions": [
+
+        ]
+      },
+      "frameworks": "UIKit"
     }
   ]
 }

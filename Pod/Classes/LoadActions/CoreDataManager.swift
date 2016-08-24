@@ -126,20 +126,20 @@ public extension NSManagedObject { // Quitar en Swift 2.0
         return obj
     }
     
-    public class func fetchAll<T:NSManagedObject where T:ClassNameable>(entity: T.Type, predicate: NSPredicate? = nil, sortDescriptors: [NSSortDescriptor]? = nil) -> [T]? {
+    public class func fetch<T:NSManagedObject where T:ClassNameable>(entity: T.Type, predicate: NSPredicate? = nil, sortDescriptors: [NSSortDescriptor]? = nil) -> [T]? {
         return CoreDataManager.fetch(T.className, predicate: predicate, sortDescriptors: sortDescriptors) as? [T]
     }
     
-    public class func fetch<T:NSManagedObject>(entity: T.Type, predicate: NSPredicate?) -> T? {
-        return fetchAll(entity, predicate: predicate)?.first
+    public class func fetchSingle<T:NSManagedObject>(entity: T.Type, predicate: NSPredicate?) -> T? {
+        return fetch(entity, predicate: predicate)?.first
     }
     
-    public class func fetch<T:NSManagedObject where T:UniquedObject>(entity: T.Type, uid: String) -> T? {
-        return fetch(entity, predicate: NSPredicate(format: "uid == %@", uid))
+    public class func fetchSingle<T:NSManagedObject where T:UniquedObject>(entity: T.Type, uid: String) -> T? {
+        return fetchSingle(entity, predicate: NSPredicate(format: "uid == %@", uid))
     }
     
-    public class func fetchOrCreate<T:NSManagedObject where T:UniquedObject>(entity: T.Type, uid: String) -> T {
-        return fetch(entity, uid: uid) ?? create(entity, uid: uid)
+    public class func fetchSingleOrCreate<T:NSManagedObject where T:UniquedObject>(entity: T.Type, uid: String) -> T {
+        return fetchSingle(entity, uid: uid) ?? create(entity, uid: uid)
     }
     
     public func delete() {
