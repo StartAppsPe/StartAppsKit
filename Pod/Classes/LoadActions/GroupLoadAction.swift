@@ -13,6 +13,8 @@ public enum GroupLoadOrder {
     case Parallel, Sequential, SequentialForced
 }
 
+public enum IgnoreValue { }
+
 public class GroupLoadAction<T>: LoadAction<T> {
     
     public typealias LoadedResultType    = Result<T, ErrorType>
@@ -113,6 +115,8 @@ public class GroupLoadAction<T>: LoadAction<T> {
         // Get value
         if let processValueClosure = processValueClosure {
             value = processValueClosure(actions: actions)
+        } else if value is IgnoreValue {
+            value = GroupLoadAction.DefaultProcessValueIgnore(actions: actions)
         } else {
             value = GroupLoadAction.DefaultProcessValueLast(actions: actions)
         }
@@ -158,6 +162,12 @@ public class GroupLoadAction<T>: LoadAction<T> {
     class var DefaultProcessValueLast: ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
             return actions.reverse().find({ $0.valueAny as? T != nil })?.valueAny as? T
+        }
+    }
+    
+    class var DefaultProcessValueIgnore: ProcessValue {
+        return { (actions: [LoadActionLoadableType]) -> T? in
+            return nil
         }
     }
     

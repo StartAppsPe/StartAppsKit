@@ -23,6 +23,10 @@ public struct PostObject {
             return $0+"<\($1.key)>\(value)</\($1.key)>"
         })
     }
+    public init(key: String, value: Any) {
+        self.key = key
+        self.value = value
+    }
 }
 
 public class SoapLoadAction: ProcessLoadAction<AEXMLElement, AEXMLElement> {

@@ -56,8 +56,13 @@ extension UIRefreshControl: LoadActionDelegate {
     
     public convenience init(loadAction: LoadActionLoadableType) {
         self.init()
+        setAction(loadAction: loadAction)
+    }
+    
+    public func setAction(loadAction loadAction: LoadActionLoadableType) {
         setAction(controlEvents: .ValueChanged, loadAction: loadAction)
     }
+    
     
 }
 

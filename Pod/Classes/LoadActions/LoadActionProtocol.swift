@@ -107,13 +107,6 @@ public protocol LoadActionType: LoadActionLoadableType {
 
 public extension LoadActionType {
     
-    /**
-     Loads new data forced replacing the previous stored data
-     */
-//    public func loadNew() {
-//        load(completion: nil)
-//    }
-    
     public var valueAny: Any? {
         return value
     }
