@@ -10,7 +10,7 @@ import UIKit
 
 // If rhs not nil, set value. lhs is not replaced if rhs is nil.
 infix operator ?= { associativity right precedence 90 assignment }
-public func ?=<T>(inout lhs: T?, @autoclosure rhs: () -> T?) {
+public func ?=<T>(inout lhs: T, @autoclosure rhs: () -> T?) {
     if let nv = rhs() { lhs = nv }
 }
 
