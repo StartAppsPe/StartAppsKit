@@ -77,7 +77,7 @@ extension UIControl {
 }
 
 
-public struct SALoadActionStatusViewParams {
+public struct LoadActionStatusViewParams {
     public var activityAnimating: Bool
     public var image: UIImage?
     public var message: String?
@@ -94,15 +94,15 @@ public struct SALoadActionStatusViewParams {
             self.buttonAction = buttonAction
     }
     
-    public struct SALoadActionStatusViewParamsDefault {
-        public var loadingParams = SALoadActionStatusViewParams(activityAnimating: true)
-        public var errorParams   = SALoadActionStatusViewParams(message: "Error")
-        public var emptyParams   = SALoadActionStatusViewParams(message: "No data")
+    public struct LoadActionStatusViewParamsDefault {
+        public var loadingParams = LoadActionStatusViewParams(activityAnimating: true)
+        public var errorParams   = LoadActionStatusViewParams(message: "Error")
+        public var emptyParams   = LoadActionStatusViewParams(message: "No data")
     }
-    public static var defaultParams = SALoadActionStatusViewParamsDefault()
+    public static var defaultParams = LoadActionStatusViewParamsDefault()
 }
 
-public class SALoadActionStatusView: UIView, LoadActionDelegate {
+public class LoadActionStatusView: UIView, LoadActionDelegate {
     
     @IBOutlet public weak var activityIndicatorView: UIActivityIndicatorView!
     
@@ -115,25 +115,25 @@ public class SALoadActionStatusView: UIView, LoadActionDelegate {
     @IBOutlet private weak var imageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var imageViewAspectConstraint: NSLayoutConstraint!
     
-    public var loadingParams = SALoadActionStatusViewParams.defaultParams.loadingParams
-    public var errorParams   = SALoadActionStatusViewParams.defaultParams.errorParams
-    public var emptyParams   = SALoadActionStatusViewParams.defaultParams.emptyParams
+    public var loadingParams = LoadActionStatusViewParams.defaultParams.loadingParams
+    public var errorParams   = LoadActionStatusViewParams.defaultParams.errorParams
+    public var emptyParams   = LoadActionStatusViewParams.defaultParams.emptyParams
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    public class func loadFromNib() -> SALoadActionStatusView {
-        let rootBundle = NSBundle(forClass: SALoadActionStatusView.self)
+    public class func loadFromNib() -> LoadActionStatusView {
+        let rootBundle = NSBundle(forClass: LoadActionStatusView.self)
         let bundleURL = rootBundle.URLForResource("StartAppsKit", withExtension: "bundle")!
         let cellNib = UINib(nibName: "SALoadingStatusView", bundle: NSBundle(URL: bundleURL))
         let instant = cellNib.instantiateWithOwner(self, options: nil)
-        let loadingStatusView = instant.first! as? SALoadActionStatusView
+        let loadingStatusView = instant.first! as? LoadActionStatusView
         return loadingStatusView!
     }
 
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
-        var params: SALoadActionStatusViewParams?
+        var params: LoadActionStatusViewParams?
         if let value = loadAction.valueAny where (value as? NSArray)?.count ?? 1 > 0  {
             // No params
         } else if loadAction.status == .Loading {
@@ -172,15 +172,15 @@ public protocol StatusViewPresentable: class {
 
 public extension StatusViewPresentable {
     
-    private func createLoadActionStatusView() -> SALoadActionStatusView {
-        let tempView = SALoadActionStatusView.loadFromNib()
+    private func createLoadActionStatusView() -> LoadActionStatusView {
+        let tempView = LoadActionStatusView.loadFromNib()
         tempView.backgroundColor = UIColor.clearColor()
         backgroundView = tempView
         return tempView
     }
     
-    public var loadActionStatusView: SALoadActionStatusView {
-        get { return objc_getAssociatedObject(self, &_svak) as? SALoadActionStatusView ?? createLoadActionStatusView() }
+    public var loadActionStatusView: LoadActionStatusView {
+        get { return objc_getAssociatedObject(self, &_svak) as? LoadActionStatusView ?? createLoadActionStatusView() }
         set { objc_setAssociatedObject(self, &_svak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
     }
     
