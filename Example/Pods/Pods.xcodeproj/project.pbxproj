@@ -31,7 +31,7 @@
 		6AB6E50857A894259EFFBB45173DAC74 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6FBB24C53DD4434A87A4D5D8AA8323 /* Foundation.framework */; };
 		6BC48B3E9E0B18A3225FEDDD480293AA /* CollectionTypeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86529BB3F870AAA1001B20C4DB18E05E /* CollectionTypeExtensions.swift */; };
 		79343F26E98C3E2492737383D76465BD /* CommonCrypto-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 39BB301F5E56600B37AE0DD49F1C3B6A /* CommonCrypto-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7CEF6C3CD8628FDCF9B21D344A98B731 /* LoadingStatusView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8986C0ACC64286B7356A4BAF5718EEDD /* LoadingStatusView.xib */; };
+		7CEF6C3CD8628FDCF9B21D344A98B731 /* LoadActionStatusView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8986C0ACC64286B7356A4BAF5718EEDD /* LoadActionStatusView.xib */; };
 		7D63A1210B4042E7BE809EE2B213DC83 /* StartAppsKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BE7AAA3387ECE784D50C5DDA4FF5027D /* StartAppsKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7F4A007AF64459C8905B24EDEE65231D /* Pods-StartAppsKit_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D2320CCB678B4856A5CDA2B36089C96E /* Pods-StartAppsKit_Example-dummy.m */; };
 		84C58B369FD0BD5DB1F98B88AB107380 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E298BF7281B89CC6D53A0B07955B64B /* DateExtensions.swift */; };
@@ -203,7 +203,7 @@
 		86529BB3F870AAA1001B20C4DB18E05E /* CollectionTypeExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CollectionTypeExtensions.swift; sourceTree = "<group>"; };
 		86D82A79C810DD238BB0544FFD07B046 /* Pods_StartAppsKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StartAppsKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8933BAC8556EB8AA045EE415A03942C4 /* LoadActionViewDelegates.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LoadActionViewDelegates.swift; sourceTree = "<group>"; };
-		8986C0ACC64286B7356A4BAF5718EEDD /* LoadingStatusView.xib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.xib; path = LoadingStatusView.xib; sourceTree = "<group>"; };
+		8986C0ACC64286B7356A4BAF5718EEDD /* LoadActionStatusView.xib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.xib; path = LoadActionStatusView.xib; sourceTree = "<group>"; };
 		8E298BF7281B89CC6D53A0B07955B64B /* DateExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
 		9087CF266701E7B2BBD0C6EE322E6A13 /* Pods-StartAppsKit_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-StartAppsKit_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		908F0033992961F35CF197ECB94E14A4 /* Pods-StartAppsKit_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-StartAppsKit_Tests-umbrella.h"; sourceTree = "<group>"; };
@@ -565,7 +565,7 @@
 		910CF161092BCC8E2B15C1DBB4DAA28F /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				8986C0ACC64286B7356A4BAF5718EEDD /* LoadingStatusView.xib */,
+				8986C0ACC64286B7356A4BAF5718EEDD /* LoadActionStatusView.xib */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -1024,7 +1024,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CEF6C3CD8628FDCF9B21D344A98B731 /* LoadingStatusView.xib in Resources */,
+				7CEF6C3CD8628FDCF9B21D344A98B731 /* LoadActionStatusView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
