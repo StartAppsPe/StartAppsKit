@@ -23,46 +23,6 @@ let DateComponents: NSCalendarUnit = [
 public extension NSDate {
     
     /********************************************************************************************************/
-    // MARK: Relative Date Methods
-    /********************************************************************************************************/
-    
-    public convenience init(daysFromNow days: Int) {
-        self.init(timeIntervalSinceNow: NSTimeInterval(days))
-    }
-    /*
-    public class func dateTomorrow() -> NSDate {
-    return NSDate().dateWithDaysFromNow(1)
-    }
-    
-    public class func dateYesterday() -> NSDate {
-    return NSDate().dateWithDaysBeforeNow(1)
-    }
-    
-    public class func dateWithDaysFromNow(days: Double) -> NSDate {
-    return NSDate().dateByAddingDays(days)
-    }
-    
-    public class func dateWithDaysBeforeNow(days: Double) -> NSDate {
-    return NSDate().dateBySubtractingDays(days)
-    }
-    
-    public class func dateWithHoursFromNow(hours: Double) -> NSDate {
-    return NSDate().dateByAddingHours(hours)
-    }
-    
-    public class func dateWithHoursBeforeNow(hours: Double) -> NSDate {
-    return NSDate().dateBySubtractingHours(hours)
-    }
-    
-    public class func dateWithMinutesFromNow(minutes: Double) -> NSDate {
-    return NSDate().dateByAddingMinutes(minutes)
-    }
-    
-    public class func dateWithMinutesBeforeNow(minutes: Double) -> NSDate {
-    return NSDate().dateBySubtractingMinutes(minutes)
-    }*/
-    
-    /********************************************************************************************************/
     // MARK: String Date Methods
     /********************************************************************************************************/
     
@@ -89,7 +49,18 @@ public extension NSDate {
         return formatter.stringFromDate(self)
     }
     
+    public func stringWithFormat(dateStyle dateStyle: NSDateFormatterStyle? = nil, timeStyle: NSDateFormatterStyle? = nil, locale: String? = nil) -> String {
+        let formatter = NSDateFormatter()
+        formatter.dateStyle ?= dateStyle;
+        formatter.timeStyle ?= timeStyle;
+        if let locale = locale {
+            formatter.locale = NSLocale(localeIdentifier: locale)
+        }
+        return formatter.stringFromDate(self)
+    }
+    
     public func shortDateString(locale locale: String? = nil) -> String {
+        //return stringWithFormat(dateStyle: .ShortStyle, locale: locale)
         return stringWithFormat((locale?.containsString("es") ?? false ? "dd/MM/yyyy" : "MM/dd/yyyy"), locale: locale)
     }
     
