@@ -126,7 +126,7 @@ public class LoadActionStatusView: UIView, LoadActionDelegate {
     public class func loadFromNib() -> LoadActionStatusView {
         let rootBundle = NSBundle(forClass: LoadActionStatusView.self)
         let bundleURL = rootBundle.URLForResource("StartAppsKit", withExtension: "bundle")!
-        let cellNib = UINib(nibName: "SALoadingStatusView", bundle: NSBundle(URL: bundleURL))
+        let cellNib = UINib(nibName: "LoadActionStatusView", bundle: NSBundle(URL: bundleURL))
         let instant = cellNib.instantiateWithOwner(self, options: nil)
         let loadingStatusView = instant.first! as? LoadActionStatusView
         return loadingStatusView!
