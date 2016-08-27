@@ -10,20 +10,14 @@ import Foundation
 
 import UIKit
 
-public class StaticLoadAction: LoadAction<[StaticTableItemProtocol]> {
+public class StaticLoadAction: LoadAction<StaticContent> {
     
-    public typealias StaticItemsResultType    = Result<[StaticTableItemProtocol], ErrorType>
-    public typealias StaticItemsResultClosure = (result: StaticItemsResultType) -> Void
-    public typealias StaticItemsResult        = (completion: StaticItemsResultClosure) -> Void
+    public typealias StaticContentResultType    = Result<StaticContent, ErrorType>
+    public typealias StaticContentResultClosure = (result: StaticContentResultType) -> Void
+    public typealias StaticContentResult        = (completion: StaticContentResultClosure) -> Void
     
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
     public init(
-        staticItems: StaticItemsResult,
+        staticItems: StaticContentResult,
         delegates:   [LoadActionDelegate] = [],
         dummy:       (() -> ())? = nil)
     {
@@ -36,37 +30,58 @@ public class StaticLoadAction: LoadAction<[StaticTableItemProtocol]> {
 }
 
 
-// Section Management
-//public class StaticItemSection {
-//    var header:  String?
-//    var items: [StaticTableItem]!
-//    func append(item: StaticTableItem) {
-//        items.append(item)
-//    }
-//    init(header: String? = nil, items: [StaticTableItem]? = nil) {
-//        self.header = header
-//        self.items = items ?? [StaticTableItem]()
-//    }
-//}
-//public func += (inout left: [StaticItemSection], right: StaticItemSection?) {
-//    if let right = right { left.append(right) }
-//}
-//public func += (inout left: StaticItemSection, right: StaticTableItem?) {
-//    if let right = right { left.append(right) }
-//}
-
-
-
-// Default cell
-public protocol StaticTableItemProtocol {
+public class StaticContent: NSObject, UITableViewDataSource {
+    public var sections: [StaticContentSection] = []
+    
+    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return sections.count
+    }
+    
+    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sections[section].title
+    }
+    
+    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return sections[section].items.count
+    }
+    
+    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        return sections[indexPath.section].items[indexPath.row].dequeueReusableCell(tableView: tableView, indexPath: indexPath)
+    }
     
 }
+public func += (inout left: StaticContent, right: StaticContentSection) {
+    left.sections.append(right)
+}
 
-public class StaticTableItem<C: UITableViewCell>: StaticTableItemProtocol {
+
+public class StaticContentSection {
+    public var title: String?
+    public var items: [StaticContentItemProtocol] = []
+    public init(title: String? = nil) {
+        self.title = title
+    }
+}
+public func += (inout left: [StaticContentSection], right: StaticContentSection) {
+    left.append(right)
+}
+public func += (inout left: StaticContentSection, right: StaticContentItemProtocol) {
+    left.items.append(right)
+}
+
+
+
+public protocol StaticContentItemProtocol {
+    func dequeueReusableCell(tableView tableView: UITableView, indexPath: NSIndexPath) -> StaticTableViewCell
+    func doOnSelection(cell cell: StaticTableViewCell)
+    func doOnAction(cell cell: StaticTableViewCell)
+}
+
+public class StaticContentItem<C: StaticTableViewCell>: StaticContentItemProtocol {
     public var cellIdentifier: String
-    public var customization: ((cell: C) -> Void)?
-    public var onSelection:   ((cell: C) -> Void)?
-    public var onAction:      ((cell: C) -> Void)?
+    private var customization: ((cell: C) -> Void)?
+    private var onSelection:   ((cell: C) -> Void)?
+    private var onAction:      ((cell: C) -> Void)?
     public init(cellIdentifier: String) {
         self.cellIdentifier = cellIdentifier
     }
@@ -79,14 +94,26 @@ public class StaticTableItem<C: UITableViewCell>: StaticTableItemProtocol {
     public func setOnAction(onAction: ((cell: C) -> Void)?) {
         self.onAction = onAction
     }
+    public func dequeueReusableCell(tableView tableView: UITableView, indexPath: NSIndexPath) -> StaticTableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! C
+        cell.contentItem = self
+        customization?(cell: cell)
+        return cell
+    }
+    public func doOnSelection(cell cell: StaticTableViewCell) {
+        onSelection?(cell: self as! C)
+    }
+    public func doOnAction(cell cell: StaticTableViewCell) {
+        onAction?(cell: self as! C)
+    }
 }
 
 public class StaticTableViewCell: UITableViewCell {
     public class func defaultIdentifier() -> String { return "StaticTableViewCell" }
-    public var tableItem: StaticTableItem<UITableViewCell>!
+    public var contentItem: StaticContentItemProtocol!
     public override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        tableItem.onSelection?(cell: self)
+        contentItem.doOnSelection(cell: self)
     }
 }
 public class TitleStaticTableViewCell: StaticTableViewCell {
@@ -106,39 +133,21 @@ public class ButtonStaticTableViewCell: PictureStaticTableViewCell {
     public override class func defaultIdentifier() -> String { return "ButtonStaticTableViewCell" }
     public override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        tableItem.onAction?(cell: self)
+        contentItem.doOnAction(cell: self)
     }
 }
-
 public class SwitchStaticTableViewCell: TextStaticTableViewCell {
     public override class func defaultIdentifier() -> String { return "SwitchStaticTableViewCell" }
     @IBOutlet weak var switchView: UISwitch?
-    public override var tableItem: StaticTableItem<UITableViewCell>! {
+    public override var contentItem: StaticContentItemProtocol! {
         didSet {
             switchView?.setAction(controlEvents: .ValueChanged, action: { (sender) in
-                self.tableItem.onAction?(cell: self)
+                self.contentItem.doOnAction(cell: self)
             })
         }
     }
 }
 
-//// Check Cell
-//public class SACheckTableObject: SATitleTableObject {
-//    public var checkOn:  Bool
-//    public var onAction: ((sender: SACheckTableViewCell) -> Void)
-//    init(cellIdentifier: String = "CheckCell", title: String?, checkOn: Bool,
-//         customization: ((cell: SATableViewCell) -> Void)? = nil, onAction: ((sender: SACheckTableViewCell) -> Void)) {
-//        self.checkOn  = checkOn
-//        self.onAction = onAction
-//        super.init(cellIdentifier: cellIdentifier, title: title, customization: customization, onSelection: { () -> Void in  })
-//        if self.customization == nil {
-//            self.customization = { (cell: SATableViewCell) -> Void in
-//                let checkOn = (cell.tableObject as? SACheckTableObject)?.checkOn ?? false
-//                cell.accessoryType = checkOn ? .Checkmark : .None
-//            }
-//        }
-//    }
-//}
 //public class SACheckTableViewCell: SATitleTableViewCell {
 //    //@IBOutlet weak var checkView: UIImageView?
 //    public override var tableObject: SATableObject! {
@@ -150,20 +159,6 @@ public class SwitchStaticTableViewCell: TextStaticTableViewCell {
 //    public override func setSelected(selected: Bool, animated: Bool) {
 //        super.setSelected(selected, animated: animated)
 //        if selected { (tableObject as! SACheckTableObject).onAction(sender: self) }
-//    }
-//}
-//
-//// Check Cell
-//public class SATextFieldTableObject: SATitleTableObject {
-//    public var text: String?
-//    public var placeholder: String?
-//    public var onAction: ((sender: SATextFieldTableViewCell) -> Void)
-//    init(cellIdentifier: String = "TextFieldCell", title: String?, text: String?, placeholder: String?,
-//         customization: ((cell: SATableViewCell) -> Void)? = nil, onAction: ((sender: SATextFieldTableViewCell) -> Void)) {
-//        self.text = text
-//        self.placeholder = placeholder
-//        self.onAction = onAction
-//        super.init(cellIdentifier: cellIdentifier, title: title, customization: customization, onSelection: { () -> Void in  })
 //    }
 //}
 //public class SATextFieldTableViewCell: SATitleTableViewCell {
