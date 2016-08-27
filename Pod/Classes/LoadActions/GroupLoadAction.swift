@@ -13,7 +13,7 @@ public enum GroupLoadOrder {
     case Parallel, Sequential, SequentialForced
 }
 
-public enum IgnoreValue { }
+public struct IgnoreValue { }
 
 public class GroupLoadAction<T>: LoadAction<T> {
     
@@ -66,11 +66,21 @@ public class GroupLoadAction<T>: LoadAction<T> {
                     self.loadSequential(completion: completion)
                 } else {
                     self.actionsToLoad = []
-                    completion(result: Result.Failure(self.error!))
+                    if let error = self.error {
+                        completion(result: .Failure(error))
+                    } else {
+                        let error = NSError(domain: "LoadAction[Group]", code: 2913, description: "Secuential load no error processed")
+                        completion(result: .Failure(error))
+                    }
                 }
             }
         } else {
-            completion(result: Result.Success(self.value!))
+            if let value = self.value {
+                completion(result: .Success(value))
+            } else {
+                let error = NSError(domain: "LoadAction[Group]", code: 2914, description: "Secuential load no value processed")
+                completion(result: .Failure(error))
+            }
         }
     }
     
@@ -85,9 +95,12 @@ public class GroupLoadAction<T>: LoadAction<T> {
             actionToLoad.loadAny() { (result) -> Void in
                 if self.actions.find({ $0.status != .Ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
-                        completion(result: Result.Failure(error))
+                        completion(result: .Failure(error))
+                    } else if let value = self.value {
+                        completion(result: .Success(value))
                     } else {
-                        completion(result: Result.Success(self.value!))
+                        let error = NSError(domain: "LoadAction[Group]", code: 2915, description: "Parallel load no value processed")
+                        completion(result: .Failure(error))
                     }
                 } else {
                     self.sendDelegateUpdates()
@@ -153,21 +166,21 @@ public class GroupLoadAction<T>: LoadAction<T> {
         }
     }
     
-    class var DefaultProcessErrorFirst: ProcessError {
+    private class var DefaultProcessErrorFirst: ProcessError {
         return { (actions: [LoadActionLoadableType]) -> ErrorType? in
             return actions.find({ $0.error != nil })?.error
         }
     }
     
-    class var DefaultProcessValueLast: ProcessValue {
+    private class var DefaultProcessValueLast: ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
             return actions.reverse().find({ $0.valueAny as? T != nil })?.valueAny as? T
         }
     }
     
-    class var DefaultProcessValueIgnore: ProcessValue {
+    private class var DefaultProcessValueIgnore: ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
-            return nil
+            return IgnoreValue() as! T
         }
     }
     
