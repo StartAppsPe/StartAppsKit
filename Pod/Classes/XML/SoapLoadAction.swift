@@ -101,7 +101,6 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLElement, AEXMLElement> {
         serviceUrl:  ServiceUrlResult,
         serviceName: String,
         postObjects: [PostObject],
-        process:     ProcessResult? = nil,
         delegates:   [LoadActionDelegate] = [],
         dummy:       (() -> ())? = nil)
     {

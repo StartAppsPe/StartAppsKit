@@ -15,18 +15,18 @@ public extension String {
     }
     
     /*func md5() -> String! {
-        let str = cStringUsingEncoding(NSUTF8StringEncoding)
-        let strLen = CUnsignedInt(lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
-        let digestLen = Int(CC_MD5_DIGEST_LENGTH)
-        let result = UnsafeMutablePointer<CUnsignedChar>.alloc(digestLen)
-        CC_MD5(str!, strLen, result)
-        let hash = NSMutableString()
-        for i in 0..<digestLen {
-            hash.appendFormat("%02x", result[i])
-        }
-        result.destroy()
-        return String(format: hash as String)
-    }*/
+     let str = cStringUsingEncoding(NSUTF8StringEncoding)
+     let strLen = CUnsignedInt(lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
+     let digestLen = Int(CC_MD5_DIGEST_LENGTH)
+     let result = UnsafeMutablePointer<CUnsignedChar>.alloc(digestLen)
+     CC_MD5(str!, strLen, result)
+     let hash = NSMutableString()
+     for i in 0..<digestLen {
+     hash.appendFormat("%02x", result[i])
+     }
+     result.destroy()
+     return String(format: hash as String)
+     }*/
     
     public func stringByRemovingHTML() -> String {
         return (try! NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!,
@@ -48,9 +48,42 @@ public extension String {
         return self.substring(range: 0..<end)
     }
     
-    public func substring(start: String, end: String) -> String? {
-        if let startRange = rangeOfString(start), endRange = rangeOfString(end) where startRange.endIndex <= endRange.startIndex {
-            return self[startRange.endIndex..<endRange.startIndex]
+    public func substring(start start: Int, end: Int) -> String {
+        return self.substring(range: start..<end)
+    }
+    
+    public func substring(start start: Index) -> String {
+        return self.substringWithRange(start..<self.endIndex)
+    }
+    
+    public func substring(end end: Index) -> String {
+        return self.substringWithRange(self.startIndex..<end)
+    }
+    
+    public func substring(start start: Index, end: Index) -> String {
+        return self.substringWithRange(start..<end)
+    }
+    
+    public func substring(start start: String, end: String) -> String? {
+        if let startRange = rangeOfString(start) {
+            let newString = self.substring(start: startRange.endIndex)
+            if let endRange = newString.rangeOfString(end) {
+                return newString.substring(end: endRange.startIndex)
+            }
+        }
+        return nil
+    }
+    
+    public func substring(start start: String) -> String? {
+        if let startRange = rangeOfString(start) {
+            return substring(start: startRange.endIndex)
+        }
+        return nil
+    }
+    
+    public func substring(end end: String) -> String? {
+        if let endRange = rangeOfString(end) {
+            return substring(end: endRange.startIndex)
         }
         return nil
     }

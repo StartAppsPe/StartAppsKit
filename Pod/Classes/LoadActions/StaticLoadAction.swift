@@ -16,6 +16,8 @@ public class StaticLoadAction: LoadAction<StaticContent> {
     public typealias StaticContentResultClosure = (result: StaticContentResultType) -> Void
     public typealias StaticContentResult        = (completion: StaticContentResultClosure) -> Void
     
+    public let dataSource = StaticDataSource()
+    
     public init(
         staticItems: StaticContentResult,
         delegates:   [LoadActionDelegate] = [],
@@ -25,30 +27,37 @@ public class StaticLoadAction: LoadAction<StaticContent> {
             load: staticItems,
             delegates: delegates
         )
+        dataSource.loadAction = self
     }
     
 }
 
-
-public class StaticContent: NSObject, UITableViewDataSource {
-    public var sections: [StaticContentSection] = []
+public class StaticDataSource: NSObject, UITableViewDataSource {
+    
+    weak var loadAction: StaticLoadAction!
     
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return sections.count
+        return loadAction.value?.sections.count ?? 0
     }
     
     public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section].title
+        return loadAction.value?.sections[section].title
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sections[section].items.count
+        return loadAction.value?.sections[section].items.count ?? 0
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return sections[indexPath.section].items[indexPath.row].dequeueReusableCell(tableView: tableView, indexPath: indexPath)
+        return loadAction.value!.sections[indexPath.section].items[indexPath.row].dequeueReusableCell(tableView: tableView, indexPath: indexPath)
     }
     
+}
+
+public class StaticContent {
+    public var sections: [StaticContentSection] = []
+    public init() {
+    }
 }
 public func += (inout left: StaticContent, right: StaticContentSection) {
     left.sections.append(right)
@@ -101,10 +110,10 @@ public class StaticContentItem<C: StaticTableViewCell>: StaticContentItemProtoco
         return cell
     }
     public func doOnSelection(cell cell: StaticTableViewCell) {
-        onSelection?(cell: self as! C)
+        onSelection?(cell: cell as! C)
     }
     public func doOnAction(cell cell: StaticTableViewCell) {
-        onAction?(cell: self as! C)
+        onAction?(cell: cell as! C)
     }
 }
 
@@ -113,7 +122,7 @@ public class StaticTableViewCell: UITableViewCell {
     public var contentItem: StaticContentItemProtocol!
     public override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        contentItem.doOnSelection(cell: self)
+        if selected { contentItem.doOnSelection(cell: self) }
     }
 }
 public class TitleStaticTableViewCell: StaticTableViewCell {
@@ -133,7 +142,7 @@ public class ButtonStaticTableViewCell: PictureStaticTableViewCell {
     public override class func defaultIdentifier() -> String { return "ButtonStaticTableViewCell" }
     public override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        contentItem.doOnAction(cell: self)
+        if selected { contentItem.doOnAction(cell: self) }
     }
 }
 public class SwitchStaticTableViewCell: TextStaticTableViewCell {

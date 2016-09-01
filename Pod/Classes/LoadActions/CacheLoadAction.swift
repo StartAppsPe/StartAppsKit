@@ -10,9 +10,9 @@ import Foundation
 
 public class CacheLoadAction<T>: LoadAction<T> {
     
-    public typealias UseCacheResultType     = Result<Bool, ErrorType>
-    public typealias UseCacheResultClosure  = (result: UseCacheResultType) -> Void
-    public typealias UseCacheResult         = (loadAction: CacheLoadAction<T>, completion: UseCacheResultClosure) -> Void
+    public typealias UpdateCacheResultType     = Result<Bool, ErrorType>
+    public typealias UpdateCacheResultClosure  = (result: UpdateCacheResultType) -> Void
+    public typealias UpdateCacheResult         = (loadAction: CacheLoadAction<T>, completion: UpdateCacheResultClosure) -> Void
     
     public typealias SaveToCacheResultType    = Result<Bool, ErrorType>
     public typealias SaveToCacheResultClosure = (result: SaveToCacheResultType) -> Void
@@ -21,7 +21,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
     public var cacheLoadAction:    LoadAction<T>
     public var baseLoadAction:     LoadAction<T>
     public var saveToCacheClosure: SaveToCacheResult?
-    public var useCacheClosure:    UseCacheResult
+    public var updateCacheClosure: UpdateCacheResult
     
     private var useForcedNext: Bool = false
     
@@ -47,16 +47,16 @@ public class CacheLoadAction<T>: LoadAction<T> {
             useForcedNext = false
             return
         }
-        useCacheClosure(loadAction: self) { (useCacheResult) in
-            switch useCacheResult {
+        updateCacheClosure(loadAction: self) { (updateCacheResult) in
+            switch updateCacheResult {
             case .Failure(let error):
                 completion(result: Result.Failure(error))
-            case .Success(let useCache):
-                if useCache {
-                    self.loadCache(completion: completion)
-                } else {
-                    self.loadBase(completion: completion)
-                }
+            case .Success(let updateCache):
+                self.loadCache(completion: { (result) in
+                    if updateCache {
+                        self.loadBase(completion: completion)
+                    }
+                })
             }
         }
         
@@ -108,14 +108,14 @@ public class CacheLoadAction<T>: LoadAction<T> {
         baseLoadAction:  LoadAction<T>,
         cacheLoadAction: LoadAction<T>,
         saveToCache:     SaveToCacheResult?,
-        useCache:        UseCacheResult,
+        updateCache:     UpdateCacheResult,
         delegates:       [LoadActionDelegate] = [],
         dummy:           (() -> ())? = nil)
     {
         self.baseLoadAction     = baseLoadAction
         self.cacheLoadAction    = cacheLoadAction
         self.saveToCacheClosure = saveToCache
-        self.useCacheClosure    = useCache
+        self.updateCacheClosure = updateCache
         super.init(
             load:      { _ in },
             delegates: delegates

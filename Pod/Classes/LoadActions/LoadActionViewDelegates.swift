@@ -29,7 +29,7 @@ extension UIButton: LoadActionDelegate {
         case .Loading:
             activityIndicatorView?.startAnimating()
             userInteractionEnabled = false
-            tempTitle = " "
+            tempTitle = ""
         case .Ready, .Paging:
             activityIndicatorView?.stopAnimating()
             activityIndicatorView  = nil
