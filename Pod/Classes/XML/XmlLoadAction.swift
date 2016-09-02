@@ -9,7 +9,7 @@
 import Foundation
 import AEXML
 
-public class XmlLoadAction: ProcessLoadAction<NSData, AEXMLElement> {
+public class XmlLoadAction: ProcessLoadAction<NSData, AEXMLDocument> {
     
     private func processInner(loadedValue loadedValue: NSData, completion: ProcessResultClosure) {
         do {

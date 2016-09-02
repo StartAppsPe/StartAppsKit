@@ -29,7 +29,7 @@ public struct PostObject {
     }
 }
 
-public class SoapLoadAction: ProcessLoadAction<AEXMLElement, AEXMLElement> {
+public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
     
     public typealias ServiceUrlResultType     = Result<NSURL, ErrorType>
     public typealias ServiceUrlResultClosure  = (result: ServiceUrlResultType) -> Void
@@ -83,7 +83,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLElement, AEXMLElement> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func processInner(loadedValue loadedValue: AEXMLElement, completion: ProcessResultClosure) {
+    private func processInner(loadedValue loadedValue: AEXMLDocument, completion: ProcessResultClosure) {
         //let serviceNameL = serviceName.lowercasedFirstString()
         //let loadedSoap = loadedXml["soapenv:Envelope"]["soapenv:Body"]["\(serviceNameL)Response"]["\(serviceNameL)Return"]
         let loadedSoap = loadedValue.children[0].children[0].children[0].children[0]
@@ -108,7 +108,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLElement, AEXMLElement> {
         self.serviceName        = serviceName
         self.postObjects        = postObjects
         super.init(
-            baseLoadAction: LoadAction<AEXMLElement>(load: { _ in }),
+            baseLoadAction: LoadAction<AEXMLDocument>(load: { _ in }),
             process: { _,_ in },
             delegates: delegates
         )

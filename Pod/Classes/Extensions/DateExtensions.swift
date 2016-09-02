@@ -80,7 +80,7 @@ public extension NSDate {
         return stringWithFormat("H:mm", locale: locale)
     }
     
-    public func timeAgoString(exact: Bool = false, locale: String? = nil) -> String {
+    public func timeAgoString(exact exact: Bool = false, locale: String? = nil) -> String {
         var timeAgoValue: Int!
         var timeAgoUnit:  String!
         let secondsAgo = NSTimeInterval(secondsBeforeNow()) 

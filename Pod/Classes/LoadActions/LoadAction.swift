@@ -44,7 +44,7 @@ public class LoadAction<T>: LoadActionType {
      - parameter completion: Closure called when operation finished
      */
     public func load(completion completion: LoadResultClosure?) {
-        print(owner: "LoadAction[Main]", items: "Load Began", level: .Info)
+        print(owner: "LoadAction[Main]", items: "Load Began", level: .Verbose)
         
         // Adjust loading status to loading kind
         status = .Loading
@@ -58,7 +58,7 @@ public class LoadAction<T>: LoadActionType {
                 print(owner: "LoadAction[Main]", items: "Loaded Failure (\(error))", level: .Error)
                 self.error = error
             case .Success(let loadedValue):
-                print(owner: "LoadAction[Main]", items: "Loaded Success", level: .Info)
+                print(owner: "LoadAction[Main]", items: "Loaded Success", level: .Verbose)
                 self.value = loadedValue
             }
             
