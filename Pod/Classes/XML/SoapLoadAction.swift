@@ -84,11 +84,12 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
      - parameter completion: Closure called when operation finished
      */
     private func processInner(loadedValue loadedValue: AEXMLDocument, completion: ProcessResultClosure) {
-        //let serviceNameL = serviceName.lowercasedFirstString()
-        //let loadedSoap = loadedXml["soapenv:Envelope"]["soapenv:Body"]["\(serviceNameL)Response"]["\(serviceNameL)Return"]
-        let loadedSoap = loadedValue.children[0].children[0].children[0].children[0]
-        // FIX: Improve checks here
-        completion(result: Result.Success(loadedSoap))
+        guard let loadedSoap = loadedValue.children.first?.children.first?.children.first?.children.first else {
+            let error = NSError(domain: "LoadAction[SOAP]", code: 8328, description: "Contenido SOAP inválido")
+            completion(result: .Failure(error))
+            return
+        }
+        completion(result: .Success(loadedSoap))
     }
     
     /**
