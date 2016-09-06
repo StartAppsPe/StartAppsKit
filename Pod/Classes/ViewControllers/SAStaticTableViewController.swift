@@ -34,7 +34,7 @@ public class SAStaticTableViewController: SATableViewController {
     }
     
     /********************************************************************************************************/
-    // MARK: SATableViewController Subclass
+    // MARK: TableView Methods
     /********************************************************************************************************/
     
     func loadingStatus(tableView tableView: UITableView, section: Int?) -> LoadingStatus {
