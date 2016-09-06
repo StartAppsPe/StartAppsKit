@@ -147,7 +147,7 @@ public class ButtonStaticTableViewCell: PictureStaticTableViewCell {
 }
 public class SwitchStaticTableViewCell: TextStaticTableViewCell {
     public override class func defaultIdentifier() -> String { return "SwitchStaticTableViewCell" }
-    @IBOutlet weak var switchView: UISwitch?
+    @IBOutlet public weak var switchView: UISwitch?
     public override var contentItem: StaticContentItemProtocol! {
         didSet {
             switchView?.setAction(controlEvents: .ValueChanged, action: { (sender) in
