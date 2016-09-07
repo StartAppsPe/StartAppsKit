@@ -19,13 +19,11 @@ public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
     public init(
         urlRequest: WebLoadAction.UrlRequestResult,
         process:    ProcessResult? = nil,
-        delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         super.init(
             baseLoadAction: WebLoadAction(urlRequest: urlRequest),
-            process:   process,
-            delegates: delegates
+            process:   process
         )
     }
     
@@ -70,16 +68,20 @@ public class WebLoadAction: LoadAction<NSData> {
     
     public init(
         urlRequest: UrlRequestResult,
-        delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.urlRequestClosure  = urlRequest
         super.init(
-            load: { _ in },
-            delegates: delegates
+            load: { _ in }
         )
         loadClosure = { (result) -> Void in
             self.loadInner(completion: result)
         }
     }
 }
+
+
+
+
+
+

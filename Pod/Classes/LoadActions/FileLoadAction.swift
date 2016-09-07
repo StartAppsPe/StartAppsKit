@@ -13,13 +13,11 @@ public class ProcessFileLoadAction<T>: ProcessLoadAction<NSData, T> {
     public init(
         filePath:   FileLoadAction.FilePathResult,
         process:    ProcessResult? = nil,
-        delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         super.init(
             baseLoadAction: FileLoadAction(filePath: filePath),
-            process:   process,
-            delegates: delegates
+            process:   process
         )
     }
     
@@ -54,13 +52,11 @@ public class FileLoadAction: LoadAction<NSData> {
     
     public init(
         filePath:   FilePathResult,
-        delegates:  [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.filePathClosure  = filePath
         super.init(
-            load: { _ in },
-            delegates: delegates
+            load: { _ in }
         )
         loadClosure = { (result) -> Void in
             self.loadInner(completion: result)

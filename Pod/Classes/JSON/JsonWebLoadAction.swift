@@ -23,13 +23,11 @@ public class JsonLoadAction: ProcessLoadAction<NSData, JSON> {
     
     public init(
         baseLoadAction: LoadAction<NSData>,
-        delegates:      [LoadActionDelegate] = [],
         dummy:          (() -> ())? = nil)
     {
         super.init(
             baseLoadAction: baseLoadAction,
-            process: { _,_ in },
-            delegates: delegates
+            process: { _,_ in }
         )
         self.processClosure = { (loadedValue, completion) -> Void in
             self.processInner(loadedValue: loadedValue, completion: completion)

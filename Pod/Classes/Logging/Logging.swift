@@ -8,8 +8,8 @@
 
 import Foundation
 
-public var _PrintLevelCurrent = PrintLevel.Verbose
-public var _PrintIndentation1 = 15
+public var _PrintLevelCurrent = PrintLevel.Debug
+public var _PrintIndentation1 = 25
 public var _PrintIndentation2 = 100
 
 public enum PrintLevel: Int {
@@ -32,13 +32,13 @@ public func print(owner owner: String, items: Any..., separator: String = ", ", 
     guard level.rawValue <= PrintLevel.current.rawValue else { return }
     var printString = "\(owner): "
     let indentationCount = max(PrintLevel.indentation1-printString.length, 0)
-    let indentation = String(count:indentationCount, repeatedValue:" " as Character)
+    let indentation = String(count: indentationCount, repeatedValue: " " as Character)
     var itemsString = String(items[0])
     for i in 1..<items.count { itemsString.appendContentsOf("\(separator)\(String(items[i]))") }
     printString.appendContentsOf("\(indentation)\(itemsString)")
     if level.rawValue <= PrintLevel.Warning.rawValue {
         let indentation2Count = max(PrintLevel.indentation2-printString.length, 0)
-        let indentation2 = String(count:indentation2Count, repeatedValue:" " as Character)
+        let indentation2 = String(count: indentation2Count, repeatedValue: " " as Character)
         printString.appendContentsOf("\(indentation2)\(level)")
     }
     print(printString, terminator: terminator)

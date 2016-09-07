@@ -25,7 +25,7 @@ public class LoadAction<T>: LoadActionType {
         didSet { updatedProperties.insert(.Error) }
     }
     public var value: T? {
-        didSet { updatedProperties.insert(.Value); date = NSDate() }
+        didSet { updatedProperties.insert(.Value); date = NSDate.now() }
     }
     public var date: NSDate? {
         didSet { updatedProperties.insert(.Date) }
@@ -89,12 +89,22 @@ public class LoadAction<T>: LoadActionType {
      */
     public init(
         load:       LoadResult,
-        delegates: [LoadActionDelegate] = [],
         dummy:      (() -> ())? = nil)
     {
         self.loadClosure    = load
-        self.delegates      = delegates
     }
     
 }
 
+
+public extension LoadAction {
+    
+    public class func start<N>(startLoadAction: () -> LoadAction<N>, dummy: (() -> ())? = nil) -> LoadAction<N> {
+        return startLoadAction()
+    }
+    
+    public func then<N>(thenLoadAction: (loadAction: LoadAction<T>) -> LoadAction<N>, dummy: (() -> ())? = nil) -> LoadAction<N> {
+        return thenLoadAction(loadAction: self)
+    }
+    
+}

@@ -102,7 +102,6 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
         serviceUrl:  ServiceUrlResult,
         serviceName: String,
         postObjects: [PostObject],
-        delegates:   [LoadActionDelegate] = [],
         dummy:       (() -> ())? = nil)
     {
         self.serviceUrlClosure  = serviceUrl
@@ -110,8 +109,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
         self.postObjects        = postObjects
         super.init(
             baseLoadAction: LoadAction<AEXMLDocument>(load: { _ in }),
-            process: { _,_ in },
-            delegates: delegates
+            process: { _,_ in }
         )
         self.baseLoadAction = XmlLoadAction(
             baseLoadAction: WebLoadAction(

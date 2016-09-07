@@ -74,7 +74,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
         print(owner: "LoadAction[Cache]", items: "Cache Load Began", level: .Info)
         cacheLoadAction.load { (result) in
             switch result {
-            case .Success(let value):
+            case .Success(_):
                 print(owner: "LoadAction[Cache]", items: "Cache Load Success", level: .Info)
                 completion(result: result)
             case .Failure(let error):
@@ -98,7 +98,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
                     print(owner: "LoadAction[Cache]", items: "Save to Cache Began", level: .Info)
                     saveToCacheClosure(loadedValue: value, loadAction: self, completion: { (saveToCacheResult) in
                         switch saveToCacheResult {
-                        case .Success(let value):
+                        case .Success(_):
                             print(owner: "LoadAction[Cache]", items: "Save to Cache Success", level: .Info)
                             print(owner: "LoadAction[Cache]", items: "Base Load Success", level: .Info)
                             completion(result: result)
@@ -133,7 +133,6 @@ public class CacheLoadAction<T>: LoadAction<T> {
         cacheLoadAction: LoadAction<T>,
         saveToCache:     SaveToCacheResult?,
         updateCache:     UpdateCacheResult,
-        delegates:       [LoadActionDelegate] = [],
         dummy:           (() -> ())? = nil)
     {
         self.baseLoadAction     = baseLoadAction
@@ -141,8 +140,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
         self.saveToCacheClosure = saveToCache
         self.updateCacheClosure = updateCache
         super.init(
-            load:      { _ in },
-            delegates: delegates
+            load:      { _ in }
         )
         loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)

@@ -49,7 +49,6 @@ public class ProcessLoadAction<A, T>: LoadAction<T> {
     public init(
         baseLoadAction: LoadAction<A>,
         process:        ProcessResult?,
-        delegates:      [LoadActionDelegate] = [],
         dummy:          (() -> ())? = nil)
     {
         self.baseLoadAction = baseLoadAction
@@ -59,12 +58,22 @@ public class ProcessLoadAction<A, T>: LoadAction<T> {
             self.processClosure = ProcessLoadAction<A, T>.automaticProcess()
         }
         super.init(
-            load:      { _ in },
-            delegates: delegates
+            load:      { _ in }
         )
         self.loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)
         }
+    }
+    
+}
+
+public extension LoadAction {
+    
+    public func process<N>(processClosure: ProcessLoadAction<T, N>.ProcessResult, dummy: (() -> ())? = nil) -> ProcessLoadAction<T, N> {
+        return ProcessLoadAction<T, N>(
+            baseLoadAction: self,
+            process: processClosure
+        )
     }
     
 }

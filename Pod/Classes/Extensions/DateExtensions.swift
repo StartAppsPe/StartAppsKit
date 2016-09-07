@@ -10,6 +10,20 @@
 
 import Foundation
 
+private var _forcedNowDate: NSDate?
+public extension NSDate {
+    
+    public class var forcedNow: NSDate? {
+        set { _forcedNowDate = newValue }
+        get { return _forcedNowDate }
+    }
+    
+    public class func now() -> NSDate {
+        return _forcedNowDate ?? NSDate()
+    }
+    
+}
+
 let TimeIntervalMinute: NSTimeInterval = 60
 let TimeIntervalHour:   NSTimeInterval = 3600
 let TimeIntervalDay:    NSTimeInterval = 86400
@@ -26,7 +40,7 @@ public extension NSDate {
     // MARK: String Date Methods
     /********************************************************************************************************/
     
-    convenience init?(string: String, format: String, locale: String? = nil) {
+    public convenience init?(string: String, format: String, locale: String? = nil) {
         let formatter = NSDateFormatter()
         formatter.dateFormat = format
         if let locale = locale {
@@ -35,7 +49,7 @@ public extension NSDate {
         if let date = formatter.dateFromString(string) {
             self.init(timeInterval:0, sinceDate:date)
         } else {
-            self.init(timeInterval:0, sinceDate:NSDate())
+            self.init(timeInterval:0, sinceDate:NSDate.now())
             return nil
         }
     }
@@ -140,15 +154,15 @@ public extension NSDate {
     }
     
     public func isToday() -> Bool {
-        return isSameDayAsDate(NSDate())
+        return isSameDayAsDate(NSDate.now())
     }
     
     public func isTomorrow() -> Bool {
-        return isSameDayAsDate(NSDate().dateByAddingDays(1))
+        return isSameDayAsDate(NSDate.now().dateByAddingDays(1))
     }
     
     public func isYesterday() -> Bool {
-        return isSameDayAsDate(NSDate().dateBySubtractingDays(1))
+        return isSameDayAsDate(NSDate.now().dateBySubtractingDays(1))
     }
     
     public func isSameWeekAsDate(date: NSDate) -> Bool {
@@ -163,15 +177,15 @@ public extension NSDate {
     }
     
     public func isThisWeek() -> Bool {
-        return isSameWeekAsDate(NSDate())
+        return isSameWeekAsDate(NSDate.now())
     }
     
     public func isNextWeek() -> Bool {
-        return isSameWeekAsDate(NSDate().dateByAddingDays(7))
+        return isSameWeekAsDate(NSDate.now().dateByAddingDays(7))
     }
     
     public func isLastWeek() -> Bool {
-        return isSameWeekAsDate(NSDate().dateBySubtractingDays(7))
+        return isSameWeekAsDate(NSDate.now().dateBySubtractingDays(7))
     }
     
     public func isSameMonthAsDate(date: NSDate) -> Bool {
@@ -182,7 +196,7 @@ public extension NSDate {
     }
     
     public func isThisMonth() -> Bool {
-        return isSameMonthAsDate(NSDate())
+        return isSameMonthAsDate(NSDate.now())
     }
     
     public func isSameYearAsDate(date: NSDate) -> Bool {
@@ -192,7 +206,7 @@ public extension NSDate {
     }
     
     public func isThisYear() -> Bool {
-        return isSameYearAsDate(NSDate())
+        return isSameYearAsDate(NSDate.now())
     }
     
     public func isEarlierThanDate(date: NSDate) -> Bool {
@@ -216,11 +230,11 @@ public extension NSDate {
     }
     
     public func isInPast() -> Bool {
-        return isEarlierThanDate(NSDate())
+        return isEarlierThanDate(NSDate.now())
     }
     
     public func isInFuture() -> Bool {
-        return isLaterThanDate(NSDate())
+        return isLaterThanDate(NSDate.now())
     }
     
     /********************************************************************************************************/
@@ -358,11 +372,11 @@ public extension NSDate {
     /********************************************************************************************************/
     
     public func secondsAfterNow() -> Int {  // In ## Seconds
-        return secondsAfterDate(NSDate())
+        return secondsAfterDate(NSDate.now())
     }
     
     public func secondsBeforeNow() -> Int { // ## Seconds Ago
-        return secondsBeforeDate(NSDate())
+        return secondsBeforeDate(NSDate.now())
     }
     
     public func secondsAfterDate(date: NSDate) -> Int {

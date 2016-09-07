@@ -131,7 +131,6 @@ public class GroupLoadAction<T>: LoadAction<T> {
         actions:          [LoadActionLoadableType],
         processValue:      ProcessValue? = nil,
         processError:      ProcessError? = nil,
-        delegates:        [LoadActionDelegate] = [],
         dummy:             (() -> ())? = nil)
     {
         self.order = order
@@ -147,8 +146,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
             self.processErrorClosure = GroupLoadAction.defaultProcessErrorFirst()
         }
         super.init(
-            load: { _ in },
-            delegates: delegates
+            load: { _ in }
         )
         loadClosure = { (result) -> Void in
             self.loadInner(completion: result)

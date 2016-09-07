@@ -52,6 +52,7 @@
 		B9E0B99EE9526466BCF37A5A3631D93A /* CoreDataLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD013A358479BC83E3215C580BB0539 /* CoreDataLoadAction.swift */; };
 		BFB8FDACA6745EA4AB94F433F44C72FC /* SwiftyJSON-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 24DD0C604FE85E38955C1C587395800B /* SwiftyJSON-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFD6635FC9F7FF45309204375DDC01E8 /* LoadActionViewDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933BAC8556EB8AA045EE415A03942C4 /* LoadActionViewDelegates.swift */; };
+		C0103CDF1D7F331F00E1D81B /* RssLoadAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0103CDD1D7F331500E1D81B /* RssLoadAction.swift */; };
 		C3315E57B33DC2EE6DFCE192C42D92D8 /* NumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C241B65A1FBF2B06F5FFA13BE94370 /* NumberExtensions.swift */; };
 		D94A94C6F774172F3F7FDC512E4127F3 /* TimerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B6011B32ED6C4DC4A424EAE63E874D /* TimerExtensions.swift */; };
 		E25617171CD911E969925ADE981B9B99 /* StartAppsKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 080C0B11A2DA5C825EAB0F8A248827E0 /* StartAppsKit-dummy.m */; };
@@ -224,6 +225,7 @@
 		BE7AAA3387ECE784D50C5DDA4FF5027D /* StartAppsKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "StartAppsKit-umbrella.h"; sourceTree = "<group>"; };
 		BF297E2E5EA6E5D83726219AA86E2D99 /* NSData+CommonCrypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSData+CommonCrypto.h"; sourceTree = "<group>"; };
 		BF6FBB24C53DD4434A87A4D5D8AA8323 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		C0103CDD1D7F331500E1D81B /* RssLoadAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RssLoadAction.swift; sourceTree = "<group>"; };
 		C7E71619B9FCBEB1C7D66FE2BF24EAAE /* Pods-StartAppsKit_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-StartAppsKit_Example.modulemap"; sourceTree = "<group>"; };
 		CCDD954317FDE79306F1977730A50010 /* Pods-StartAppsKit_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-StartAppsKit_Example-umbrella.h"; sourceTree = "<group>"; };
 		CD137B80AFDADC259F169473D2D192CE /* SoapLoadAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SoapLoadAction.swift; sourceTree = "<group>"; };
@@ -475,6 +477,7 @@
 			children = (
 				CD137B80AFDADC259F169473D2D192CE /* SoapLoadAction.swift */,
 				AF522F2C5476EAC22CC92069EF7B91B5 /* XmlLoadAction.swift */,
+				C0103CDD1D7F331500E1D81B /* RssLoadAction.swift */,
 			);
 			path = XML;
 			sourceTree = "<group>";
@@ -1088,6 +1091,7 @@
 				56CC23EDB53763A0BC156D58A0D59C94 /* LoadAction.swift in Sources */,
 				F6C347C3B8EC415B069C1AEC732BB82B /* LoadActionProtocol.swift in Sources */,
 				BFD6635FC9F7FF45309204375DDC01E8 /* LoadActionViewDelegates.swift in Sources */,
+				C0103CDF1D7F331F00E1D81B /* RssLoadAction.swift in Sources */,
 				1F5E7F23DFA02D5F9E642579A3D26221 /* Logging.swift in Sources */,
 				C3315E57B33DC2EE6DFCE192C42D92D8 /* NumberExtensions.swift in Sources */,
 				A81B331ECFA1F94BD384CEB85137838D /* ProcessLoadAction.swift in Sources */,
@@ -1482,14 +1486,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B7308B3096D7FF7D601152CF3EAB83D8 /* StartAppsKit.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/StartAppsKit";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/ResourceBundle-StartAppsKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -1635,11 +1642,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B7308B3096D7FF7D601152CF3EAB83D8 /* StartAppsKit.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/StartAppsKit";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "Target Support Files/StartAppsKit/ResourceBundle-StartAppsKit-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = StartAppsKit;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

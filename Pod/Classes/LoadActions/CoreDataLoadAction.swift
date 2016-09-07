@@ -29,14 +29,12 @@ public class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U?> {
     public init(
         predicate:       NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
-        delegates:       [LoadActionDelegate] = [],
         dummy:           (() -> ())? = nil)
     {
         self.predicate = predicate
         self.sortDescriptors = sortDescriptors
         super.init(
-            load:      { _ in },
-            delegates: delegates
+            load:      { _ in }
         )
         loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)
@@ -65,14 +63,12 @@ public class CoreDataLoadAction<U: NSManagedObject>: LoadAction<[U]> {
     public init(
         predicate:       NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
-        delegates:       [LoadActionDelegate] = [],
         dummy:           (() -> ())? = nil)
     {
         self.predicate = predicate
         self.sortDescriptors = sortDescriptors
         super.init(
-            load:      { _ in },
-            delegates: delegates
+            load:      { _ in }
         )
         loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)

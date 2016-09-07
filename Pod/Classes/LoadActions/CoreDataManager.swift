@@ -130,7 +130,7 @@ public extension NSManagedObject { // Quitar en Swift 2.0
         return CoreDataManager.fetch(T.className, predicate: predicate, sortDescriptors: sortDescriptors) as? [T]
     }
     
-    public class func fetchSingle<T:NSManagedObject>(entity: T.Type, predicate: NSPredicate?) -> T? {
+    public class func fetchSingle<T:NSManagedObject>(entity: T.Type, predicate: NSPredicate? = nil) -> T? {
         return fetch(entity, predicate: predicate)?.first
     }
     

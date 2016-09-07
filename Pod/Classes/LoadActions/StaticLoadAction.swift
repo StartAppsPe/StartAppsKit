@@ -20,12 +20,10 @@ public class StaticLoadAction: LoadAction<StaticContent> {
     
     public init(
         staticItems: StaticContentResult,
-        delegates:   [LoadActionDelegate] = [],
         dummy:       (() -> ())? = nil)
     {
         super.init(
-            load: staticItems,
-            delegates: delegates
+            load: staticItems
         )
         dataSource.loadAction = self
     }
