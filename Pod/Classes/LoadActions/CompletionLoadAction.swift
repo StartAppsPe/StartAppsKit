@@ -10,9 +10,9 @@ import Foundation
 
 public class CompletionLoadAction<A, B>: LoadAction<B> {
     
-    public typealias CompletionResult = (loadedValue: A, loadAction: LoadAction<A>) -> LoadAction<B>
+    public typealias QuickCompletionResult = (loadedValue: A, loadAction: LoadAction<A>) -> LoadAction<B>
     
-    public var completionClosure: CompletionResult
+    public var completionClosure: QuickCompletionResult
     
     public var baseLoadAction: LoadAction<A>
     
@@ -40,7 +40,7 @@ public class CompletionLoadAction<A, B>: LoadAction<B> {
     
     public init(
         baseLoadAction: LoadAction<A>,
-        completion:     CompletionResult,
+        completion:     QuickCompletionResult,
         dummy:          (() -> ())? = nil
         )
     {
@@ -59,7 +59,7 @@ public class CompletionLoadAction<A, B>: LoadAction<B> {
 
 public extension LoadAction {
     
-    public func completion<B>(completionClosure: CompletionLoadAction<T, B>.CompletionResult, dummy: (() -> ())? = nil) -> CompletionLoadAction<T, B> {
+    public func completion<B>(completionClosure: CompletionLoadAction<T, B>.QuickCompletionResult, dummy: (() -> ())? = nil) -> CompletionLoadAction<T, B> {
         return CompletionLoadAction<T, B>(
             baseLoadAction: self,
             completion: completionClosure
