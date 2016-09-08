@@ -31,23 +31,6 @@ public class ProcessLoadAction<A, B>: LoadAction<B> {
         }
     }
     
-    public class func automaticProcess() -> ProcessResult {
-        return { (loadedValue: A, completion: ProcessResultClosure) in
-            if let loadedValue = loadedValue as? B {
-                completion(result: Result.Success(loadedValue))
-            } else {
-                let error = NSError(domain: "LoadAction[Process]", code: 432, description: "Could not automatically process value")
-                completion(result: Result.Failure(error))
-            }
-        }
-    }
-    
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
     public init(
         baseLoadAction: LoadAction<A>,
         process:        ProcessResult,
@@ -65,9 +48,24 @@ public class ProcessLoadAction<A, B>: LoadAction<B> {
     
 }
 
+public extension ProcessLoadAction {
+    
+    public class func automaticProcess() -> ProcessResult {
+        return { (loadedValue: A, completion: ProcessResultClosure) in
+            if let loadedValue = loadedValue as? B {
+                completion(result: Result.Success(loadedValue))
+            } else {
+                let error = NSError(domain: "LoadAction[Process]", code: 432, description: "Could not automatically process value")
+                completion(result: Result.Failure(error))
+            }
+        }
+    }
+    
+}
+
 public extension LoadAction {
     
-    public func process<B>(processClosure: ProcessLoadAction<T, B>.QuickProcessResult, dummy: (() -> ())? = nil) -> ProcessLoadAction<T, B> {
+    public func process<B>(processClosure: ProcessLoadAction<T, B>.QuickProcessResult) -> LoadAction<B> {
         return ProcessLoadAction<T, B>(
             baseLoadAction: self,
             process: { (loadedValue, completion) in

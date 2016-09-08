@@ -59,7 +59,7 @@ public class CompletionLoadAction<A, B>: LoadAction<B> {
 
 public extension LoadAction {
     
-    public func completion<B>(completionClosure: CompletionLoadAction<T, B>.QuickCompletionResult, dummy: (() -> ())? = nil) -> CompletionLoadAction<T, B> {
+    public func completion<B>(completionClosure: CompletionLoadAction<T, B>.QuickCompletionResult) -> CompletionLoadAction<T, B> {
         return CompletionLoadAction<T, B>(
             baseLoadAction: self,
             completion: completionClosure
