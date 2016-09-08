@@ -37,7 +37,6 @@ public class LoadAction<T>: LoadActionType {
         load(completion: nil)
     }
     
-    
     /**
      Loads value giving the option of paging or loading new.
      
@@ -94,11 +93,19 @@ public class LoadAction<T>: LoadActionType {
         self.loadClosure = load
     }
     
-    public class func start<N>(startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
+}
+
+public func Load<N>(@noescape startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
+    return startLoadAction()
+}
+
+public extension LoadAction {
+    
+    public class func start<N>(@noescape startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
         return startLoadAction()
     }
     
-    public func then<N>(thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<N>)) -> LoadAction<N> {
+    public func then<N>(@noescape thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<N>)) -> LoadAction<N> {
         return thenLoadAction(loadAction: self)
     }
     

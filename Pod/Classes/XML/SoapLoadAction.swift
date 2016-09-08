@@ -35,7 +35,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
     public var serviceName: String
     public var postObjects: [PostObject]
     
-    private func urlRequestCreate(completion completion: WebLoadAction.UrlRequestResultClosure) {
+    private func urlRequestCreate() -> NSURLRequest {
         
         // Create authentication data
         let authData  = "learning space:waswas".dataUsingEncoding(NSUTF8StringEncoding)!
@@ -60,7 +60,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
         request.setValue(String(request.HTTPBody!.length),      forHTTPHeaderField: "Content-Length")
         
         // Respond success
-        completion(result: .Success(request))
+        return request
         
     }
     
@@ -99,11 +99,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
             process: { _,_ in }
         )
         self.baseLoadAction = XmlLoadAction(
-            baseLoadAction: WebLoadAction(
-                urlRequest: { (completion) in
-                    self.urlRequestCreate(completion: completion)
-                }
-            )
+            baseLoadAction: WebLoadAction(urlRequest: urlRequestCreate())
         )
         self.processClosure = { (loadedValue, completion) -> Void in
             self.processInner(loadedValue: loadedValue, completion: completion)

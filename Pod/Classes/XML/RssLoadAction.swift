@@ -13,10 +13,6 @@ public class RssLoadAction: ProcessLoadAction<AEXMLDocument, RssChannel> {
     
     public var rssUrl: NSURL
     
-    private func urlRequestCreate(completion completion: WebLoadAction.UrlRequestResultClosure) {
-        completion(result: .Success(NSMutableURLRequest(URL: rssUrl)))
-    }
-    
     /**
      Processes data giving the option of paging or loading new.
      
@@ -49,9 +45,7 @@ public class RssLoadAction: ProcessLoadAction<AEXMLDocument, RssChannel> {
         )
         self.baseLoadAction = XmlLoadAction(
             baseLoadAction: WebLoadAction(
-                urlRequest: { (completion) in
-                    self.urlRequestCreate(completion: completion)
-                }
+                urlRequest: NSURLRequest(URL: rssUrl)
             )
         )
         self.processClosure = { (loadedValue, completion) -> Void in
@@ -178,8 +172,6 @@ public class RssChannel {
         guard channelXml.xmlString.length > 20 else {
             throw NSError(domain: "LoadAction[Rss]", code: 2283, description: "Respuesta vacía")
         }
-        
-        print("CVSGBSHNS1",channelXml.xmlString)
         
         guard let title = channelXml["title"].value,
             linkString = channelXml["link"].value, link = NSURL(string: linkString) else {
