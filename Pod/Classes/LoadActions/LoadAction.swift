@@ -74,9 +74,9 @@ public class LoadAction<T>: LoadActionType {
         load() { (resultGeneric) -> Void in
             switch resultGeneric {
             case .Success(let loadedValue):
-                completion?(result: Result.Success(loadedValue))
+                completion?(result: .Success(loadedValue))
             case .Failure(let error):
-                completion?(result: Result.Failure(error))
+                completion?(result: .Failure(error))
             }
         }
     }
@@ -88,22 +88,17 @@ public class LoadAction<T>: LoadActionType {
      - parameter delegates: Array containing objects that react to updated value
      */
     public init(
-        load:       LoadResult,
-        dummy:      (() -> ())? = nil)
+        load:  LoadResult,
+        dummy: (() -> ())? = nil)
     {
-        self.loadClosure    = load
+        self.loadClosure = load
     }
     
-}
-
-
-public extension LoadAction {
-    
-    public class func start<N>(startLoadAction: () -> LoadAction<N>, dummy: (() -> ())? = nil) -> LoadAction<N> {
+    public class func start<N>(startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
         return startLoadAction()
     }
     
-    public func then<N>(thenLoadAction: (loadAction: LoadAction<T>) -> LoadAction<N>, dummy: (() -> ())? = nil) -> LoadAction<N> {
+    public func then<N>(thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<N>)) -> LoadAction<N> {
         return thenLoadAction(loadAction: self)
     }
     

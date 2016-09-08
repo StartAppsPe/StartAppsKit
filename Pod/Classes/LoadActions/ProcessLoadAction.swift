@@ -48,15 +48,11 @@ public class ProcessLoadAction<A, T>: LoadAction<T> {
      */
     public init(
         baseLoadAction: LoadAction<A>,
-        process:        ProcessResult?,
+        process:        ProcessResult,
         dummy:          (() -> ())? = nil)
     {
         self.baseLoadAction = baseLoadAction
-        if let processClosure = process {
-            self.processClosure = processClosure
-        } else {
-            self.processClosure = ProcessLoadAction<A, T>.automaticProcess()
-        }
+        self.processClosure = process
         super.init(
             load:      { _ in }
         )

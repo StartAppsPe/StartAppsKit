@@ -18,7 +18,7 @@ public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
     
     public init(
         urlRequest: WebLoadAction.UrlRequestResult,
-        process:    ProcessResult? = nil,
+        process:    ProcessResult,
         dummy:      (() -> ())? = nil)
     {
         super.init(

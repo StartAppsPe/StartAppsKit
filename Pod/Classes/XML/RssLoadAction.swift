@@ -11,22 +11,10 @@ import AEXML
 
 public class RssLoadAction: ProcessLoadAction<AEXMLDocument, RssChannel> {
     
-    public typealias RssUrlResultType     = Result<NSURL, ErrorType>
-    public typealias RssUrlResultClosure  = (result: RssUrlResultType) -> Void
-    public typealias RssUrlResult         = (completion: RssUrlResultClosure) -> Void
-    
-    public var rssUrlClosure:  RssUrlResult
+    public var rssUrl: NSURL
     
     private func urlRequestCreate(completion completion: WebLoadAction.UrlRequestResultClosure) {
-        rssUrlClosure() { (rssUrlResult) in
-            switch rssUrlResult {
-            case .Success(let rssUrl):
-                completion(result: .Success(NSMutableURLRequest(URL: rssUrl)))
-            case .Failure(let error):
-                completion(result: .Failure(error))
-            }
-        }
-        
+        completion(result: .Success(NSMutableURLRequest(URL: rssUrl)))
     }
     
     /**
@@ -51,10 +39,10 @@ public class RssLoadAction: ProcessLoadAction<AEXMLDocument, RssChannel> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        rssUrl:    RssUrlResult,
-        dummy:     (() -> ())? = nil)
+        rssUrl: NSURL,
+        dummy: (() -> ())? = nil)
     {
-        self.rssUrlClosure  = rssUrl
+        self.rssUrl  = rssUrl
         super.init(
             baseLoadAction: LoadAction<AEXMLDocument>(load: { _ in }),
             process: { _,_ in }

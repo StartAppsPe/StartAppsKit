@@ -12,7 +12,7 @@ public class ProcessFileLoadAction<T>: ProcessLoadAction<NSData, T> {
     
     public init(
         filePath:   FileLoadAction.FilePathResult,
-        process:    ProcessResult? = nil,
+        process:    ProcessResult,
         dummy:      (() -> ())? = nil)
     {
         super.init(
