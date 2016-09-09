@@ -30,12 +30,14 @@ public class FileLoadAction: LoadAction<NSData> {
     
     private func loadInner(completion completion: LoadResultClosure) {
         let fullFilePath = "\(NSHomeDirectory())/Documents/\(filePath)"
-        print(owner: "LoadAction[File]", items: "FilePath: \(fullFilePath)", level: .Debug)
+        print(owner: "LoadAction[File]", items: "Load Began (\(fullFilePath))", level: .Debug)
         guard let loadedData = NSData(contentsOfFile: fullFilePath) else {
+            print(owner: "LoadAction[File]", items: "Load Failure", level: .Error)
             let error = NSError(domain: "LoadAction[File]", code: 421, description: "Archivo no pudo ser leido")
             completion(result: .Failure(error))
             return
         }
+        print(owner: "LoadAction[File]", items: "Load Success", level: .Debug)
         completion(result: .Success(loadedData))
     }
     
@@ -56,19 +58,14 @@ public class FileLoadAction: LoadAction<NSData> {
 
 public extension FileLoadAction {
     
-    public typealias FileSaveResultType    = Result<Bool, ErrorType>
-    public typealias FileSaveResultClosure = (result: FileSaveResultType) -> Void
-    public typealias FileSaveResult        = (completion: FileSaveResultClosure) -> Void
-    
-    public class func saveToFile(filePath filePath: String, value: NSData, completion: FileSaveResultClosure) {
+    public class func saveToFile(filePath filePath: String, value: NSData) throws {
         let fullFilePath = "\(NSHomeDirectory())/Documents/\(filePath)"
-        print(owner: "LoadAction[File]", items: "Saving to filePath", fullFilePath, level: .Info)
+        print(owner: "LoadAction[File]", items: "Save Began (\(fullFilePath))", level: .Debug)
         guard value.writeToFile(fullFilePath, atomically: true) == true else {
-            let error = NSError(domain: "LoadAction[File]", code: 422, description: "Archivo no pudo ser guardado")
-            completion(result: .Failure(error))
-            return
+            print(owner: "LoadAction[File]", items: "Save Failure", level: .Error)
+            throw NSError(domain: "LoadAction[File]", code: 422, description: "Archivo no pudo ser guardado")
         }
-        completion(result: .Success(true))
+        print(owner: "LoadAction[File]", items: "Save Success", level: .Debug)
     }
     
 }

@@ -212,7 +212,7 @@ extension UIScrollView: LoadActionDelegate {
         refreshControl?.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
         if let tableView = self as? UITableView {
             tableView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
-            tableView.separatorColor = (loadAction.value != nil ? UIColor.grayColor() : UIColor.clearColor())
+            tableView.separatorStyle = (loadAction.value != nil ? .SingleLine : .None)
             tableView.reloadData()
         }
         if let collectionView = self as? UICollectionView {

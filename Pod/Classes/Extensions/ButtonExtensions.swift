@@ -56,7 +56,7 @@ public extension UIButton {
     }
     
     public var errorTitle: String? {
-        get { return objc_getAssociatedObject(self, &_toak) as? String }
+        get { return objc_getAssociatedObject(self, &_etak) as? String }
         set { objc_setAssociatedObject(self, &_etak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
     }
     
@@ -73,8 +73,8 @@ public extension UIButton {
     private func createActivityIndicatorView() -> UIActivityIndicatorView {
         let tempView = UIActivityIndicatorView(activityIndicatorStyle: .White)
         tempView.center    = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
-        tempView.tintColor = UIColor.blackColor()
-        tempView.color     = UIColor.blackColor()
+        tempView.tintColor = textColor
+        tempView.color     = textColor
         tempView.hidesWhenStopped = true
         activityIndicatorView = tempView
         addSubview(tempView)
