@@ -76,7 +76,7 @@ extension UIControl {
 }
 
 
-public struct LoadActionStatusViewParams {
+public class LoadActionStatusViewParams {
     public var activityAnimating: Bool
     public var image: UIImage?
     public var message: String?
