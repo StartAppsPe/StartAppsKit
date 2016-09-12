@@ -39,13 +39,13 @@ public extension UIColor {
     public func colorWithHighlight(highlight: CGFloat) -> UIColor {
         var red: CGFloat = 1.0, green: CGFloat = 1.0, blue: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-highlight) + highlight, green: green * (1-highlight) + highlight, blue: blue * (1-highlight) + highlight, alpha: alpha * (1-highlight) + highlight)
+        return UIColor(red: red * (1-highlight) + highlight, green: green * (1-highlight) + highlight, blue: blue * (1-highlight) + highlight, alpha: alpha)
     }
     
     public func colorWithShadow(shadow: CGFloat) -> UIColor {
         var red: CGFloat = 1.0, green: CGFloat = 1.0, blue: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return UIColor(red: red * (1-shadow), green: green * (1-shadow), blue: blue * (1-shadow), alpha: alpha * (1-shadow) + shadow)
+        return UIColor(red: red * (1-shadow), green: green * (1-shadow), blue: blue * (1-shadow), alpha: alpha)
     }
     
     public func blendedColorWithFraction(fraction: CGFloat, ofColor color: UIColor) -> UIColor {
@@ -61,13 +61,17 @@ public extension UIColor {
             alpha: a1 * (1 - fraction) + a2 * fraction);
     }
     
-    public func components() -> [CGFloat] {
+    public var components: [CGFloat] {
         var red: CGFloat = 1.0, green: CGFloat = 1.0, blue: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         return [red,green,blue,alpha]
     }
     
-    convenience init(hex: String) {
+    public var alpha: CGFloat {
+        return CGColorGetAlpha(self.CGColor)
+    }
+    
+    public convenience init(hex: String) {
         var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
         if (cString.hasPrefix("#")) { cString = cString.substringFromIndex(cString.startIndex.advancedBy(1)) }
         if (cString.characters.count != 6) {
@@ -84,7 +88,7 @@ public extension UIColor {
         }
     }
     
-    func hexString() -> String {
+    public var hexString: String {
         let components = CGColorGetComponents(self.CGColor)
         let r = Float(components[0])
         let g = Float(components[1])
@@ -96,8 +100,8 @@ public extension UIColor {
 
 public extension UIColor {
     
-    convenience init(r: Int, g:Int , b:Int) {
-        self.init(red: CGFloat(r)/255, green: CGFloat(g)/255, blue: CGFloat(b)/255, alpha: 1.0)
+    public convenience init(r: Int, g:Int, b:Int, a: Int = 255) {
+        self.init(red: CGFloat(r)/255, green: CGFloat(g)/255, blue: CGFloat(b)/255, alpha: CGFloat(a)/255)
     }
     
     public class func flatLightTurquoiseColor()->UIColor {

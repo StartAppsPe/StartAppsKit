@@ -9,58 +9,8 @@
 
 import Foundation
 
-public enum Result<T, E> {
-    case Success(T), Failure(E)
-    public var isSuccess: Bool {
-        switch self {
-        case .Success: return true
-        case .Failure: return false
-        }
-    }
-    public var isFailure: Bool {
-        switch self {
-        case .Success: return false
-        case .Failure: return true
-        }
-    }
-    public var value: T? {
-        switch self {
-        case .Success(let value): return value
-        case .Failure(_): return nil
-        }
-    }
-    public var error: E? {
-        switch self {
-        case .Success(_): return nil
-        case .Failure(let error): return error
-        }
-    }
-}
-
-extension Result: CustomStringConvertible, CustomDebugStringConvertible {
-    
-    public var description: String {
-        switch self {
-        case .Success:
-            return "Result(SUCCESS)"
-        case .Failure:
-            return "Result(FAILURE)"
-        }
-    }
-    
-    public var debugDescription: String {
-        switch self {
-        case .Success(let value):
-            return "Result(SUCCESS): \(value)"
-        case .Failure(let error):
-            return "Result(FAILURE): \(error)"
-        }
-    }
-    
-}
-
 public enum LoadingStatus {
-    case Ready, Loading, Paging
+    case Ready, Loading
 }
 
 public enum LoadActionProperties {
@@ -81,7 +31,7 @@ public protocol LoadActionLoadableType: AnyObject {
     var delegates: [LoadActionDelegate] { get set }
     
     func loadNew()
-    func loadAny(completion completion: ((result: Result<Any, ErrorType>) -> Void)?)
+    func loadAny(completion completion: ((result: Result<Any>) -> Void)?)
     
     var updatedProperties: Set<LoadActionProperties> { get set }
     
@@ -95,7 +45,7 @@ public protocol LoadActionType: LoadActionLoadableType {
     
     associatedtype T
     
-    associatedtype LoadedResultType    = Result<T, ErrorType>
+    associatedtype LoadedResultType    = Result<T>
     associatedtype LoadedResultClosure = (result: LoadedResultType) -> Void
     associatedtype LoadedResult        = (completion: LoadedResultClosure?) -> Void
     

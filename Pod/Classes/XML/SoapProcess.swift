@@ -1,5 +1,5 @@
 //
-//  SoapLoadAction.swift
+//  SoapProcess.swift
 //  ULima
 //
 //  Created by Gabriel Lanata on 29/6/16.
@@ -27,6 +27,17 @@ public struct PostObject {
         self.key = key
         self.value = value
     }
+}
+
+public func SoapProcess(loadedValue loadedValue: AEXMLDocument) throws -> AEXMLElement {
+    guard let loadedSoap = loadedValue.children.first?.children.first?.children.first?.children.first else {
+        throw NSError(domain: "LoadAction[SOAP]", code: 8328, description: "Contenido SOAP inválido")
+    }
+    return loadedSoap
+}
+
+public func SoapProcess(loadedValue loadedValue: NSData) throws -> AEXMLElement {
+    return try SoapProcess(loadedValue: try XmlProcess(loadedValue))
 }
 
 public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
@@ -61,22 +72,6 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
         
         // Respond success
         return request
-        
-    }
-    
-    /**
-     Processes data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func processInner(loadedValue loadedValue: AEXMLDocument, completion: ProcessResultClosure) {
-        guard let loadedSoap = loadedValue.children.first?.children.first?.children.first?.children.first else {
-            let error = NSError(domain: "LoadAction[SOAP]", code: 8328, description: "Contenido SOAP inválido")
-            completion(result: .Failure(error))
-            return
-        }
-        completion(result: .Success(loadedSoap))
     }
     
     /**
@@ -96,14 +91,9 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
         self.postObjects = postObjects
         super.init(
             baseLoadAction: LoadAction<AEXMLDocument>(load: { _ in }),
-            process: { _,_ in }
+            process: SoapProcess
         )
-        self.baseLoadAction = XmlLoadAction(
-            baseLoadAction: WebLoadAction(urlRequest: urlRequestCreate())
-        )
-        self.processClosure = { (loadedValue, completion) -> Void in
-            self.processInner(loadedValue: loadedValue, completion: completion)
-        }
+        self.baseLoadAction = WebLoadAction(urlRequest: urlRequestCreate()).then(XmlProcess)
     }
     
 }

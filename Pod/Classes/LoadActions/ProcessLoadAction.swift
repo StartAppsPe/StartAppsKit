@@ -8,13 +8,9 @@
 
 import Foundation
 
-public class ProcessLoadAction<A, B>: LoadAction<B> {
+public class ProcessLoadAction<A, T>: LoadAction<T> {
     
-    public typealias QuickProcessResult = (loadedValue: A, loadAction: LoadAction<A>) -> B
-    
-    public typealias ProcessResultType    = Result<B, ErrorType>
-    public typealias ProcessResultClosure = (result: ProcessResultType) -> Void
-    public typealias ProcessResult        = (loadedValue: A, completion: ProcessResultClosure) -> Void
+    public typealias ProcessResult = (loadedValue: A) throws -> T
     
     public var processClosure: ProcessResult
     
@@ -24,9 +20,14 @@ public class ProcessLoadAction<A, B>: LoadAction<B> {
         baseLoadAction.load() { (result) in
             switch result {
             case .Failure(let error):
-                completion(result: Result.Failure(error))
+                completion(result: .Failure(error))
             case .Success(let loadedValue):
-                self.processClosure(loadedValue: loadedValue, completion: completion)
+                do {
+                    let processedValue = try self.processClosure(loadedValue: loadedValue)
+                    completion(result: .Success(processedValue))
+                } catch(let error) {
+                    completion(result: .Failure(error))
+                }
             }
         }
     }
@@ -39,7 +40,7 @@ public class ProcessLoadAction<A, B>: LoadAction<B> {
         self.baseLoadAction = baseLoadAction
         self.processClosure = process
         super.init(
-            load:      { _ in }
+            load: { _ in }
         )
         self.loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)
@@ -50,28 +51,21 @@ public class ProcessLoadAction<A, B>: LoadAction<B> {
 
 public extension ProcessLoadAction {
     
-    public class func automaticProcess() -> ProcessResult {
-        return { (loadedValue: A, completion: ProcessResultClosure) in
-            if let loadedValue = loadedValue as? B {
-                completion(result: Result.Success(loadedValue))
-            } else {
-                let error = NSError(domain: "LoadAction[Process]", code: 432, description: "Could not automatically process value")
-                completion(result: Result.Failure(error))
-            }
+    public class func automaticProcess(loadedValue loadedValue: A) throws -> T {
+        guard let loadedValue = loadedValue as? T else {
+            throw NSError(domain: "LoadAction[Process]", code: 432, description: "Could not automatically process value")
         }
+        return loadedValue
     }
     
 }
 
 public extension LoadAction {
     
-    public func process<B>(processClosure: ProcessLoadAction<T, B>.QuickProcessResult) -> LoadAction<B> {
+    public func then<B>(processClosure: ProcessLoadAction<T, B>.ProcessResult) -> LoadAction<B> {
         return ProcessLoadAction<T, B>(
             baseLoadAction: self,
-            process: { (loadedValue, completion) in
-                let processedValue = processClosure(loadedValue: loadedValue, loadAction: self)
-                completion(result: .Success(processedValue))
-            }
+            process: processClosure
         )
     }
     

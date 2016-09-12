@@ -17,10 +17,6 @@ public struct IgnoreValue { }
 
 public class GroupLoadAction<T>: LoadAction<T> {
     
-    public typealias LoadedResultType    = Result<T, ErrorType>
-    public typealias LoadedResultClosure = (result: LoadedResultType) -> Void
-    public typealias LoadedResult        = (completion: LoadedResultClosure) -> Void
-    
     public typealias ProcessValue  = (actions: [LoadActionLoadableType]) -> T?
     public typealias ProcessError  = (actions: [LoadActionLoadableType]) -> ErrorType?
     
@@ -37,7 +33,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadInner(completion completion: LoadedResultClosure) {
+    private func loadInner(completion completion: LoadAction<T>.LoadedResultClosure) {
         
         // Copy load actions
         actionsToLoad = actions
@@ -58,7 +54,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadSequential(completion completion: LoadedResultClosure) {
+    private func loadSequential(completion completion: LoadAction<T>.LoadedResultClosure) {
         if let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny() { (result) -> Void in
                 self.updateValueAndError()
@@ -92,7 +88,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadParallel(completion completion: LoadedResultClosure) {
+    private func loadParallel(completion completion: LoadAction<T>.LoadedResultClosure) {
         while let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny() { (result) -> Void in
                 self.updateValueAndError()
@@ -173,103 +169,3 @@ public class GroupLoadAction<T>: LoadAction<T> {
     
 }
 
-
-//public class GroupLoadAction2: LoadAction<IgnoreValue> {
-//    
-//    public typealias GroupLoadedResultType    = Result<IgnoreValue, ErrorType>
-//    public typealias GroupLoadedResultClosure = (result: GroupLoadedResultType) -> Void
-//    public typealias GroupLoadedResult        = (completion: GroupLoadedResultClosure) -> Void
-//    
-//    public  var order:          GroupLoadOrder
-//    public  var actions:       [LoadActionLoadableType]
-//    private var actionsToLoad: [LoadActionLoadableType] = []
-//    
-//    /**
-//     Loads data giving the option of paging or loading new.
-//     
-//     - parameter forced: If true forces main load
-//     - parameter completion: Closure called when operation finished
-//     */
-//    private func loadInner(completion completion: GroupLoadedResultClosure) {
-//        
-//        // Copy load actions
-//        actionsToLoad = actions
-//        
-//        // choose loading function
-//        switch order {
-//        case .Sequential, .SequentialForced:
-//            loadSequential(completion: completion)
-//        case .Parallel:
-//            loadParallel(completion: completion)
-//        }
-//        
-//    }
-//    
-//    /**
-//     Loads data giving the option of paging or loading new.
-//     
-//     - parameter forced: If true forces main load
-//     - parameter completion: Closure called when operation finished
-//     */
-//    private func loadSequential(completion completion: GroupLoadedResultClosure) {
-//        if let actionToLoad = actionsToLoad.popFirst() {
-//            actionToLoad.loadAny() { (result) -> Void in
-//                if result.isSuccess || self.order != .SequentialForced {
-//                    if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
-//                    self.loadSequential(completion: completion)
-//                } else {
-//                    self.actionsToLoad = []
-//                    let error = NSError(domain: "LoadAction[Group]", code: 2913, description: "Sequential load error")
-//                    completion(result: .Failure(error))
-//                }
-//            }
-//        } else {
-//            completion(result: .Success(IgnoreValue()))
-//        }
-//    }
-//    
-//    /**
-//     Loads data giving the option of paging or loading new.
-//     
-//     - parameter forced: If true forces main load
-//     - parameter completion: Closure called when operation finished
-//     */
-//    private func loadParallel(completion completion: GroupLoadedResultClosure) {
-//        while let actionToLoad = actionsToLoad.popFirst() {
-//            actionToLoad.loadAny() { (result) -> Void in
-//                if self.actions.find({ $0.status != .Ready }) == nil {
-//                    completion(result: .Success(IgnoreValue()))
-//                } else {
-//                    self.sendDelegateUpdates()
-//                }
-//            }
-//        }
-//    }
-//    
-//    /**
-//     Quick initializer with all closures
-//     
-//     - parameter limitOnce: Only load one time automatically (does allow reload when called specifically)
-//     - parameter shouldUpdateCache: Load from cache before loading from web
-//     - parameter loadCache: Closure to load from cache, must call result closure when finished
-//     - parameter load: Closure to load from web, must call result closure when finished
-//     - parameter delegates: Array containing objects that react to updated data
-//     */
-//    public init(
-//        order:             GroupLoadOrder = .Parallel,
-//        actions:          [LoadActionLoadableType],
-//        delegates:        [LoadActionDelegate] = [],
-//        dummy:             (() -> ())? = nil)
-//    {
-//        self.order = order
-//        self.actions = actions
-//        super.init(
-//            load: { _ in },
-//            delegates: delegates
-//        )
-//        loadClosure = { (result) -> Void in
-//            self.loadInner(completion: result)
-//        }
-//    }
-//    
-//}

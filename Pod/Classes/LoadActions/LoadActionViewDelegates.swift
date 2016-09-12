@@ -15,7 +15,6 @@ extension UIActivityIndicatorView: LoadActionDelegate {
         switch loadAction.status {
         case .Loading: self.startAnimating()
         case .Ready:   self.stopAnimating()
-        case .Paging:  self.startAnimating()
         }
     }
     
@@ -30,7 +29,7 @@ extension UIButton: LoadActionDelegate {
             activityIndicatorView?.startAnimating()
             userInteractionEnabled = false
             tempTitle = ""
-        case .Ready, .Paging:
+        case .Ready:
             activityIndicatorView?.stopAnimating()
             activityIndicatorView  = nil
             userInteractionEnabled = true
@@ -49,8 +48,8 @@ extension UIRefreshControl: LoadActionDelegate {
     public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         guard updatedProperties.contains(.Status) else { return }
         switch loadAction.status {
-        case .Loading:        animating = true
-        case .Ready, .Paging: animating = false
+        case .Loading: animating = true
+        case .Ready:   animating = false
         }
     }
     
@@ -63,7 +62,6 @@ extension UIRefreshControl: LoadActionDelegate {
     public func setAction(loadAction loadAction: LoadActionLoadableType) {
         setAction(controlEvents: .ValueChanged, loadAction: loadAction)
     }
-    
     
 }
 
@@ -189,7 +187,6 @@ public extension StatusViewPresentable {
 
 extension UICollectionView: StatusViewPresentable { }
 extension UITableView: StatusViewPresentable { }
-
 
 public extension UIScrollView {
     

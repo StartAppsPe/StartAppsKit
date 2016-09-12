@@ -23,7 +23,7 @@ public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
     {
         super.init(
             baseLoadAction: WebLoadAction(urlRequest: urlRequest),
-            process:   process
+            process: process
         )
     }
     
@@ -31,7 +31,7 @@ public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
 
 public class WebLoadAction: LoadAction<NSData> {
     
-    public var urlRequest:  NSURLRequest
+    public var urlRequest: NSURLRequest
     
     private func loadInner(completion completion: LoadResultClosure) {
         print(owner: "LoadAction[Web]", items: "Load Began (Url: \(urlRequest.URL?.absoluteString ?? "-"))", level: .Verbose)
@@ -58,10 +58,7 @@ public class WebLoadAction: LoadAction<NSData> {
         }).resume()
     }
     
-    public init(
-        urlRequest: NSURLRequest,
-        dummy:      (() -> ())? = nil)
-    {
+    public init(urlRequest: NSURLRequest) {
         self.urlRequest  = urlRequest
         super.init(
             load: { _ in }
@@ -70,6 +67,11 @@ public class WebLoadAction: LoadAction<NSData> {
             self.loadInner(completion: result)
         }
     }
+    
+    public convenience init(url: NSURL) {
+        self.init(urlRequest: NSURLRequest(URL: url))
+    }
+    
 }
 
 

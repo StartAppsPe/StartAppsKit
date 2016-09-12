@@ -83,6 +83,7 @@ public extension UIButton {
     
     override public var highlighted: Bool {
         didSet {
+            if backgroundColor?.alpha ?? 0 == 0 { return }
             if backgroundColorOriginal == nil { backgroundColorOriginal = backgroundColor }
             backgroundColor = backgroundColorOriginal?.colorWithShadow(highlighted ? 0.2 : 0.0)
         }
@@ -90,6 +91,7 @@ public extension UIButton {
     
     override public var enabled: Bool {
         didSet {
+            if backgroundColor?.alpha ?? 0 == 0 { return }
             if backgroundColorOriginal == nil { backgroundColorOriginal = backgroundColor }
             backgroundColor = backgroundColorOriginal?.colorWithAlpha(enabled ? 1.0 : 0.5)
         }

@@ -12,19 +12,32 @@ import UIKit
 
 public class StaticLoadAction: LoadAction<StaticContent> {
     
-    public typealias StaticContentResultType    = Result<StaticContent, ErrorType>
-    public typealias StaticContentResultClosure = (result: StaticContentResultType) -> Void
-    public typealias StaticContentResult        = (completion: StaticContentResultClosure) -> Void
+    public typealias StaticContentResult = () throws -> StaticContent
+    
+    public var staticContentClosure: StaticContentResult
     
     public let dataSource = StaticDataSource()
     
+    private func loadInner(completion completion: LoadResultClosure) {
+        do {
+            let staticContent = try staticContentClosure()
+            completion(result: .Success(staticContent))
+        } catch(let error) {
+            completion(result: .Failure(error))
+        }
+    }
+    
     public init(
-        staticItems: StaticContentResult,
+        staticContent: StaticContentResult,
         dummy:       (() -> ())? = nil)
     {
+        self.staticContentClosure = staticContent
         super.init(
-            load: staticItems
+            load: { _ in }
         )
+        self.loadClosure = { (completion) -> Void in
+            self.loadInner(completion: completion)
+        }
         dataSource.loadAction = self
     }
     

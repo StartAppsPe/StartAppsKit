@@ -1,5 +1,5 @@
 //
-//  RssLoadAction.swift
+//  RssProcess.swift
 //  ULima
 //
 //  Created by Gabriel Lanata on 1/9/16.
@@ -9,53 +9,13 @@
 import Foundation
 import AEXML
 
-public class RssLoadAction: ProcessLoadAction<AEXMLDocument, RssChannel> {
-    
-    public var rssUrl: NSURL
-    
-    /**
-     Processes data giving the option of paging or loading new.
-     
-     - parameter forced: If true forces main load
-     - parameter completion: Closure called when operation finished
-     */
-    private func processInner(loadedValue loadedValue: AEXMLDocument, completion: ProcessResultClosure) {
-        do {
-            let channelXml = loadedValue.root["channel"]
-            completion(result: .Success(try RssChannel(channelXml: channelXml)))
-        } catch(let error) {
-            completion(result: .Failure(error))
-        }
-    }
-    
-    /**
-     Quick initializer with all closures
-     
-     - parameter load: Closure to load from web, must call result closure when finished
-     - parameter delegates: Array containing objects that react to updated data
-     */
-    public init(
-        rssUrl: NSURL,
-        dummy: (() -> ())? = nil)
-    {
-        self.rssUrl  = rssUrl
-        super.init(
-            baseLoadAction: LoadAction<AEXMLDocument>(load: { _ in }),
-            process: { _,_ in }
-        )
-        self.baseLoadAction = XmlLoadAction(
-            baseLoadAction: WebLoadAction(
-                urlRequest: NSURLRequest(URL: rssUrl)
-            )
-        )
-        self.processClosure = { (loadedValue, completion) -> Void in
-            self.processInner(loadedValue: loadedValue, completion: completion)
-        }
-    }
-    
+public func RssProcess(loadedValue loadedValue: AEXMLDocument) throws -> RssChannel {
+    return try RssChannel(channelXml: loadedValue.root["channel"])
 }
 
-
+public func RssProcess(loadedValue loadedValue: NSData) throws -> RssChannel {
+    return try RssProcess(loadedValue: try XmlProcess(loadedValue))
+}
 
 // MARK: RSS Objects
 

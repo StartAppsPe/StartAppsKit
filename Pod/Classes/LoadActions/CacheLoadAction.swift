@@ -130,7 +130,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
         self.saveToCacheClosure = saveToCache
         self.updateCacheClosure = updateCache
         super.init(
-            load:      { _ in }
+            load: { _ in }
         )
         loadClosure = { (completion) -> Void in
             self.loadInner(completion: completion)

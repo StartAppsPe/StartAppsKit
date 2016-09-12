@@ -9,9 +9,19 @@
 
 import Foundation
 
+public let LoadActionUpdatedNotification = "LoadActionUpdatedNotification"
+public var LoadActionLoadingCount: Int = 0 {
+didSet {
+    NSNotificationCenter.defaultCenter().postNotificationName(LoadActionUpdatedNotification, object: nil)
+}
+}
+public var LoadActionAllStatus: LoadingStatus {
+    return (LoadActionLoadingCount == 0 ? .Ready : .Loading)
+}
+
 public class LoadAction<T>: LoadActionType {
     
-    public typealias LoadResultType     = Result<T, ErrorType>
+    public typealias LoadResultType     = Result<T>
     public typealias LoadResultClosure  = (result: LoadResultType) -> Void
     public typealias LoadResult         = (completion: LoadResultClosure) -> Void
     
@@ -43,6 +53,7 @@ public class LoadAction<T>: LoadActionType {
      - parameter completion: Closure called when operation finished
      */
     public func load(completion completion: LoadResultClosure?) {
+        LoadActionLoadingCount += 1
         print(owner: "LoadAction[Main]", items: "Load Began", level: .Verbose)
         
         // Adjust loading status to loading kind
@@ -63,13 +74,14 @@ public class LoadAction<T>: LoadActionType {
             
             // Adjust loading status to loaded kind and call completion
             self.status = .Ready
+            LoadActionLoadingCount -= 1
             self.sendDelegateUpdates()
             completion?(result: result)
         }
         
     }
     
-    public func loadAny(completion completion: ((result: Result<Any, ErrorType>) -> Void)?) {
+    public func loadAny(completion completion: ((result: Result<Any>) -> Void)?) {
         load() { (resultGeneric) -> Void in
             switch resultGeneric {
             case .Success(let loadedValue):
@@ -95,17 +107,13 @@ public class LoadAction<T>: LoadActionType {
     
 }
 
-public func Load<N>(@noescape startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
+public func Load<B>(@noescape startLoadAction: (() -> LoadAction<B>)) -> LoadAction<B> {
     return startLoadAction()
 }
 
 public extension LoadAction {
     
-    public class func start<N>(@noescape startLoadAction: (() -> LoadAction<N>)) -> LoadAction<N> {
-        return startLoadAction()
-    }
-    
-    public func then<N>(@noescape thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<N>)) -> LoadAction<N> {
+    public func then<B>(@noescape thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<B>)) -> LoadAction<B> {
         return thenLoadAction(loadAction: self)
     }
     
