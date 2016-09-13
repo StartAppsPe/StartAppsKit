@@ -31,6 +31,11 @@ public extension UIButton {
         set { setTitleColor(newValue, forState: .Normal) }
     }
     
+    public var titleFont: UIFont? {
+        get { return titleLabel?.font }
+        set { titleLabel?.font = newValue }
+    }
+    
     public var title: String? {
         get {
             return titleForState(.Normal)

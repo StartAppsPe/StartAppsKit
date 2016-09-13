@@ -94,9 +94,9 @@ public class LoadActionStatusViewParams {
     }
     
     public struct LoadActionStatusViewParamsDefault {
-        public var loadingParams = LoadActionStatusViewParams(activityAnimating: true)
-        public var errorParams   = LoadActionStatusViewParams(message: "Error")
-        public var emptyParams   = LoadActionStatusViewParams(message: "No data")
+        public var loadingParams: LoadActionStatusViewParams { return LoadActionStatusViewParams(activityAnimating: true) }
+        public var errorParams:   LoadActionStatusViewParams { return LoadActionStatusViewParams(message: "Error") }
+        public var emptyParams:   LoadActionStatusViewParams { return LoadActionStatusViewParams(message: "No data") }
     }
     public static var defaultParams = LoadActionStatusViewParamsDefault()
 }

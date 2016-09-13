@@ -159,7 +159,6 @@ public extension UIView {
         view.layoutIfNeeded()
         view.updateConstraintsIfNeeded()
         view.frame = newFrame
-        view.backgroundColor = UIColor.clearColor()
         self.addSubview(view)
         
         // Add constraints
@@ -178,16 +177,16 @@ public extension UIView {
             )
         )
         self.addConstraint(
-            NSLayoutConstraint(item: view,
+            NSLayoutConstraint(item: self,
                 attribute: .Bottom, relatedBy: .Equal,
-                toItem: self, attribute: .Bottom,
+                toItem: view, attribute: .Bottom,
                 multiplier: 1.0, constant: margin
             )
         )
         self.addConstraint(
-            NSLayoutConstraint(item: view,
+            NSLayoutConstraint(item: self,
                 attribute: .Trailing, relatedBy: .Equal,
-                toItem: self, attribute: .Trailing,
+                toItem: view, attribute: .Trailing,
                 multiplier: 1.0, constant: margin
             )
         )
