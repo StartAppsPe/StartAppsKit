@@ -9,20 +9,20 @@
 import Foundation
 import CoreData
 
-public class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U?> {
+open class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U?> {
     
-    public var predicate:       NSPredicate?
-    public var sortDescriptors: [NSSortDescriptor]?
+    open var predicate:       NSPredicate?
+    open var sortDescriptors: [NSSortDescriptor]?
     
-    private func loadInner(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[CoreData1]", items: "Load Began", level: .Info)
+    fileprivate func loadInner(completion: LoadResultClosure) {
+        print(owner: "LoadAction[CoreData1]", items: "Load Began", level: .info)
         if let loadedValue = NSManagedObject.fetch(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
-            print(owner: "LoadAction[CoreData]", items: "Load Success", level: .Info)
-            completion(result: Result.Success(loadedValue.first))
+            print(owner: "LoadAction[CoreData]", items: "Load Success", level: .info)
+            completion(.success(loadedValue.first))
         } else {
             let error = NSError(domain: "LoadAction[CoreData]", code: 542, description: "Error when fetching from database")
-            print(owner: "LoadAction[CoreData]", items: "Load Failure. \(error)", level: .Error)
-            completion(result: .Failure(error))
+            print(owner: "LoadAction[CoreData]", items: "Load Failure. \(error)", level: .error)
+            completion(.failure(error))
         }
     }
     
@@ -43,20 +43,20 @@ public class CoreDataLoadActionSingle<U: NSManagedObject>: LoadAction<U?> {
     
 }
 
-public class CoreDataLoadAction<U: NSManagedObject>: LoadAction<[U]> {
+open class CoreDataLoadAction<U: NSManagedObject>: LoadAction<[U]> {
     
-    public var predicate:       NSPredicate?
-    public var sortDescriptors: [NSSortDescriptor]?
+    open var predicate:       NSPredicate?
+    open var sortDescriptors: [NSSortDescriptor]?
     
-    private func loadInner(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[CoreData]", items: "Load Began", level: .Info)
+    fileprivate func loadInner(completion: LoadResultClosure) {
+        print(owner: "LoadAction[CoreData]", items: "Load Began", level: .info)
         if let loadedValue = NSManagedObject.fetch(U.self, predicate: predicate, sortDescriptors: sortDescriptors) {
-            print(owner: "LoadAction[CoreData]", items: "Load Success", level: .Info)
-            completion(result: Result.Success(loadedValue))
+            print(owner: "LoadAction[CoreData]", items: "Load Success", level: .info)
+            completion(.success(loadedValue))
         } else {
             let error = NSError(domain: "LoadAction[CoreData]", code: 543, description: "Error when fetching from database")
-            print(owner: "LoadAction[CoreData]", items: "Load Failure. \(error)", level: .Error)
-            completion(result: .Failure(error))
+            print(owner: "LoadAction[CoreData]", items: "Load Failure. \(error)", level: .error)
+            completion(.failure(error))
         }
     }
     

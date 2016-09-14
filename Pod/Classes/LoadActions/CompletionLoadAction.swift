@@ -8,36 +8,36 @@
 
 import Foundation
 
-public class CompletionLoadAction<A, T>: LoadAction<T> {
+open class CompletionLoadAction<A, T>: LoadAction<T> {
     
-    public typealias CompletionResult = (loadedValue: A) throws -> LoadAction<T>
+    public typealias CompletionResult = (_ loadedValue: A) throws -> LoadAction<T>
     
-    public var completionClosure: CompletionResult
+    open var completionClosure: CompletionResult
     
-    public var baseLoadAction: LoadAction<A>
+    open var baseLoadAction: LoadAction<A>
     
-    private func loadInner(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[Completion]", items: "Load Tegan", level: .Debug)
+    fileprivate func loadInner(completion: @escaping LoadResultClosure) {
+        print(owner: "LoadAction[Completion]", items: "Load Tegan", level: .debug)
         baseLoadAction.load() { (result) in
             switch result {
-            case .Failure(let error):
-                print(owner: "LoadAction[Completion]", items: "Load Failure Tase", level: .Debug)
-                completion(result: .Failure(error))
-            case .Success(let loadedValue):
+            case .failure(let error):
+                print(owner: "LoadAction[Completion]", items: "Load Failure Tase", level: .debug)
+                completion(.failure(error))
+            case .success(let loadedValue):
                 do {
-                    try self.completionClosure(loadedValue: loadedValue).load(completion: { (result) in
+                    try self.completionClosure(loadedValue).load(completion: { (result) in
                         switch result {
-                        case .Failure(let error):
-                            print(owner: "LoadAction[Completion]", items: "Load Failure", level: .Debug)
-                            completion(result: .Failure(error))
-                        case .Success(let loadedValue2):
-                            print(owner: "LoadAction[Completion]", items: "Load Success", level: .Debug)
-                            completion(result: .Success(loadedValue2))
+                        case .failure(let error):
+                            print(owner: "LoadAction[Completion]", items: "Load Failure", level: .debug)
+                            completion(.failure(error))
+                        case .success(let loadedValue2):
+                            print(owner: "LoadAction[Completion]", items: "Load Success", level: .debug)
+                            completion(.success(loadedValue2))
                         }
                     })
                 } catch(let error) {
-                    print(owner: "LoadAction[Completion]", items: "Load Failure Completion", level: .Debug)
-                    completion(result: .Failure(error))
+                    print(owner: "LoadAction[Completion]", items: "Load Failure Completion", level: .debug)
+                    completion(.failure(error))
                 }
             }
         }
@@ -45,7 +45,7 @@ public class CompletionLoadAction<A, T>: LoadAction<T> {
     
     public init(
         baseLoadAction: LoadAction<A>,
-        completion:     CompletionResult,
+        completion:     @escaping CompletionResult,
         dummy:          (() -> ())? = nil
         )
     {
@@ -64,7 +64,7 @@ public class CompletionLoadAction<A, T>: LoadAction<T> {
 
 public extension LoadAction {
     
-    public func then<B>(completionClosure: CompletionLoadAction<T, B>.CompletionResult) -> LoadAction<B> {
+    public func then<B>(_ completionClosure: @escaping CompletionLoadAction<T, B>.CompletionResult) -> LoadAction<B> {
         return CompletionLoadAction<T, B>(
             baseLoadAction: self,
             completion: completionClosure

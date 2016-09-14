@@ -8,17 +8,17 @@
 
 import Foundation
 
-let session = NSURLSession(
-    configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+let session = URLSession(
+    configuration: URLSessionConfiguration.default,
     delegate: nil,
-    delegateQueue: NSOperationQueue.mainQueue()
+    delegateQueue: OperationQueue.main
 )
 
-public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
+open class ProcessWebLoadAction<T>: ProcessLoadAction<Data, T> {
     
     public init(
-        urlRequest: NSURLRequest,
-        process:    ProcessResult,
+        urlRequest: URLRequest,
+        process:    @escaping ProcessResult,
         dummy:      (() -> ())? = nil)
     {
         super.init(
@@ -29,36 +29,36 @@ public class ProcessWebLoadAction<T>: ProcessLoadAction<NSData, T> {
     
 }
 
-public class WebLoadAction: LoadAction<NSData> {
+open class WebLoadAction: LoadAction<Data> {
     
-    public var urlRequest: NSURLRequest
+    open var urlRequest: URLRequest
     
-    private func loadInner(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[Web]", items: "Load Began (Url: \(urlRequest.URL?.absoluteString ?? "-"))", level: .Verbose)
-        session.dataTaskWithRequest(urlRequest, completionHandler: { (loadedData, urlResponse, error) -> Void in
+    fileprivate func loadInner(completion: @escaping LoadResultClosure) {
+        print(owner: "LoadAction[Web]", items: "Load Began (Url: \(urlRequest.url?.absoluteString ?? "-"))", level: .verbose)
+        session.dataTask(with: urlRequest, completionHandler: { (loadedData, urlResponse, error) -> Void in
             if let error = error {
-                var newError = error
-                switch error.code {
+                var newError = error as NSError
+                switch newError.code {
                 case -1001, -1003, -1009:
-                    newError = NSError(domain: "LoadAction[Web]", code: error.code, description: "No hay conexión a internet")
+                    newError = NSError(domain: "LoadAction[Web]", code: newError.code, description: "No hay conexión a internet")
                 default: ()
                 }
-                print(owner: "LoadAction[Web]", items: "Load Failure, \(newError.localizedDescription) (Url: \(self.urlRequest.URL?.absoluteString ?? "-"))", level: .Error)
-                completion(result: .Failure(newError))
+                print(owner: "LoadAction[Web]", items: "Load Failure, \(newError.localizedDescription) (Url: \(self.urlRequest.url?.absoluteString ?? "-"))", level: .error)
+                completion(.failure(newError))
                 return
             }
             guard let loadedData = loadedData else {
-                print(owner: "LoadAction[Web]", items: "Load Failure, empty response (Url: \(self.urlRequest.URL?.absoluteString ?? "-"))", level: .Error)
+                print(owner: "LoadAction[Web]", items: "Load Failure, empty response (Url: \(self.urlRequest.url?.absoluteString ?? "-"))", level: .error)
                 let error = NSError(domain: "LoadAction[Web]", code: 33, description: "Data retornada vacía")
-                completion(result: .Failure(error))
+                completion(.failure(error))
                 return
             }
-            print(owner: "LoadAction[Web]", items: "Load Success (Url: \(self.urlRequest.URL?.absoluteString ?? "-"))", level: .Verbose)
-            completion(result: .Success(loadedData))
+            print(owner: "LoadAction[Web]", items: "Load Success (Url: \(self.urlRequest.url?.absoluteString ?? "-"))", level: .verbose)
+            completion(.success(loadedData))
         }).resume()
     }
     
-    public init(urlRequest: NSURLRequest) {
+    public init(urlRequest: URLRequest) {
         self.urlRequest  = urlRequest
         super.init(
             load: { _ in }
@@ -68,8 +68,8 @@ public class WebLoadAction: LoadAction<NSData> {
         }
     }
     
-    public convenience init(url: NSURL) {
-        self.init(urlRequest: NSURLRequest(URL: url))
+    public convenience init(url: URL) {
+        self.init(urlRequest: URLRequest(url: url))
     }
     
 }

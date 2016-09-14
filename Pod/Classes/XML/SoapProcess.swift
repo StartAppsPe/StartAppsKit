@@ -12,8 +12,8 @@ import AEXML
 public struct PostObject {
     public var key: String
     public var value: Any
-    public static func process(postObjects postObjects: [PostObject]) -> String {
-        return postObjects.reduce("", combine: {
+    public static func process(postObjects: [PostObject]) -> String {
+        return postObjects.reduce("", {
             let value: Any
             if let valueArray = $1.value as? [PostObject] {
                 value = process(postObjects: valueArray)
@@ -29,49 +29,49 @@ public struct PostObject {
     }
 }
 
-public func SoapProcess(loadedValue loadedValue: AEXMLDocument) throws -> AEXMLElement {
+public func SoapProcess(loadedValue: AEXMLDocument) throws -> AEXMLElement {
     guard let loadedSoap = loadedValue.children.first?.children.first?.children.first?.children.first else {
         throw NSError(domain: "LoadAction[SOAP]", code: 8328, description: "Contenido SOAP inválido")
     }
     return loadedSoap
 }
 
-public func SoapProcess(loadedValue loadedValue: NSData) throws -> AEXMLElement {
+public func SoapProcess(loadedValue: Data) throws -> AEXMLElement {
     return try SoapProcess(loadedValue: try XmlProcess(loadedValue))
 }
 
-public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
+open class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
     
-    public var serviceUrl:  NSURL
-    public var serviceName: String
-    public var postObjects: [PostObject]
+    open var serviceUrl:  URL
+    open var serviceName: String
+    open var postObjects: [PostObject]
     
-    private func urlRequestCreate() -> NSURLRequest {
+    fileprivate func urlRequestCreate() -> URLRequest {
         
         // Create authentication data
-        let authData  = "learning space:waswas".dataUsingEncoding(NSUTF8StringEncoding)!
-        let authValue = "Basic \(authData.base64EncodedStringWithOptions([]))"
-        print(owner: "LoadAction[SOAP]", items: "AuthValue: \(authValue)", level: .Verbose)
+        let authData  = "learning space:waswas".data(using: String.Encoding.utf8)!
+        let authValue = "Basic \(authData.base64EncodedString(options: []))"
+        print(owner: "LoadAction[SOAP]", items: "AuthValue: \(authValue)", level: .verbose)
         
         // Create post body
-        let serviceNameL = serviceName.lowercasedFirstString()
+        let serviceNameL = serviceName.lowercasedFirst()
         var postBody = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:web=\"http://webservice.ul.ulima.edu\">"
         postBody += "<soapenv:Header/><soapenv:Body><web:\(serviceNameL)>"
         postBody += PostObject.process(postObjects: postObjects)
         postBody += "</web:\(serviceNameL)></soapenv:Body></soapenv:Envelope>"
-        print(owner: "LoadAction[SOAP]", items: "Posting body = \(postBody)", level: .Verbose)
+        print(owner: "LoadAction[SOAP]", items: "Posting body = \(postBody)", level: .verbose)
         
         // Create request
-        let request = NSMutableURLRequest(URL: serviceUrl)
-        request.HTTPMethod = "POST"
-        request.HTTPBody   = postBody.dataUsingEncoding(NSUTF8StringEncoding)!
-        request.addValue(request.URL!.absoluteString,           forHTTPHeaderField: "SOAPAction")
+        let request = NSMutableURLRequest(url: serviceUrl)
+        request.httpMethod = "POST"
+        request.httpBody   = postBody.data(using: String.Encoding.utf8)!
+        request.addValue(request.url!.absoluteString,           forHTTPHeaderField: "SOAPAction")
         request.setValue(authValue,                             forHTTPHeaderField: "Authorization")
         request.setValue("application/soap+xml; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(String(request.HTTPBody!.length),      forHTTPHeaderField: "Content-Length")
+        request.setValue(String(request.httpBody!.count),      forHTTPHeaderField: "Content-Length")
         
         // Respond success
-        return request
+        return request as URLRequest
     }
     
     /**
@@ -81,7 +81,7 @@ public class SoapLoadAction: ProcessLoadAction<AEXMLDocument, AEXMLElement> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        serviceUrl:  NSURL,
+        serviceUrl:  URL,
         serviceName: String,
         postObjects: [PostObject],
         dummy:       (() -> ())? = nil)

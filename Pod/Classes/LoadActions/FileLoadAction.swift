@@ -8,11 +8,11 @@
 
 import Foundation
 
-public class ProcessFileLoadAction<T>: ProcessLoadAction<NSData, T> {
+open class ProcessFileLoadAction<T>: ProcessLoadAction<Data, T> {
     
     public init(
         filePath: String,
-        process:  ProcessResult,
+        process:  @escaping ProcessResult,
         dummy:    (() -> ())? = nil)
     {
         super.init(
@@ -24,21 +24,21 @@ public class ProcessFileLoadAction<T>: ProcessLoadAction<NSData, T> {
 }
 
 
-public class FileLoadAction: LoadAction<NSData> {
+open class FileLoadAction: LoadAction<Data> {
     
-    public var filePath: String
+    open var filePath: String
     
-    private func loadInner(completion completion: LoadResultClosure) {
+    fileprivate func loadInner(completion: LoadResultClosure) {
         let fullFilePath = "\(NSHomeDirectory())/Documents/\(filePath)"
-        print(owner: "LoadAction[File]", items: "Load Began (\(fullFilePath))", level: .Debug)
-        guard let loadedData = NSData(contentsOfFile: fullFilePath) else {
-            print(owner: "LoadAction[File]", items: "Load Failure", level: .Error)
+        print(owner: "LoadAction[File]", items: "Load Began (\(fullFilePath))", level: .debug)
+        guard let loadedData = try? Data(contentsOf: URL(fileURLWithPath: fullFilePath)) else {
+            print(owner: "LoadAction[File]", items: "Load Failure", level: .error)
             let error = NSError(domain: "LoadAction[File]", code: 421, description: "Archivo no pudo ser leido")
-            completion(result: .Failure(error))
+            completion(.failure(error))
             return
         }
-        print(owner: "LoadAction[File]", items: "Load Success", level: .Debug)
-        completion(result: .Success(loadedData))
+        print(owner: "LoadAction[File]", items: "Load Success", level: .debug)
+        completion(.success(loadedData))
     }
     
     public init(
@@ -58,14 +58,14 @@ public class FileLoadAction: LoadAction<NSData> {
 
 public extension FileLoadAction {
     
-    public class func saveToFile(filePath filePath: String, value: NSData) throws {
+    public class func saveToFile(filePath: String, value: Data) throws {
         let fullFilePath = "\(NSHomeDirectory())/Documents/\(filePath)"
-        print(owner: "LoadAction[File]", items: "Save Began (\(fullFilePath))", level: .Debug)
-        guard value.writeToFile(fullFilePath, atomically: true) == true else {
-            print(owner: "LoadAction[File]", items: "Save Failure", level: .Error)
+        print(owner: "LoadAction[File]", items: "Save Began (\(fullFilePath))", level: .debug)
+        guard ((try? value.write(to: URL(fileURLWithPath: fullFilePath), options: [.atomic])) != nil) == true else {
+            print(owner: "LoadAction[File]", items: "Save Failure", level: .error)
             throw NSError(domain: "LoadAction[File]", code: 422, description: "Archivo no pudo ser guardado")
         }
-        print(owner: "LoadAction[File]", items: "Save Success", level: .Debug)
+        print(owner: "LoadAction[File]", items: "Save Success", level: .debug)
     }
     
 }

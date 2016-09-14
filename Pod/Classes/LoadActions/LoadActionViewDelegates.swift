@@ -10,11 +10,11 @@ import UIKit
 
 extension UIActivityIndicatorView: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
-        guard updatedProperties.contains(.Status) else { return }
+    public func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.status) else { return }
         switch loadAction.status {
-        case .Loading: self.startAnimating()
-        case .Ready:   self.stopAnimating()
+        case .loading: self.startAnimating()
+        case .ready:   self.stopAnimating()
         }
     }
     
@@ -22,17 +22,17 @@ extension UIActivityIndicatorView: LoadActionDelegate {
 
 extension UIButton: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
-        guard updatedProperties.contains(.Status) || updatedProperties.contains(.Error) else { return }
+    public func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.status) || updatedProperties.contains(.error) else { return }
         switch loadAction.status {
-        case .Loading:
+        case .loading:
             activityIndicatorView?.startAnimating()
-            userInteractionEnabled = false
+            isUserInteractionEnabled = false
             tempTitle = ""
-        case .Ready:
+        case .ready:
             activityIndicatorView?.stopAnimating()
             activityIndicatorView  = nil
-            userInteractionEnabled = true
+            isUserInteractionEnabled = true
             if loadAction.error != nil {
                 tempTitle = errorTitle ?? "Error"
             } else {
@@ -45,11 +45,11 @@ extension UIButton: LoadActionDelegate {
 
 extension UIRefreshControl: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
-        guard updatedProperties.contains(.Status) else { return }
+    public func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        guard updatedProperties.contains(.status) else { return }
         switch loadAction.status {
-        case .Loading: animating = true
-        case .Ready:   animating = false
+        case .loading: active = true
+        case .ready:   active = false
         }
     }
     
@@ -59,15 +59,15 @@ extension UIRefreshControl: LoadActionDelegate {
         loadAction.addDelegate(self)
     }
     
-    public func setAction(loadAction loadAction: LoadActionLoadableType) {
-        setAction(controlEvents: .ValueChanged, loadAction: loadAction)
+    public func setAction(loadAction: LoadActionLoadableType) {
+        setAction(controlEvents: .valueChanged, loadAction: loadAction)
     }
     
 }
 
 extension UIControl {
     
-    public func setAction(controlEvents controlEvents: UIControlEvents, loadAction: LoadActionLoadableType) {
+    public func setAction(controlEvents: UIControlEvents, loadAction: LoadActionLoadableType) {
         setAction(controlEvents: controlEvents) { (sender) in
             loadAction.loadNew()
         }
@@ -76,15 +76,15 @@ extension UIControl {
 }
 
 
-public class LoadActionStatusViewParams {
-    public var activityAnimating: Bool
-    public var image: UIImage?
-    public var message: String?
-    public var buttonTitle: String?
-    public var buttonColor: UIColor?
-    public var buttonAction: ((sender: AnyObject) -> Void)?
+open class LoadActionStatusViewParams {
+    open var activityAnimating: Bool
+    open var image: UIImage?
+    open var message: String?
+    open var buttonTitle: String?
+    open var buttonColor: UIColor?
+    open var buttonAction: ((_ sender: AnyObject) -> Void)?
     public init(activityAnimating: Bool = false, image: UIImage? = nil, message: String? = nil,
-        buttonTitle: String? = nil, buttonColor: UIColor? = nil, buttonAction: ((sender: AnyObject) -> Void)? = nil) {
+        buttonTitle: String? = nil, buttonColor: UIColor? = nil, buttonAction: ((_ sender: AnyObject) -> Void)? = nil) {
             self.activityAnimating = activityAnimating
             self.image = image
             self.message = message
@@ -98,44 +98,44 @@ public class LoadActionStatusViewParams {
         public var errorParams:   LoadActionStatusViewParams { return LoadActionStatusViewParams(message: "Error") }
         public var emptyParams:   LoadActionStatusViewParams { return LoadActionStatusViewParams(message: "No data") }
     }
-    public static var defaultParams = LoadActionStatusViewParamsDefault()
+    open static var defaultParams = LoadActionStatusViewParamsDefault()
 }
 
-public class LoadActionStatusView: UIView, LoadActionDelegate {
+open class LoadActionStatusView: UIView, LoadActionDelegate {
     
-    @IBOutlet public weak var activityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet open weak var activityIndicatorView: UIActivityIndicatorView!
     
-    @IBOutlet public weak var boxView:   UIView!
-    @IBOutlet public weak var imageView: UIImageView!
-    @IBOutlet public weak var textLabel: UILabel!
-    @IBOutlet public weak var button:    UIButton!
+    @IBOutlet open weak var boxView:   UIView!
+    @IBOutlet open weak var imageView: UIImageView!
+    @IBOutlet open weak var textLabel: UILabel!
+    @IBOutlet open weak var button:    UIButton!
     
-    @IBOutlet private weak var buttonHeightConstraint:    NSLayoutConstraint!
-    @IBOutlet private weak var imageViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var imageViewAspectConstraint: NSLayoutConstraint!
+    @IBOutlet fileprivate weak var buttonHeightConstraint:    NSLayoutConstraint!
+    @IBOutlet fileprivate weak var imageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet fileprivate weak var imageViewAspectConstraint: NSLayoutConstraint!
     
-    public var loadingParams = LoadActionStatusViewParams.defaultParams.loadingParams
-    public var errorParams   = LoadActionStatusViewParams.defaultParams.errorParams
-    public var emptyParams   = LoadActionStatusViewParams.defaultParams.emptyParams
+    open var loadingParams = LoadActionStatusViewParams.defaultParams.loadingParams
+    open var errorParams   = LoadActionStatusViewParams.defaultParams.errorParams
+    open var emptyParams   = LoadActionStatusViewParams.defaultParams.emptyParams
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    public class func loadFromNib() -> LoadActionStatusView {
-        let rootBundle = NSBundle(forClass: LoadActionStatusView.self)
-        let bundleURL = rootBundle.URLForResource("StartAppsKit", withExtension: "bundle")!
-        let cellNib = UINib(nibName: "LoadActionStatusView", bundle: NSBundle(URL: bundleURL))
-        let instant = cellNib.instantiateWithOwner(self, options: nil)
+    open class func loadFromNib() -> LoadActionStatusView {
+        let rootBundle = Bundle(for: LoadActionStatusView.self)
+        let bundleURL = rootBundle.url(forResource: "StartAppsKit", withExtension: "bundle")!
+        let cellNib = UINib(nibName: "LoadActionStatusView", bundle: Bundle(url: bundleURL))
+        let instant = cellNib.instantiate(withOwner: self, options: nil)
         let loadingStatusView = instant.first! as? LoadActionStatusView
         return loadingStatusView!
     }
 
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+    open func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>) {
         var params: LoadActionStatusViewParams?
-        if let value = loadAction.valueAny where (value as? NSArray)?.count ?? 1 > 0  {
+        if let value = loadAction.valueAny , (value as? NSArray)?.count ?? 1 > 0  {
             // No params
-        } else if loadAction.status == .Loading {
+        } else if loadAction.status == .loading {
             params = loadingParams
         } else if loadAction.error != nil {
             params = errorParams
@@ -143,16 +143,16 @@ public class LoadActionStatusView: UIView, LoadActionDelegate {
             params = emptyParams
         }
         
-        hidden = (params == nil)
+        isHidden = (params == nil)
         button.title = params?.buttonTitle
-        button.backgroundColor = params?.buttonColor ?? UIColor.grayColor()
+        button.backgroundColor = params?.buttonColor ?? UIColor.gray
         textLabel.text = params?.message
         imageView.image = params?.image
-        activityIndicatorView.animating = params?.activityAnimating ?? false
+        activityIndicatorView.active = params?.activityAnimating ?? false
         
-        button.hidden = (button.title?.clean() == nil)
+        button.isHidden = (button.title?.clean() == nil)
         button.title  = (button.title?.clean() != nil ? "   \(button.title!)   " : nil)
-        button.userInteractionEnabled   = (button.title?.clean() != nil)
+        button.isUserInteractionEnabled   = (button.title?.clean() != nil)
         buttonHeightConstraint.constant = (button.title?.clean() != nil ? 40 : 0)
         let imageSize = imageView.image?.size
         imageViewAspectConstraint.constant = (imageSize?.width ?? 1)/(imageSize?.height ?? 1)
@@ -171,9 +171,9 @@ public protocol StatusViewPresentable: class {
 
 public extension StatusViewPresentable {
     
-    private func createLoadActionStatusView() -> LoadActionStatusView {
+    fileprivate func createLoadActionStatusView() -> LoadActionStatusView {
         let tempView = LoadActionStatusView.loadFromNib()
-        tempView.backgroundColor = UIColor.clearColor()
+        tempView.backgroundColor = UIColor.clear
         backgroundView = tempView
         return tempView
     }
@@ -188,12 +188,23 @@ public extension StatusViewPresentable {
 extension UICollectionView: StatusViewPresentable { }
 extension UITableView: StatusViewPresentable { }
 
+
 public extension UIScrollView {
     
-    public var refreshControl: UIRefreshControl? {
-        get { return objc_getAssociatedObject(self, &_rcak) as? UIRefreshControl }
+    public var refreshControlCompat: UIRefreshControl? {
+        get {
+            if #available(iOS 10.0, *) {
+                return refreshControl
+            } else {
+                return objc_getAssociatedObject(self, &_rcak) as? UIRefreshControl
+            }
+        }
         set {
-            objc_setAssociatedObject(self, &_rcak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            if #available(iOS 10.0, *) {
+                refreshControl = newValue
+            } else {
+                objc_setAssociatedObject(self, &_rcak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
             if let newValue = newValue {
                 alwaysBounceVertical = true
                 addSubview(newValue)
@@ -205,11 +216,16 @@ public extension UIScrollView {
 
 extension UIScrollView: LoadActionDelegate {
     
-    public func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>) {
-        refreshControl?.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
+    public func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>) {
+        if #available(iOS 10.0, *) {
+            refreshControl?.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
+        } else {
+            refreshControlCompat?.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
+        }
+
         if let tableView = self as? UITableView {
             tableView.loadActionStatusView.loadActionUpdated(loadAction: loadAction, updatedProperties: updatedProperties)
-            tableView.separatorStyle = (loadAction.value != nil ? .SingleLine : .None)
+            tableView.separatorStyle = (loadAction.value != nil ? .singleLine : .none)
             tableView.reloadData()
         }
         if let collectionView = self as? UICollectionView {

@@ -8,25 +8,25 @@
 
 import Foundation
 
-public class ProcessLoadAction<A, T>: LoadAction<T> {
+open class ProcessLoadAction<A, T>: LoadAction<T> {
     
-    public typealias ProcessResult = (loadedValue: A) throws -> T
+    public typealias ProcessResult = (_ loadedValue: A) throws -> T
     
-    public var processClosure: ProcessResult
+    open var processClosure: ProcessResult
     
-    public var baseLoadAction: LoadAction<A>
+    open var baseLoadAction: LoadAction<A>
     
-    private func loadInner(completion completion: LoadResultClosure) {
+    fileprivate func loadInner(completion: @escaping LoadResultClosure) {
         baseLoadAction.load() { (result) in
             switch result {
-            case .Failure(let error):
-                completion(result: .Failure(error))
-            case .Success(let loadedValue):
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let loadedValue):
                 do {
-                    let processedValue = try self.processClosure(loadedValue: loadedValue)
-                    completion(result: .Success(processedValue))
+                    let processedValue = try self.processClosure(loadedValue)
+                    completion(.success(processedValue))
                 } catch(let error) {
-                    completion(result: .Failure(error))
+                    completion(.failure(error))
                 }
             }
         }
@@ -34,7 +34,7 @@ public class ProcessLoadAction<A, T>: LoadAction<T> {
     
     public init(
         baseLoadAction: LoadAction<A>,
-        process:        ProcessResult,
+        process:        @escaping ProcessResult,
         dummy:          (() -> ())? = nil)
     {
         self.baseLoadAction = baseLoadAction
@@ -42,16 +42,17 @@ public class ProcessLoadAction<A, T>: LoadAction<T> {
         super.init(
             load: { _ in }
         )
-        self.loadClosure = { (completion) -> Void in
+        let dajjdh = { (completion) -> Void in
             self.loadInner(completion: completion)
         }
+        self.loadClosure = dajjdh
     }
     
 }
 
 public extension ProcessLoadAction {
     
-    public class func automaticProcess(loadedValue loadedValue: A) throws -> T {
+    public class func automaticProcess(loadedValue: A) throws -> T {
         guard let loadedValue = loadedValue as? T else {
             throw NSError(domain: "LoadAction[Process]", code: 432, description: "Could not automatically process value")
         }
@@ -62,7 +63,7 @@ public extension ProcessLoadAction {
 
 public extension LoadAction {
     
-    public func then<B>(processClosure: ProcessLoadAction<T, B>.ProcessResult) -> LoadAction<B> {
+    public func then<B>(_ processClosure: @escaping ProcessLoadAction<T, B>.ProcessResult) -> LoadAction<B> {
         return ProcessLoadAction<T, B>(
             baseLoadAction: self,
             process: processClosure

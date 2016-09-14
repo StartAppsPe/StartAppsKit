@@ -12,43 +12,43 @@ import UIKit
 
 public extension UIColor {
     
-    public func colorWithHue(newHue: CGFloat) -> UIColor {
+    public func colorWithHue(_ newHue: CGFloat) -> UIColor {
         var saturation: CGFloat = 1.0, brightness: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getHue(nil, saturation: &saturation, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: newHue, saturation: saturation, brightness: brightness, alpha: alpha)
     }
     
-    public func colorWithSaturation(newSaturation: CGFloat) -> UIColor {
+    public func colorWithSaturation(_ newSaturation: CGFloat) -> UIColor {
         var hue: CGFloat = 1.0, brightness: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getHue(&hue, saturation: nil, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: hue, saturation: newSaturation, brightness: brightness, alpha: alpha)
     }
     
-    public func colorWithBrightness(newBrightness: CGFloat) -> UIColor {
+    public func colorWithBrightness(_ newBrightness: CGFloat) -> UIColor {
         var hue: CGFloat = 1.0, saturation: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getHue(&hue, saturation: &saturation, brightness: nil, alpha: &alpha)
         return UIColor(hue: hue, saturation: saturation, brightness: newBrightness, alpha: alpha)
     }
     
-    public func colorWithAlpha(newAlpha: CGFloat) -> UIColor {
+    public func colorWithAlpha(_ newAlpha: CGFloat) -> UIColor {
         var hue: CGFloat = 1.0, saturation: CGFloat = 1.0, brightness: CGFloat = 1.0
         self.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: nil)
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: newAlpha)
     }
     
-    public func colorWithHighlight(highlight: CGFloat) -> UIColor {
+    public func colorWithHighlight(_ highlight: CGFloat) -> UIColor {
         var red: CGFloat = 1.0, green: CGFloat = 1.0, blue: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         return UIColor(red: red * (1-highlight) + highlight, green: green * (1-highlight) + highlight, blue: blue * (1-highlight) + highlight, alpha: alpha)
     }
     
-    public func colorWithShadow(shadow: CGFloat) -> UIColor {
+    public func colorWithShadow(_ shadow: CGFloat) -> UIColor {
         var red: CGFloat = 1.0, green: CGFloat = 1.0, blue: CGFloat = 1.0, alpha: CGFloat = 1.0
         self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         return UIColor(red: red * (1-shadow), green: green * (1-shadow), blue: blue * (1-shadow), alpha: alpha)
     }
     
-    public func blendedColorWithFraction(fraction: CGFloat, ofColor color: UIColor) -> UIColor {
+    public func blendedColorWithFraction(_ fraction: CGFloat, ofColor color: UIColor) -> UIColor {
         var r1: CGFloat = 1.0, g1: CGFloat = 1.0, b1: CGFloat = 1.0, a1: CGFloat = 1.0
         var r2: CGFloat = 1.0, g2: CGFloat = 1.0, b2: CGFloat = 1.0, a2: CGFloat = 1.0
         
@@ -68,17 +68,17 @@ public extension UIColor {
     }
     
     public var alpha: CGFloat {
-        return CGColorGetAlpha(self.CGColor)
+        return self.cgColor.alpha
     }
     
     public convenience init(hex: String) {
-        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
-        if (cString.hasPrefix("#")) { cString = cString.substringFromIndex(cString.startIndex.advancedBy(1)) }
+        var cString:String = hex.trim().uppercased()
+        if (cString.hasPrefix("#")) { cString = cString.substring(from: cString.characters.index(cString.startIndex, offsetBy: 1)) }
         if (cString.characters.count != 6) {
             self.init(red: 0.5, green: 0.0, blue: 0.5, alpha: 1.0)
         } else {
             var rgbValue:UInt32 = 0
-            NSScanner(string: cString).scanHexInt(&rgbValue)
+            Scanner(string: cString).scanHexInt32(&rgbValue)
             self.init(
                 red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
                 green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
@@ -89,10 +89,10 @@ public extension UIColor {
     }
     
     public var hexString: String {
-        let components = CGColorGetComponents(self.CGColor)
-        let r = Float(components[0])
-        let g = Float(components[1])
-        let b = Float(components[2])
+        let components = self.cgColor.components
+        let r = Float((components?[0])!)
+        let g = Float((components?[1])!)
+        let b = Float((components?[2])!)
         return String(format: "#%02lX%02lX%02lX", lroundf(r * 255),lroundf(g * 255),lroundf(b * 255))
     }
     

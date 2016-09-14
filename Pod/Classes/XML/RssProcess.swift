@@ -9,27 +9,27 @@
 import Foundation
 import AEXML
 
-public func RssProcess(loadedValue loadedValue: AEXMLDocument) throws -> RssChannel {
+public func RssProcess(loadedValue: AEXMLDocument) throws -> RssChannel {
     return try RssChannel(channelXml: loadedValue.root["channel"])
 }
 
-public func RssProcess(loadedValue loadedValue: NSData) throws -> RssChannel {
+public func RssProcess(loadedValue: Data) throws -> RssChannel {
     return try RssProcess(loadedValue: try XmlProcess(loadedValue))
 }
 
 // MARK: RSS Objects
 
-public class RssChannel {
+open class RssChannel {
     
-    public class ImageInfo {
+    open class ImageInfo {
         
-        public var rawXml: AEXMLElement?
+        open var rawXml: AEXMLElement?
         
-        public var title: String
-        public var link: NSURL
-        public var url: NSURL
+        open var title: String
+        open var link: URL
+        open var url: URL
         
-        public init(title: String, link: NSURL, url: NSURL) {
+        public init(title: String, link: URL, url: URL) {
             self.title = title
             self.link = link
             self.url = url
@@ -37,8 +37,8 @@ public class RssChannel {
         
         public convenience init(channelImageXml: AEXMLElement) throws {
             guard let title = channelImageXml["title"].value,
-                linkString = channelImageXml["link"].value, link = NSURL(string: linkString),
-                urlString = channelImageXml["url"].value, url = NSURL(string: urlString) else {
+                let linkString = channelImageXml["link"].value, let link = URL(string: linkString),
+                let urlString = channelImageXml["url"].value, let url = URL(string: urlString) else {
                     throw NSError(domain: "LoadAction[Rss]", code: 2274, description: "Faltan parámetros en canal")
             }
             self.init(title: title, link: link, url: url)
@@ -47,25 +47,25 @@ public class RssChannel {
         
     }
     
-    public class Item {
+    open class Item {
         
-        public class Enclosure {
+        open class Enclosure {
             
-            public var rawXml: AEXMLElement?
+            open var rawXml: AEXMLElement?
             
-            public var url: NSURL
-            public var length: String
-            public var type: String
+            open var url: URL
+            open var length: String
+            open var type: String
             
-            public init(url: NSURL, length: String, type: String) {
+            public init(url: URL, length: String, type: String) {
                 self.url = url
                 self.length = length
                 self.type = type
             }
             
             public convenience init(enclosureXml: AEXMLElement) throws {
-                guard let urlString = enclosureXml.attributes["url"], url = NSURL(string: urlString),
-                    length = enclosureXml.attributes["length"], type = enclosureXml.attributes["type"] else {
+                guard let urlString = enclosureXml.attributes["url"], let url = URL(string: urlString),
+                    let length = enclosureXml.attributes["length"], let type = enclosureXml.attributes["type"] else {
                         throw NSError(domain: "LoadAction[Rss]", code: 2275, description: "Faltan parámetros en enclosure")
                 }
                 self.init(url: url, length: length, type: type)
@@ -74,54 +74,54 @@ public class RssChannel {
             
         }
         
-        public var rawXml: AEXMLElement?
+        open var rawXml: AEXMLElement?
         
-        public var title: String
-        public var description: String
-        public var link: NSURL
+        open var title: String
+        open var description: String
+        open var link: URL
         
-        public var author: String?
-        public var comments: NSURL?
-        public var enclosure: Enclosure?
-        public var pubDate: NSDate?
+        open var author: String?
+        open var comments: URL?
+        open var enclosure: Enclosure?
+        open var pubDate: Date?
         
-        public init(title: String, description: String, link: NSURL) {
+        public init(title: String, description: String, link: URL) {
             self.title = title
             self.description = description
             self.link = link
         }
         
         public convenience init(itemXml: AEXMLElement) throws {
-            guard let title = itemXml["title"].value, description = itemXml["description"].value,
-                linkString = itemXml["link"].value, link = NSURL(string: linkString) else {
+            guard let title = itemXml["title"].value, let description = itemXml["description"].value,
+                let linkString = itemXml["link"].value, let link = URL(string: linkString) else {
                     throw NSError(domain: "LoadAction[Rss]", code: 2276, description: "Faltan parámetros en item")
             }
             self.init(title: title, description: description, link: link)
             self.rawXml = itemXml
             self.author = itemXml["author"].value
-            self.comments = itemXml["comments"].value.flatMap({ NSURL(string: $0) })
+            self.comments = itemXml["comments"].value.flatMap({ URL(string: $0) })
             self.enclosure = itemXml["enclosure"].first.flatMap({ try? Enclosure(enclosureXml: $0) })
             if let dateString = itemXml["pubDate"].value {
-                self.pubDate = NSDate(string: dateString, format: "EEE, dd MMM yyyy HH:mm:ss ZZZ", locale: "en_US_POSIX")!
+                self.pubDate = Date(string: dateString, format: "EEE, dd MMM yyyy HH:mm:ss ZZZ", locale: "en_US_POSIX")!
             }
         }
         
     }
     
-    public var rawXml: AEXMLElement?
+    open var rawXml: AEXMLElement?
     
-    public var title: String
-    public var description: String
-    public var link: NSURL
+    open var title: String
+    open var description: String
+    open var link: URL
     
-    public var category:  String?
-    public var copyright: String?
-    public var language:  String?
-    public var imageInfo: ImageInfo?
+    open var category:  String?
+    open var copyright: String?
+    open var language:  String?
+    open var imageInfo: ImageInfo?
     
-    public var items: [Item] = []
+    open var items: [Item] = []
     
-    public init(title: String, description: String, link: NSURL) {
+    public init(title: String, description: String, link: URL) {
         self.title = title
         self.description = description
         self.link = link
@@ -129,12 +129,12 @@ public class RssChannel {
     
     public convenience init(channelXml: AEXMLElement) throws {
         
-        guard channelXml.xmlString.length > 20 else {
+        guard channelXml.xml.length > 20 else {
             throw NSError(domain: "LoadAction[Rss]", code: 2283, description: "Respuesta vacía")
         }
         
         guard let title = channelXml["title"].value,
-            linkString = channelXml["link"].value, link = NSURL(string: linkString) else {
+            let linkString = channelXml["link"].value, let link = URL(string: linkString) else {
                 throw NSError(domain: "LoadAction[Rss]", code: 2285, description: "Faltan parámetros en canal")
         }
         let description = channelXml["description"].value ?? ""

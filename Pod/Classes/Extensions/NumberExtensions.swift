@@ -28,10 +28,10 @@ public extension Bool {
 public extension Int {
     
     public init?(string: String) {
-        let nan = NSDecimalNumber.notANumber()
+        let nan = NSDecimalNumber.notANumber
         let decimal = NSDecimalNumber(string: string)
         guard decimal != nan else { return nil }
-        self = decimal.integerValue
+        self = decimal.intValue
     }
     
     public func nonZero() -> Int? {
@@ -47,19 +47,19 @@ public extension Int {
 public extension NSDecimalNumber {
     
     public convenience init?(fromString: String) {
-        let nan = NSDecimalNumber.notANumber()
+        let nan = NSDecimalNumber.notANumber
         let decimal = NSDecimalNumber(string: fromString)
         guard decimal != nan else { return nil }
         self.init(string: fromString)
     }
     
     public var twoDecimalString: String {
-        let numberFormatter = NSNumberFormatter()
+        let numberFormatter = NumberFormatter()
         numberFormatter.minimumIntegerDigits  = 1
         numberFormatter.minimumFractionDigits = 2
         numberFormatter.maximumFractionDigits = 2
         numberFormatter.usesGroupingSeparator = true
-        return numberFormatter.stringFromNumber(self)!
+        return numberFormatter.string(from: self)!
     }
     
 }
@@ -67,41 +67,41 @@ public extension NSDecimalNumber {
 extension NSDecimalNumber: Comparable {}
 
 public func ==(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> Bool {
-    return lhs.compare(rhs) == .OrderedSame
+    return lhs.compare(rhs) == .orderedSame
 }
 
 public func +=(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberByAdding(rhs)
+    return lhs.adding(rhs)
 }
 
 public func -=(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberBySubtracting(rhs)
+    return lhs.subtracting(rhs)
 }
 
 public func +(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberByAdding(rhs)
+    return lhs.adding(rhs)
 }
 
 public func -(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberBySubtracting(rhs)
+    return lhs.subtracting(rhs)
 }
 
 public func *(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberByMultiplyingBy(rhs)
+    return lhs.multiplying(by: rhs)
 }
 
 public func /(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> NSDecimalNumber {
-    return lhs.decimalNumberByDividingBy(rhs)
+    return lhs.dividing(by: rhs)
 }
 
 public func ^(lhs: NSDecimalNumber, rhs: Int) -> NSDecimalNumber {
-    return lhs.decimalNumberByRaisingToPower(rhs)
+    return lhs.raising(toPower: rhs)
 }
 
 public func <(lhs: NSDecimalNumber, rhs: NSDecimalNumber) -> Bool {
-    return lhs.compare(rhs) == .OrderedAscending
+    return lhs.compare(rhs) == .orderedAscending
 }
 
 public prefix func -(value: NSDecimalNumber) -> NSDecimalNumber {
-    return value.decimalNumberByMultiplyingBy(NSDecimalNumber(mantissa: 1, exponent: 0, isNegative: true))
+    return value.multiplying(by: NSDecimalNumber(mantissa: 1, exponent: 0, isNegative: true))
 }

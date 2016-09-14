@@ -10,22 +10,22 @@ import UIKit
 
 // If rhs not nil, set value. lhs is not replaced if rhs is nil.
 infix operator ?= { associativity right precedence 90 assignment }
-public func ?=<T>(inout lhs: T, @autoclosure rhs: () -> T?) {
+public func ?=<T>(lhs: inout T, rhs: @autoclosure () -> T?) {
     if let nv = rhs() { lhs = nv }
 }
 
 // If lhs is nil, set value. rhs is not called if lhs is not nil.
 infix operator |= { associativity right precedence 90 assignment }
-public func |=<T>(inout lhs: T?, @autoclosure rhs: () -> T?) {
+public func |=<T>(lhs: inout T?, rhs: @autoclosure () -> T?) {
     if lhs == nil { lhs = rhs() }
 }
 
 
 public extension UIActivityIndicatorView {
     
-    var animating: Bool {
+    public var active: Bool {
         get {
-            return isAnimating()
+            return isAnimating
         }
         set {
             if newValue {
@@ -38,11 +38,11 @@ public extension UIActivityIndicatorView {
     
 }
 
-extension UIRefreshControl {
+public extension UIRefreshControl {
     
-    var animating: Bool {
+    public var active: Bool {
         get {
-            return refreshing
+            return isRefreshing
         }
         set {
             if newValue {
@@ -95,10 +95,10 @@ public extension UIView {
     
     @IBInspectable public var borderColor: UIColor? {
         get {
-            return (layer.borderColor != nil ? UIColor(CGColor: layer.borderColor!) : nil)
+            return (layer.borderColor != nil ? UIColor(cgColor: layer.borderColor!) : nil)
         }
         set {
-            layer.borderColor = newValue?.CGColor
+            layer.borderColor = newValue?.cgColor
             updateLayerEffects()
         }
     }
@@ -115,7 +115,7 @@ public extension UIView {
     
     public func updateLayerEffects() {
         if shadowOpacity != 0 {
-            layer.shadowOffset  = CGSizeMake(0, 0);
+            layer.shadowOffset  = CGSize(width: 0, height: 0);
             layer.masksToBounds = false
         } else if cornerRadius != 0 {
             layer.masksToBounds = true
@@ -126,15 +126,15 @@ public extension UIView {
 
 public extension UIView {
     
-    func addParallax(amount amount: Int) {
+    func addParallax(amount: Int) {
         let verticalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.y",
-                                                               type: .TiltAlongVerticalAxis)
+                                                               type: .tiltAlongVerticalAxis)
         verticalMotionEffect.minimumRelativeValue = -amount
         verticalMotionEffect.maximumRelativeValue = amount
         
         // Set horizontal effect
         let horizontalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.x",
-                                                                 type: .TiltAlongHorizontalAxis)
+                                                                 type: .tiltAlongHorizontalAxis)
         horizontalMotionEffect.minimumRelativeValue = -amount
         horizontalMotionEffect.maximumRelativeValue = amount
         
@@ -150,7 +150,7 @@ public extension UIView {
 
 public extension UIView {
     
-    public func fillWithSubview(view: UIView, margin: CGFloat = 0.0) {
+    public func fillWithSubview(_ view: UIView, margin: CGFloat = 0.0) {
         
         // Add view
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -164,30 +164,30 @@ public extension UIView {
         // Add constraints
         self.addConstraint(
             NSLayoutConstraint(item: view,
-                attribute: .Top, relatedBy: .Equal,
-                toItem: self, attribute: .Top,
-                multiplier: 1.0, constant: margin
+                               attribute: .top, relatedBy: .equal,
+                               toItem: self, attribute: .top,
+                               multiplier: 1.0, constant: margin
             )
         )
         self.addConstraint(
             NSLayoutConstraint(item: view,
-                attribute: .Leading, relatedBy: .Equal,
-                toItem: self, attribute: .Leading,
-                multiplier: 1.0, constant: margin
+                               attribute: .leading, relatedBy: .equal,
+                               toItem: self, attribute: .leading,
+                               multiplier: 1.0, constant: margin
             )
         )
         self.addConstraint(
             NSLayoutConstraint(item: self,
-                attribute: .Bottom, relatedBy: .Equal,
-                toItem: view, attribute: .Bottom,
-                multiplier: 1.0, constant: margin
+                               attribute: .bottom, relatedBy: .equal,
+                               toItem: view, attribute: .bottom,
+                               multiplier: 1.0, constant: margin
             )
         )
         self.addConstraint(
             NSLayoutConstraint(item: self,
-                attribute: .Trailing, relatedBy: .Equal,
-                toItem: view, attribute: .Trailing,
-                multiplier: 1.0, constant: margin
+                               attribute: .trailing, relatedBy: .equal,
+                               toItem: view, attribute: .trailing,
+                               multiplier: 1.0, constant: margin
             )
         )
         
@@ -197,18 +197,18 @@ public extension UIView {
 
 public extension UIViewController {
     
-    public func insertChild(viewController viewController: UIViewController, inView: UIView) {
+    public func insertChild(viewController: UIViewController, inView: UIView) {
         addChildViewController(viewController)
-        viewController.willMoveToParentViewController(self)
+        viewController.willMove(toParentViewController: self)
         inView.fillWithSubview(viewController.view)
-        viewController.didMoveToParentViewController(self)
+        viewController.didMove(toParentViewController: self)
     }
     
-    public func removeChild(viewController viewController: UIViewController) {
+    public func removeChild(viewController: UIViewController) {
         viewController.removeFromParentViewController()
-        viewController.willMoveToParentViewController(nil)
+        viewController.willMove(toParentViewController: nil)
         viewController.view?.removeFromSuperview()
-        viewController.didMoveToParentViewController(nil)
+        viewController.didMove(toParentViewController: nil)
     }
     
 }

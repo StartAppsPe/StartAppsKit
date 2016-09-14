@@ -1,6 +1,6 @@
 {
   "name": "StartAppsKit",
-  "version": "0.7.0",
+  "version": "0.8.4",
   "summary": "A library that does everything.",
   "description": "A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.",
   "homepage": "https://github.com/StartAppsPe/StartAppsKit",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/StartAppsPe/StartAppsKit.git",
-    "tag": "0.7.0"
+    "tag": "0.8.4"
   },
   "module_name": "StartAppsKit",
   "platforms": {
@@ -74,8 +74,8 @@
         "StartAppsKit/LoadActions": [
 
         ],
-        "SwiftyJSON": [
-          "~> 2.3"
+        "Gloss": [
+          "~> 0.7"
         ]
       }
     },
@@ -87,7 +87,7 @@
 
         ],
         "AEXML": [
-          "~> 3.0"
+          "~> 4.0"
         ]
       }
     },

@@ -29,67 +29,67 @@ public extension String {
      }*/
     
     public func stringByRemovingHTML() -> String {
-        return (try! NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!,
-            options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: NSUTF8StringEncoding],
+        return (try! NSAttributedString(data: data(using: String.Encoding.utf8)!,
+            options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8],
             documentAttributes: nil)).string
     }
     
-    public func substring(range range: Range<Int>) -> String {
-        let startIndex = self.startIndex.advancedBy(range.startIndex)
-        let endIndex = startIndex.advancedBy(range.endIndex - range.startIndex)
-        return self.substringWithRange(startIndex..<endIndex)
+    public func substring(range: Range<Int>) -> String {
+        let startIndex = self.characters.index(self.startIndex, offsetBy: range.lowerBound)
+        let endIndex = self.characters.index(startIndex, offsetBy: range.upperBound - range.lowerBound)
+        return self.substring(with: startIndex..<endIndex)
     }
     
-    public func substring(start start: Int) -> String {
+    public func substring(start: Int) -> String {
         return self.substring(range: start..<self.length)
     }
     
-    public func substring(end end: Int) -> String {
+    public func substring(end: Int) -> String {
         return self.substring(range: 0..<end)
     }
     
-    public func substring(start start: Int, end: Int) -> String {
+    public func substring(start: Int, end: Int) -> String {
         return self.substring(range: start..<end)
     }
     
-    public func substring(start start: Index) -> String {
-        return self.substringWithRange(start..<self.endIndex)
+    public func substring(start: Index) -> String {
+        return self.substring(with: start..<self.endIndex)
     }
     
-    public func substring(end end: Index) -> String {
-        return self.substringWithRange(self.startIndex..<end)
+    public func substring(end: Index) -> String {
+        return self.substring(with: self.startIndex..<end)
     }
     
-    public func substring(start start: Index, end: Index) -> String {
-        return self.substringWithRange(start..<end)
+    public func substring(start: Index, end: Index) -> String {
+        return self.substring(with: start..<end)
     }
     
-    public func substring(start start: String, end: String) -> String? {
-        if let startRange = rangeOfString(start) {
-            let newString = self.substring(start: startRange.endIndex)
-            if let endRange = newString.rangeOfString(end) {
-                return newString.substring(end: endRange.startIndex)
+    public func substring(start: String, end: String) -> String? {
+        if let startRange = range(of: start) {
+            let newString = self.substring(start: startRange.upperBound)
+            if let endRange = newString.range(of: end) {
+                return newString.substring(end: endRange.lowerBound)
             }
         }
         return nil
     }
     
-    public func substring(start start: String) -> String? {
-        if let startRange = rangeOfString(start) {
-            return substring(start: startRange.endIndex)
+    public func substring(start: String) -> String? {
+        if let startRange = range(of: start) {
+            return substring(start: startRange.upperBound)
         }
         return nil
     }
     
-    public func substring(end end: String) -> String? {
-        if let endRange = rangeOfString(end) {
-            return substring(end: endRange.startIndex)
+    public func substring(end: String) -> String? {
+        if let endRange = range(of: end) {
+            return substring(end: endRange.lowerBound)
         }
         return nil
     }
     
     public func trim() -> String {
-        return stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
     
     public func clean(minSize: Int = 0) -> String? {
@@ -98,50 +98,60 @@ public extension String {
     }
     
     public func urlEncode() -> String {
-        return stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        return addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
     }
     
-    public mutating func capitalizeFirst() {
+    public mutating func uppercaseFirst() {
         guard length > 0 else { return }
-        self.replaceRange(startIndex...startIndex, with: String(self[startIndex]).capitalizedString)
+        self.replaceSubrange(startIndex...startIndex, with: String(self[startIndex]).uppercased())
     }
     
-    public func capitalizedFirstString() -> String {
+    public mutating func lowercaseFirst() {
+        guard length > 0 else { return }
+        self.replaceSubrange(startIndex...startIndex, with: String(self[startIndex]).lowercased())
+    }
+    
+    public func uppercasedFirst() -> String {
         guard length > 0 else { return self }
-        return self.stringByReplacingCharactersInRange(startIndex...startIndex, withString: String(self[startIndex]).capitalizedString)
+        var selfCopy = self
+        let first = selfCopy.characters.dropFirst()
+        return String(first).uppercased()+selfCopy
     }
     
-    public func lowercasedFirstString() -> String {
-        return self.stringByReplacingCharactersInRange(startIndex...startIndex, withString: String(self[startIndex]).lowercaseString)
+    public func lowercasedFirst() -> String {
+        guard length > 0 else { return self }
+        var selfCopy = self
+        let first = selfCopy.characters.dropFirst()
+        return String(first).uppercased()+selfCopy
     }
     
-    public func justifiedAttributedString() -> NSAttributedString {
+    public func justifiedAttributed() -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = .ByWordWrapping
-        paragraphStyle.alignment = .Justified
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        paragraphStyle.alignment = .justified
         return NSAttributedString(string: self, attributes: [NSParagraphStyleAttributeName : paragraphStyle, NSBaselineOffsetAttributeName : 0])
     }
     
-    public func indexOf(target: String) -> Int {
-        let range = self.rangeOfString(target)
+    public func indexOf(_ target: String) -> Int {
+        let range = self.range(of: target)
         if let range = range {
-            return self.startIndex.distanceTo(range.startIndex)
+            return self.characters.distance(from: self.startIndex, to: range.lowerBound)
         } else {
             return -1
         }
     }
     
-    public func indexOf(target: String, startIndex: Int) -> Int {
-        let startRange = self.startIndex.advancedBy(startIndex)
-        let range = self.rangeOfString(target, options: NSStringCompareOptions.LiteralSearch, range: Range<String.Index>(startRange..<self.endIndex))
+    public func indexOf(_ target: String, startIndex: Int) -> Int {
+        let startRange = self.characters.index(self.startIndex, offsetBy: startIndex)
+        let range = self.range(of: target, options: NSString.CompareOptions.literal, range: Range<String.Index>(startRange..<self.endIndex))
         if let range = range {
-            return self.startIndex.distanceTo(range.startIndex)
+            return self.characters.distance(from: self.startIndex, to: range.lowerBound)
         } else {
             return -1
         }
     }
     
-    public func lastIndexOf(target: String) -> Int {
+    public func lastIndexOf(_ target: String) -> Int {
         var index = -1
         var stepIndex = self.indexOf(target)
         while stepIndex > -1 {
@@ -169,8 +179,8 @@ public extension NSAttributedString {
 
 public extension NSMutableAttributedString {
     
-    public func append(string string: String, font: UIFont? = nil, color: UIColor? = nil) {
-        appendAttributedString(NSAttributedString(string: string, font: font, color: color))
+    public func append(string: String, font: UIFont? = nil, color: UIColor? = nil) {
+        self.append(NSAttributedString(string: string, font: font, color: color))
     }
     
 }

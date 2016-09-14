@@ -10,25 +10,25 @@ import Foundation
 
 import UIKit
 
-public class StaticLoadAction: LoadAction<StaticContent> {
+open class StaticLoadAction: LoadAction<StaticContent> {
     
     public typealias StaticContentResult = () throws -> StaticContent
     
-    public var staticContentClosure: StaticContentResult
+    open var staticContentClosure: StaticContentResult
     
-    public let dataSource = StaticDataSource()
+    open let dataSource = StaticDataSource()
     
-    private func loadInner(completion completion: LoadResultClosure) {
+    fileprivate func loadInner(completion: LoadResultClosure) {
         do {
             let staticContent = try staticContentClosure()
-            completion(result: .Success(staticContent))
+            completion(.success(staticContent))
         } catch(let error) {
-            completion(result: .Failure(error))
+            completion(.failure(error))
         }
     }
     
     public init(
-        staticContent: StaticContentResult,
+        staticContent: @escaping StaticContentResult,
         dummy:       (() -> ())? = nil)
     {
         self.staticContentClosure = staticContent
@@ -43,125 +43,125 @@ public class StaticLoadAction: LoadAction<StaticContent> {
     
 }
 
-public class StaticDataSource: NSObject, UITableViewDataSource {
+open class StaticDataSource: NSObject, UITableViewDataSource {
     
     weak var loadAction: StaticLoadAction!
     
-    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         return loadAction.value?.sections.count ?? 0
     }
     
-    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return loadAction.value?.sections[section].title
     }
     
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return loadAction.value?.sections[section].items.count ?? 0
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return loadAction.value!.sections[indexPath.section].items[indexPath.row].dequeueReusableCell(tableView: tableView, indexPath: indexPath)
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return loadAction.value!.sections[(indexPath as NSIndexPath).section].items[(indexPath as NSIndexPath).row].dequeueReusableCell(tableView: tableView, indexPath: indexPath)
     }
     
 }
 
-public class StaticContent {
-    public var sections: [StaticContentSection] = []
+open class StaticContent {
+    open var sections: [StaticContentSection] = []
     public init() {
     }
 }
-public func += (inout left: StaticContent, right: StaticContentSection) {
+public func += (left: inout StaticContent, right: StaticContentSection) {
     left.sections.append(right)
 }
 
 
-public class StaticContentSection {
-    public var title: String?
-    public var items: [StaticContentItemProtocol] = []
+open class StaticContentSection {
+    open var title: String?
+    open var items: [StaticContentItemProtocol] = []
     public init(title: String? = nil) {
         self.title = title
     }
 }
-public func += (inout left: [StaticContentSection], right: StaticContentSection) {
+public func += (left: inout [StaticContentSection], right: StaticContentSection) {
     left.append(right)
 }
-public func += (inout left: StaticContentSection, right: StaticContentItemProtocol) {
+public func += (left: inout StaticContentSection, right: StaticContentItemProtocol) {
     left.items.append(right)
 }
 
 
 
 public protocol StaticContentItemProtocol {
-    func dequeueReusableCell(tableView tableView: UITableView, indexPath: NSIndexPath) -> StaticTableViewCell
-    func doOnSelection(cell cell: StaticTableViewCell)
-    func doOnAction(cell cell: StaticTableViewCell)
+    func dequeueReusableCell(tableView: UITableView, indexPath: IndexPath) -> StaticTableViewCell
+    func doOnSelection(cell: StaticTableViewCell)
+    func doOnAction(cell: StaticTableViewCell)
 }
 
-public class StaticContentItem<C: StaticTableViewCell>: StaticContentItemProtocol {
-    public var cellIdentifier: String
-    private var customization: ((cell: C) -> Void)?
-    private var onSelection:   ((cell: C) -> Void)?
-    private var onAction:      ((cell: C) -> Void)?
+open class StaticContentItem<C: StaticTableViewCell>: StaticContentItemProtocol {
+    open var cellIdentifier: String
+    fileprivate var customization: ((_ cell: C) -> Void)?
+    fileprivate var onSelection:   ((_ cell: C) -> Void)?
+    fileprivate var onAction:      ((_ cell: C) -> Void)?
     public init(cellIdentifier: String) {
         self.cellIdentifier = cellIdentifier
     }
-    public func setCustomization(customization: ((cell: C) -> Void)?) {
+    open func setCustomization(_ customization: ((_ cell: C) -> Void)?) {
         self.customization = customization
     }
-    public func setOnSelection(onSelection: ((cell: C) -> Void)?) {
+    open func setOnSelection(_ onSelection: ((_ cell: C) -> Void)?) {
         self.onSelection = onSelection
     }
-    public func setOnAction(onAction: ((cell: C) -> Void)?) {
+    open func setOnAction(_ onAction: ((_ cell: C) -> Void)?) {
         self.onAction = onAction
     }
-    public func dequeueReusableCell(tableView tableView: UITableView, indexPath: NSIndexPath) -> StaticTableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! C
+    open func dequeueReusableCell(tableView: UITableView, indexPath: IndexPath) -> StaticTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! C
         cell.contentItem = self
-        customization?(cell: cell)
+        customization?(cell)
         return cell
     }
-    public func doOnSelection(cell cell: StaticTableViewCell) {
-        onSelection?(cell: cell as! C)
+    open func doOnSelection(cell: StaticTableViewCell) {
+        onSelection?(cell as! C)
     }
-    public func doOnAction(cell cell: StaticTableViewCell) {
-        onAction?(cell: cell as! C)
+    open func doOnAction(cell: StaticTableViewCell) {
+        onAction?(cell as! C)
     }
 }
 
-public class StaticTableViewCell: UITableViewCell {
-    public class func defaultIdentifier() -> String { return "StaticTableViewCell" }
-    public var contentItem: StaticContentItemProtocol!
-    public override func setSelected(selected: Bool, animated: Bool) {
+open class StaticTableViewCell: UITableViewCell {
+    open class func defaultIdentifier() -> String { return "StaticTableViewCell" }
+    open var contentItem: StaticContentItemProtocol!
+    open override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         if selected { contentItem.doOnSelection(cell: self) }
     }
 }
-public class TitleStaticTableViewCell: StaticTableViewCell {
-    public override class func defaultIdentifier() -> String { return "TitleStaticTableViewCell" }
-    @IBOutlet public weak var titleLabel: UILabel?
+open class TitleStaticTableViewCell: StaticTableViewCell {
+    open override class func defaultIdentifier() -> String { return "TitleStaticTableViewCell" }
+    @IBOutlet open weak var titleLabel: UILabel?
 }
-public class TextStaticTableViewCell: TitleStaticTableViewCell {
-    public override class func defaultIdentifier() -> String { return "TextStaticTableViewCell" }
-    @IBOutlet public weak var contentLabel: UILabel?
+open class TextStaticTableViewCell: TitleStaticTableViewCell {
+    open override class func defaultIdentifier() -> String { return "TextStaticTableViewCell" }
+    @IBOutlet open weak var contentLabel: UILabel?
 }
-public class PictureStaticTableViewCell: TextStaticTableViewCell {
-    public override class func defaultIdentifier() -> String { return "PictureStaticTableViewCell" }
-    @IBOutlet public weak var pictureView: UIImageView?
+open class PictureStaticTableViewCell: TextStaticTableViewCell {
+    open override class func defaultIdentifier() -> String { return "PictureStaticTableViewCell" }
+    @IBOutlet open weak var pictureView: UIImageView?
 }
 
-public class ButtonStaticTableViewCell: PictureStaticTableViewCell {
-    public override class func defaultIdentifier() -> String { return "ButtonStaticTableViewCell" }
-    public override func setSelected(selected: Bool, animated: Bool) {
+open class ButtonStaticTableViewCell: PictureStaticTableViewCell {
+    open override class func defaultIdentifier() -> String { return "ButtonStaticTableViewCell" }
+    open override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         if selected { contentItem.doOnAction(cell: self) }
     }
 }
-public class SwitchStaticTableViewCell: TextStaticTableViewCell {
-    public override class func defaultIdentifier() -> String { return "SwitchStaticTableViewCell" }
-    @IBOutlet public weak var switchView: UISwitch?
-    public override var contentItem: StaticContentItemProtocol! {
+open class SwitchStaticTableViewCell: TextStaticTableViewCell {
+    open override class func defaultIdentifier() -> String { return "SwitchStaticTableViewCell" }
+    @IBOutlet open weak var switchView: UISwitch?
+    open override var contentItem: StaticContentItemProtocol! {
         didSet {
-            switchView?.setAction(controlEvents: .ValueChanged, action: { (sender) in
+            switchView?.setAction(controlEvents: .valueChanged, action: { (sender) in
                 self.contentItem.doOnAction(cell: self)
             })
         }

@@ -17,18 +17,18 @@ private var _bcak: UInt8 = 4
 public extension UIButton {
     
     public var image: UIImage? {
-        get { return imageForState(.Normal) }
-        set { setImage(newValue, forState: .Normal) }
+        get { return self.image(for: UIControlState()) }
+        set { setImage(newValue, for: UIControlState()) }
     }
     
     public var backgroundImage: UIImage? {
-        get { return backgroundImageForState(.Normal) }
-        set { setBackgroundImage(newValue, forState: .Normal) }
+        get { return self.backgroundImage(for: UIControlState()) }
+        set { setBackgroundImage(newValue, for: UIControlState()) }
     }
     
     public var textColor: UIColor? {
-        get { return titleColorForState(.Normal) }
-        set { setTitleColor(newValue, forState: .Normal) }
+        get { return titleColor(for: UIControlState()) }
+        set { setTitleColor(newValue, for: UIControlState()) }
     }
     
     public var titleFont: UIFont? {
@@ -38,24 +38,24 @@ public extension UIButton {
     
     public var title: String? {
         get {
-            return titleForState(.Normal)
+            return self.title(for: UIControlState())
         }
         set {
-            setTitle(newValue, forState: .Normal)
+            setTitle(newValue, for: UIControlState())
             titleOriginal = newValue
         }
     }
     
     public var tempTitle: String? {
         get {
-            return (titleForState(.Normal) != titleOriginal ? titleForState(.Normal) : nil)
+            return (self.title(for: UIControlState()) != titleOriginal ? self.title(for: UIControlState()) : nil)
         }
         set {
             if let newValue = newValue {
                 if titleOriginal == nil { titleOriginal = title }
-                setTitle(newValue, forState: .Normal)
+                setTitle(newValue, for: UIControlState())
             } else {
-                setTitle(titleOriginal, forState: .Normal)
+                setTitle(titleOriginal, for: UIControlState())
             }
         }
     }
@@ -70,13 +70,13 @@ public extension UIButton {
         set { objc_setAssociatedObject(self, &_aiak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
     }
     
-    private var titleOriginal: String? {
+    fileprivate var titleOriginal: String? {
         get { return objc_getAssociatedObject(self, &_toak) as? String }
         set { objc_setAssociatedObject(self, &_toak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
     }
     
-    private func createActivityIndicatorView() -> UIActivityIndicatorView {
-        let tempView = UIActivityIndicatorView(activityIndicatorStyle: .White)
+    fileprivate func createActivityIndicatorView() -> UIActivityIndicatorView {
+        let tempView = UIActivityIndicatorView(activityIndicatorStyle: .white)
         tempView.center    = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
         tempView.tintColor = textColor
         tempView.color     = textColor
@@ -86,23 +86,23 @@ public extension UIButton {
         return tempView
     }
     
-    override public var highlighted: Bool {
+    override open var isHighlighted: Bool {
         didSet {
             if backgroundColor?.alpha ?? 0 == 0 { return }
             if backgroundColorOriginal == nil { backgroundColorOriginal = backgroundColor }
-            backgroundColor = backgroundColorOriginal?.colorWithShadow(highlighted ? 0.2 : 0.0)
+            backgroundColor = backgroundColorOriginal?.colorWithShadow(isHighlighted ? 0.2 : 0.0)
         }
     }
     
-    override public var enabled: Bool {
+    override open var isEnabled: Bool {
         didSet {
             if backgroundColor?.alpha ?? 0 == 0 { return }
             if backgroundColorOriginal == nil { backgroundColorOriginal = backgroundColor }
-            backgroundColor = backgroundColorOriginal?.colorWithAlpha(enabled ? 1.0 : 0.5)
+            backgroundColor = backgroundColorOriginal?.colorWithAlpha(isEnabled ? 1.0 : 0.5)
         }
     }
     
-    private var backgroundColorOriginal: UIColor? {
+    fileprivate var backgroundColorOriginal: UIColor? {
         get { return objc_getAssociatedObject(self, &_bcak) as? UIColor }
         set { objc_setAssociatedObject(self, &_bcak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN) }
     }
@@ -111,12 +111,12 @@ public extension UIButton {
 
 public extension UIGestureRecognizer {
     
-    public convenience init(action: ((sender: AnyObject) -> Void)?) {
+    public convenience init(action: ((_ sender: AnyObject) -> Void)?) {
         self.init()
         setAction(action)
     }
     
-    public func setAction(action: ((sender: AnyObject) -> Void)?) {
+    public func setAction(_ action: ((_ sender: AnyObject) -> Void)?) {
         if let action = action {
             self.removeTarget(self, action: nil)
             self.addTarget(self, action: #selector(UIGestureRecognizer.performAction))
@@ -128,10 +128,10 @@ public extension UIGestureRecognizer {
     }
     
     public func performAction() {
-        self.closuresWrapper?.action(sender: self)
+        self.closuresWrapper?.action(self)
     }
     
-    private var closuresWrapper: ClosureWrapper? {
+    fileprivate var closuresWrapper: ClosureWrapper? {
         get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
         set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
@@ -140,22 +140,22 @@ public extension UIGestureRecognizer {
 
 public extension UIControl {
     
-    public func setAction(controlEvents controlEvents: UIControlEvents, action: ((sender: AnyObject) -> Void)?) {
+    public func setAction(controlEvents: UIControlEvents, action: ((_ sender: AnyObject) -> Void)?) {
         if let action = action {
-            self.removeTarget(self, action: nil, forControlEvents: controlEvents)
-            self.addTarget(self, action: #selector(UIControl.performAction), forControlEvents: controlEvents)
+            self.removeTarget(self, action: nil, for: controlEvents)
+            self.addTarget(self, action: #selector(UIControl.performAction), for: controlEvents)
             self.closuresWrapper = ClosureWrapper(action: action)
         } else {
-            self.removeTarget(self, action: nil, forControlEvents: controlEvents)
+            self.removeTarget(self, action: nil, for: controlEvents)
             self.closuresWrapper = nil
         }
     }
     
     public func performAction() {
-        self.closuresWrapper?.action(sender: self)
+        self.closuresWrapper?.action(self)
     }
     
-    private var closuresWrapper: ClosureWrapper? {
+    fileprivate var closuresWrapper: ClosureWrapper? {
         get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
         set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
@@ -164,7 +164,7 @@ public extension UIControl {
 
 public extension UIRefreshControl {
     
-    public convenience init(color: UIColor? = nil, action: ((sender: AnyObject) -> Void)?) {
+    public convenience init(color: UIColor? = nil, action: ((_ sender: AnyObject) -> Void)?) {
         self.init()
         setAction(action)
         if let color = color {
@@ -172,8 +172,8 @@ public extension UIRefreshControl {
         }
     }
     
-    public func setAction(action: ((sender: AnyObject) -> Void)?) {
-        setAction(controlEvents: .ValueChanged, action: action)
+    public func setAction(_ action: ((_ sender: AnyObject) -> Void)?) {
+        setAction(controlEvents: .valueChanged, action: action)
     }
     
 }
@@ -181,15 +181,15 @@ public extension UIRefreshControl {
 
 public extension UIButton {
     
-    public func setAction(action: ((sender: AnyObject) -> Void)?) {
-        setAction(controlEvents: .TouchUpInside, action: action)
+    public func setAction(_ action: ((_ sender: AnyObject) -> Void)?) {
+        setAction(controlEvents: .touchUpInside, action: action)
     }
     
 }
 
 public extension UIBarButtonItem {
     
-    public convenience init(barButtonSystemItem systemItem: UIBarButtonSystemItem, action: ((sender: AnyObject) -> Void)?) {
+    public convenience init(barButtonSystemItem systemItem: UIBarButtonSystemItem, action: ((_ sender: AnyObject) -> Void)?) {
         self.init(barButtonSystemItem: systemItem, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
@@ -197,7 +197,7 @@ public extension UIBarButtonItem {
         }
     }
     
-    public convenience init(image: UIImage?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
+    public convenience init(image: UIImage?, style: UIBarButtonItemStyle, action: ((_ sender: AnyObject) -> Void)?) {
         self.init(image: image, style: style, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
@@ -205,7 +205,7 @@ public extension UIBarButtonItem {
         }
     }
     
-    public convenience init(title: String?, style: UIBarButtonItemStyle, action: ((sender: AnyObject) -> Void)?) {
+    public convenience init(title: String?, style: UIBarButtonItemStyle, action: ((_ sender: AnyObject) -> Void)?) {
         self.init(title: title, style: style, target: nil, action: #selector(UIBarButtonItem.performAction))
         if let action = action {
             self.closuresWrapper = ClosureWrapper(action: action)
@@ -214,10 +214,10 @@ public extension UIBarButtonItem {
     }
     
     public func performAction() {
-        self.closuresWrapper?.action(sender: self)
+        self.closuresWrapper?.action(self)
     }
     
-    private var closuresWrapper: ClosureWrapper? {
+    fileprivate var closuresWrapper: ClosureWrapper? {
         get { return objc_getAssociatedObject(self, &_aaak) as? ClosureWrapper }
         set { objc_setAssociatedObject(self, &_aaak, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
@@ -225,8 +225,8 @@ public extension UIBarButtonItem {
 }
 
 private final class ClosureWrapper {
-    private var action: (sender: AnyObject) -> Void
-    init(action: (sender: AnyObject) -> Void) {
+    fileprivate var action: (_ sender: AnyObject) -> Void
+    init(action: @escaping (_ sender: AnyObject) -> Void) {
         self.action = action
     }
 }

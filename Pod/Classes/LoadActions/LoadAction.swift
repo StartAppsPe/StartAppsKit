@@ -12,38 +12,38 @@ import Foundation
 public let LoadActionUpdatedNotification = "LoadActionUpdatedNotification"
 public var LoadActionLoadingCount: Int = 0 {
 didSet {
-    NSNotificationCenter.defaultCenter().postNotificationName(LoadActionUpdatedNotification, object: nil)
+    NotificationCenter.default.post(name: Notification.Name(rawValue: LoadActionUpdatedNotification), object: nil)
 }
 }
 public var LoadActionAllStatus: LoadingStatus {
-    return (LoadActionLoadingCount == 0 ? .Ready : .Loading)
+    return (LoadActionLoadingCount == 0 ? .ready : .loading)
 }
 
-public class LoadAction<T>: LoadActionType {
+open class LoadAction<T>: LoadActionType {
     
     public typealias LoadResultType     = Result<T>
-    public typealias LoadResultClosure  = (result: LoadResultType) -> Void
-    public typealias LoadResult         = (completion: LoadResultClosure) -> Void
+    public typealias LoadResultClosure  = (_ result: LoadResultType) -> Void
+    public typealias LoadResult         = (_ completion: @escaping LoadResultClosure) -> Void
     
-    public var updatedProperties: Set<LoadActionProperties> = []
-    public var delegates: [LoadActionDelegate] = []
+    open var updatedProperties: Set<LoadActionProperties> = []
+    open var delegates: [LoadActionDelegate] = []
     
-    public var status: LoadingStatus = .Ready {
-        didSet { updatedProperties.insert(.Status) }
+    open var status: LoadingStatus = .ready {
+        didSet { updatedProperties.insert(.status) }
     }
-    public var error: ErrorType? {
-        didSet { updatedProperties.insert(.Error) }
+    open var error: Error? {
+        didSet { updatedProperties.insert(.error) }
     }
-    public var value: T? {
-        didSet { updatedProperties.insert(.Value); date = NSDate.now() }
+    open var value: T? {
+        didSet { updatedProperties.insert(.value); date = Date.now() }
     }
-    public var date: NSDate? {
-        didSet { updatedProperties.insert(.Date) }
+    open var date: Date? {
+        didSet { updatedProperties.insert(.date) }
     }
     
-    public var loadClosure: LoadResult!
+    open var loadClosure: LoadResult!
     
-    public func loadNew() {
+    open func loadNew() {
         load(completion: nil)
     }
     
@@ -52,42 +52,42 @@ public class LoadAction<T>: LoadActionType {
      
      - parameter completion: Closure called when operation finished
      */
-    public func load(completion completion: LoadResultClosure?) {
+    open func load(completion: LoadResultClosure?) {
         LoadActionLoadingCount += 1
-        print(owner: "LoadAction[Main]", items: "Load Began", level: .Verbose)
+        print(owner: "LoadAction[Main]", items: "Load Began", level: .verbose)
         
         // Adjust loading status to loading kind
-        status = .Loading
+        status = .loading
         sendDelegateUpdates()
         
         // Load value
         loadClosure() { (result) -> () in
             
             switch result {
-            case .Failure(let error):
-                print(owner: "LoadAction[Main]", items: "Loaded Failure (\(error))", level: .Error)
+            case .failure(let error):
+                print(owner: "LoadAction[Main]", items: "Loaded Failure (\(error))", level: .error)
                 self.error = error
-            case .Success(let loadedValue):
-                print(owner: "LoadAction[Main]", items: "Loaded Success", level: .Verbose)
+            case .success(let loadedValue):
+                print(owner: "LoadAction[Main]", items: "Loaded Success", level: .verbose)
                 self.value = loadedValue
             }
             
             // Adjust loading status to loaded kind and call completion
-            self.status = .Ready
+            self.status = .ready
             LoadActionLoadingCount -= 1
             self.sendDelegateUpdates()
-            completion?(result: result)
+            completion?(result)
         }
         
     }
     
-    public func loadAny(completion completion: ((result: Result<Any>) -> Void)?) {
+    open func loadAny(completion: ((_ result: Result<Any>) -> Void)?) {
         load() { (resultGeneric) -> Void in
             switch resultGeneric {
-            case .Success(let loadedValue):
-                completion?(result: .Success(loadedValue))
-            case .Failure(let error):
-                completion?(result: .Failure(error))
+            case .success(let loadedValue):
+                completion?(.success(loadedValue))
+            case .failure(let error):
+                completion?(.failure(error))
             }
         }
     }
@@ -99,7 +99,7 @@ public class LoadAction<T>: LoadActionType {
      - parameter delegates: Array containing objects that react to updated value
      */
     public init(
-        load:  LoadResult,
+        load:  @escaping LoadResult,
         dummy: (() -> ())? = nil)
     {
         self.loadClosure = load
@@ -107,14 +107,14 @@ public class LoadAction<T>: LoadActionType {
     
 }
 
-public func Load<B>(@noescape startLoadAction: (() -> LoadAction<B>)) -> LoadAction<B> {
+public func Load<B>(_ startLoadAction: (() -> LoadAction<B>)) -> LoadAction<B> {
     return startLoadAction()
 }
 
 public extension LoadAction {
     
-    public func then<B>(@noescape thenLoadAction: ((loadAction: LoadAction<T>) -> LoadAction<B>)) -> LoadAction<B> {
-        return thenLoadAction(loadAction: self)
+    public func then<B>(_ thenLoadAction: ((_ loadAction: LoadAction<T>) -> LoadAction<B>)) -> LoadAction<B> {
+        return thenLoadAction(self)
     }
     
 }

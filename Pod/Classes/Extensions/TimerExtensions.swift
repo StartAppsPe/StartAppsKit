@@ -8,28 +8,28 @@
 
 import Foundation
 
-public extension NSTimer {
+public extension Timer {
     
     /********************************************************************************************************/
     // MARK: Closure Methods
     /********************************************************************************************************/
     
-    public class NSTimerCallbackHolder : NSObject {
+    open class NSTimerCallbackHolder : NSObject {
         var callback: () -> ()
         
-        init(callback: () -> ()) {
+        init(callback: @escaping () -> ()) {
             self.callback = callback
         }
         
-        func tick(timer: NSTimer) {
+        func tick(_ timer: Timer) {
             callback()
         }
     }
     
-    public class func scheduledTimer(timeInterval: NSTimeInterval, repeats: Bool, actions: () -> ()) -> NSTimer {
+    public class func scheduledTimer(_ timeInterval: TimeInterval, repeats: Bool, actions: @escaping () -> ()) -> Timer {
         let holder = NSTimerCallbackHolder(callback: actions)
         holder.callback = actions
-        return self.scheduledTimerWithTimeInterval(timeInterval, target: holder, selector: #selector(NSTimerCallbackHolder.tick(_:)), userInfo: nil, repeats: repeats)
+        return self.scheduledTimer(timeInterval: timeInterval, target: holder, selector: #selector(NSTimerCallbackHolder.tick(_:)), userInfo: nil, repeats: repeats)
     }
     
 }

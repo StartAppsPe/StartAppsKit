@@ -10,33 +10,33 @@
 import Foundation
 
 public enum LoadingStatus {
-    case Ready, Loading
+    case ready, loading
 }
 
 public enum LoadActionProperties {
-    case Status, Error, Value, Date
+    case status, error, value, date
 }
 
 public protocol LoadActionDelegate: AnyObject {
-    func loadActionUpdated<L: LoadActionType>(loadAction loadAction: L, updatedProperties: Set<LoadActionProperties>)
+    func loadActionUpdated<L: LoadActionType>(loadAction: L, updatedProperties: Set<LoadActionProperties>)
 }
 
 public protocol LoadActionLoadableType: AnyObject {
     
     var status:   LoadingStatus { get }
-    var error:    ErrorType?    { get }
-    var date:     NSDate?       { get }
+    var error:    Error?        { get }
+    var date:     Date?         { get }
     var valueAny: Any?          { get }
     
     var delegates: [LoadActionDelegate] { get set }
     
     func loadNew()
-    func loadAny(completion completion: ((result: Result<Any>) -> Void)?)
+    func loadAny(completion: ((_ result: Result<Any>) -> Void)?)
     
     var updatedProperties: Set<LoadActionProperties> { get set }
     
-    func addDelegate(delegate: LoadActionDelegate)
-    func removeDelegate(delegate: LoadActionDelegate)
+    func addDelegate(_ delegate: LoadActionDelegate)
+    func removeDelegate(_ delegate: LoadActionDelegate)
     func sendDelegateUpdates(forced: Bool)
 
 }
@@ -46,12 +46,12 @@ public protocol LoadActionType: LoadActionLoadableType {
     associatedtype T
     
     associatedtype LoadedResultType    = Result<T>
-    associatedtype LoadedResultClosure = (result: LoadedResultType) -> Void
-    associatedtype LoadedResult        = (completion: LoadedResultClosure?) -> Void
+    associatedtype LoadedResultClosure = (_ result: LoadedResultType) -> Void
+    associatedtype LoadedResult        = (_ completion: LoadedResultClosure?) -> Void
     
     var value: T? { get }
     
-    func load(completion completion: LoadedResultClosure?)
+    func load(completion: LoadedResultClosure?)
     
 }
 
@@ -67,16 +67,16 @@ public extension LoadActionType {
         updatedProperties = []
     }
     
-    public func addDelegate(delegate: LoadActionDelegate) {
-        if !delegates.contains({ $0 === delegate }) {
+    public func addDelegate(_ delegate: LoadActionDelegate) {
+        if !delegates.contains(where: { $0 === delegate }) {
             delegates.append(delegate)
             delegate.loadActionUpdated(loadAction: self, updatedProperties: [])
         }
     }
     
-    public func removeDelegate(delegate: LoadActionDelegate) {
-        if let index = delegates.indexOf({ $0 === delegate }) {
-            delegates.removeAtIndex(index)
+    public func removeDelegate(_ delegate: LoadActionDelegate) {
+        if let index = delegates.index(where: { $0 === delegate }) {
+            delegates.remove(at: index)
         }
     }
     

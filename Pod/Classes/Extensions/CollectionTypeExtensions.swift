@@ -6,22 +6,22 @@
 //  Copyright (c) 2015 StartApps. All rights reserved.
 //
 
-public extension CollectionType {
+public extension Collection {
     
-    public func performEach(action: (Self.Generator.Element) -> Void) {
+    public func performEach(_ action: (Self.Iterator.Element) -> Void) {
         for element in self { action(element) }
     }
     
-    @warn_unused_result
-    public func find(isElement: (Self.Generator.Element) -> Bool) -> Self.Generator.Element? {
-        if let index = indexOf(isElement) {
+    
+    public func find(_ isElement: (Self.Iterator.Element) -> Bool) -> Self.Iterator.Element? {
+        if let index = index(where: isElement) {
             return self[index]
         }
         return nil
     }
     
-    @warn_unused_result
-    public func shuffled() -> [Generator.Element] {
+    
+    public func shuffled() -> [Iterator.Element] {
         var list = Array(self)
         list.shuffle()
         return list
@@ -29,20 +29,20 @@ public extension CollectionType {
     
 }
 
-public extension CollectionType where Index == Int  {
+public extension Collection where Index == Int  {
     
-    public var random: Self.Generator.Element? {
-        return self[Int(arc4random_uniform(UInt32(count)))]
+    public var random: Self.Iterator.Element? {
+        return self[Int(arc4random_uniform(UInt32(count.toIntMax())))]
     }
     
 }
 
-public extension MutableCollectionType where Index == Int  {
+public extension MutableCollection where Index == Int  {
     
     public mutating func shuffle() {
         if count < 2 { return }
-        for i in 0..<count - 1 {
-            let j = Int(arc4random_uniform(UInt32(count - i))) + i
+        for i in 0..<Int(count.toIntMax()-1) {
+            let j = Int(arc4random_uniform(UInt32(count.toIntMax() - i))) + i
             guard i != j else { continue }
             swap(&self[i], &self[j])
         }
@@ -50,11 +50,11 @@ public extension MutableCollectionType where Index == Int  {
     
 }
 
-public extension CollectionType where Generator.Element : Equatable {
+public extension Collection where Iterator.Element : Equatable {
     
-    @warn_unused_result
-    public func distinct() -> [Self.Generator.Element] {
-        var distinctElements: [Self.Generator.Element] = []
+    
+    public func distinct() -> [Self.Iterator.Element] {
+        var distinctElements: [Self.Iterator.Element] = []
         for element in self {
             if !distinctElements.contains(element) {
                 distinctElements.append(element)
@@ -67,7 +67,7 @@ public extension CollectionType where Generator.Element : Equatable {
 
 public extension Set {
     
-    public mutating func toggle(element: Element) -> Bool {
+    public mutating func toggle(_ element: Element) -> Bool {
         if contains(element) {
             remove(element)
             return false
@@ -84,7 +84,7 @@ public extension Array {
     
     public mutating func popFirst() -> Element? {
         if let first = first {
-            removeAtIndex(0)
+            remove(at: 0)
             return first
         }
         return nil
@@ -92,35 +92,35 @@ public extension Array {
     
 }
 
-public extension RangeReplaceableCollectionType where Generator.Element: Equatable {
+public extension RangeReplaceableCollection where Iterator.Element: Equatable {
     
-    public mutating func appendUnique(element: Self.Generator.Element) {
+    public mutating func appendUnique(_ element: Self.Iterator.Element) {
         if !contains(element) {
             append(element)
         }
     }
     
-    public mutating func appendIfExists(element: Self.Generator.Element?) {
+    public mutating func appendIfExists(_ element: Self.Iterator.Element?) {
         if let element = element {
             append(element)
         }
     }
     
-    public mutating func appendUniqueIfExists(element: Self.Generator.Element?) {
-        if let element = element where !contains(element) {
+    public mutating func appendUniqueIfExists(_ element: Self.Iterator.Element?) {
+        if let element = element , !contains(element) {
             append(element)
         }
     }
     
-    public mutating func remove(element: Self.Generator.Element) {
-        if let index = indexOf(element) {
-            removeAtIndex(index)
+    public mutating func remove(_ element: Self.Iterator.Element) {
+        if let index = index(of: element) {
+            self.remove(at: index)
         }
     }
     
-    public mutating func toggle(element: Self.Generator.Element) {
-        if let index = indexOf(element) {
-            removeAtIndex(index)
+    public mutating func toggle(_ element: Self.Iterator.Element) {
+        if let index = index(of: element) {
+            self.remove(at: index)
         } else {
             append(element)
         }
@@ -128,19 +128,19 @@ public extension RangeReplaceableCollectionType where Generator.Element: Equatab
     
 }
 
-public extension Range where Element : Comparable {
-    
-    public func contains(element element: Element) -> Bool {
-        return self ~= element
-    }
-    
-    public func contains(range range: Range) -> Bool {
-        return self ~= range
-    }
-    
-}
+//public extension Range where  Iterator.Element : Comparable {
+//    
+//    public func contains(element: Element) -> Bool {
+//        return self ~= element
+//    }
+//    
+//    public func contains(range: Range) -> Bool {
+//        return self ~= range
+//    }
+//    
+//}
 
-@warn_unused_result
-public func ~=<I : ForwardIndexType where I : Comparable>(pattern: Range<I>, value: Range<I>) -> Bool {
-    return pattern ~= value.startIndex || pattern ~= value.endIndex || value ~= pattern.startIndex || value ~= pattern.endIndex
+
+public func ~=<I : Comparable>(pattern: Range<I>, value: Range<I>) -> Bool where I : Comparable {
+    return pattern ~= value.lowerBound || pattern ~= value.upperBound || value ~= pattern.lowerBound || value ~= pattern.upperBound
 }

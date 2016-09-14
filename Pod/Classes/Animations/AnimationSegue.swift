@@ -8,42 +8,42 @@
 
 import UIKit
 
-public class AnimationSegue: UIStoryboardSegue {
+open class AnimationSegue: UIStoryboardSegue {
     
-    public var delay: NSTimeInterval = 0
-    public var duration: NSTimeInterval = 1
-    public var options: UIViewKeyframeAnimationOptions = [.BeginFromCurrentState]
+    open var delay: TimeInterval = 0
+    open var duration: TimeInterval = 1
+    open var options: UIViewKeyframeAnimationOptions = [.beginFromCurrentState]
     
-    public var transitions: [AnimationSegueTransition] = []
+    open var transitions: [AnimationSegueTransition] = []
     
-    public override func perform() {
+    open override func perform() {
         // Assign the source and destination views to local variables.
-        let firstVCView = self.sourceViewController.view as UIView!
-        let secondVCView = self.destinationViewController.view as UIView!
+        let firstVCView = self.source.view as UIView!
+        let secondVCView = self.destination.view as UIView!
         
         // Specify the initial position of the destination view.
-        secondVCView.frame = firstVCView.frame
-        secondVCView.alpha = 0
+        secondVCView?.frame = (firstVCView?.frame)!
+        secondVCView?.alpha = 0
         
         // Access the app's key window and insert the destination view above the current (source) one.
-        let window = UIApplication.sharedApplication().keyWindow
-        window?.insertSubview(secondVCView, aboveSubview: firstVCView)
-        secondVCView.layoutIfNeeded()
+        let window = UIApplication.shared.keyWindow
+        window?.insertSubview(secondVCView!, aboveSubview: firstVCView!)
+        secondVCView?.layoutIfNeeded()
         
         for transition in self.transitions {
             transition.prepareAnimationsClosure()()
         }
         
         // Animate the transition.
-        UIView.animateKeyframesWithDuration(duration, delay: delay, options: options,
+        UIView.animateKeyframes(withDuration: duration, delay: delay, options: options,
             animations: { () -> Void in
                 for transition in self.transitions {
-                    UIView.addKeyframeWithRelativeStartTime(transition.start, relativeDuration: transition.duration,
+                    UIView.addKeyframe(withRelativeStartTime: transition.start, relativeDuration: transition.duration,
                         animations: transition.animationsClosure())
                 }
             },
             completion: { (Finished) -> Void in
-                self.sourceViewController.presentViewController(self.destinationViewController as UIViewController, animated: false, completion: nil)
+                self.source.present(self.destination as UIViewController, animated: false, completion: nil)
                 for transition in self.transitions {
                     transition.finishAnimationsClosure()()
                 }
@@ -51,148 +51,148 @@ public class AnimationSegue: UIStoryboardSegue {
         )
     }
     
-    public func addTransition(transition: AnimationSegueTransition) {
+    open func addTransition(_ transition: AnimationSegueTransition) {
         transitions.append(transition)
     }
     
 }
 
 public enum AnimationSegueTransitionType {
-    case Action, Match, FadeOut, FadeIn, EnterUp, EnterDown, EnterLeft, EnterRight, LeaveUp, LeaveDown, LeaveLeft, LeaveRight
+    case action, match, fadeOut, fadeIn, enterUp, enterDown, enterLeft, enterRight, leaveUp, leaveDown, leaveLeft, leaveRight
 }
 
-public class AnimationSegueTransition {
+open class AnimationSegueTransition {
     
-    private var view: (() -> UIView)?
-    private var toView: (() -> UIView)?
-    private var actions: (() -> Void)?
+    fileprivate var view: (() -> UIView)?
+    fileprivate var toView: (() -> UIView)?
+    fileprivate var actions: (() -> Void)?
     
-    public var type: AnimationSegueTransitionType
+    open var type: AnimationSegueTransitionType
     
-    public var start: NSTimeInterval
-    public var duration: NSTimeInterval
+    open var start: TimeInterval
+    open var duration: TimeInterval
     
-    private func prepareAnimationsClosure() -> (() -> Void) {
+    fileprivate func prepareAnimationsClosure() -> (() -> Void) {
         return { () -> Void in
             switch self.type {
                 
-            case .Action:
+            case .action:
                 break
                 
-            case .Match:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                let to = self.toView!().superview!.convertRect(self.toView!().frame, toView: window)
+            case .match:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                let to = self.toView!().superview!.convert(self.toView!().frame, to: window)
                 
-                var transform = CGAffineTransformIdentity;
-                transform = CGAffineTransformScale(transform, CGRectGetWidth(from)/CGRectGetWidth(to), CGRectGetHeight(from)/CGRectGetHeight(to))
-                transform = CGAffineTransformTranslate(transform, CGRectGetMidX(from)-CGRectGetMidX(to), CGRectGetMidY(from)-CGRectGetMidY(to))
+                var transform = CGAffineTransform.identity;
+                transform = transform.scaledBy(x: from.width/to.width, y: from.height/to.height)
+                transform = transform.translatedBy(x: from.midX-to.midX, y: from.midY-to.midY)
                 
                 self.toView!().transform = transform
                 
-            case .FadeOut:
+            case .fadeOut:
                 self.view!().alpha = 1
-            case .FadeIn:
+            case .fadeIn:
                 self.view!().alpha = 0
                 
-            case .EnterUp:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(0, (-CGRectGetMaxY(from))-CGRectGetMinY(from))
-            case .EnterDown:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(0, CGRectGetMaxY(window.frame)-CGRectGetMinY(from))
-            case .EnterLeft:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation((-CGRectGetMaxX(from))-CGRectGetMinX(from), 0)
-            case .EnterRight:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(CGRectGetMaxX(window.frame)-CGRectGetMinX(from), 0)
+            case .enterUp:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: 0, y: (-from.maxY)-from.minY)
+            case .enterDown:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: 0, y: window.frame.maxY-from.minY)
+            case .enterLeft:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: (-from.maxX)-from.minX, y: 0)
+            case .enterRight:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: window.frame.maxX-from.minX, y: 0)
                 
-            case .LeaveUp:
+            case .leaveUp:
                 break
-            case .LeaveDown:
+            case .leaveDown:
                 break
-            case .LeaveLeft:
+            case .leaveLeft:
                 break
-            case .LeaveRight:
+            case .leaveRight:
                 break
             }
         }
     }
     
-    private func animationsClosure() -> (() -> Void) {
+    fileprivate func animationsClosure() -> (() -> Void) {
         return { () -> Void in
             switch self.type {
                 
-            case .Action:
+            case .action:
                 self.actions!()
                 
-            case .Match:
+            case .match:
                 //let window = UIApplication.sharedApplication().keyWindow!
                 //let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
                 //let to = self.toView!().superview!.convertRect(self.toView!().frame, toView: window)
                 //let translate = CGAffineTransformMakeTranslation(CGRectGetMidX(to)-CGRectGetMidX(from), CGRectGetMidY(to)-CGRectGetMidY(from))
                 //let scale = CGAffineTransformMakeScale(to.width/from.width, to.height/from.height)
-                self.view!().transform = CGAffineTransformInvert(self.toView!().transform)
-                self.toView!().transform = CGAffineTransformIdentity
+                self.view!().transform = self.toView!().transform.inverted()
+                self.toView!().transform = CGAffineTransform.identity
                 
-            case .FadeOut:
+            case .fadeOut:
                 self.view!().alpha = 0
-            case .FadeIn:
+            case .fadeIn:
                 self.view!().alpha = 1
                 
-            case .EnterUp:
-                self.view!().transform = CGAffineTransformIdentity
-            case .EnterDown:
-                self.view!().transform = CGAffineTransformIdentity
-            case .EnterLeft:
-                self.view!().transform = CGAffineTransformIdentity
-            case .EnterRight:
-                self.view!().transform = CGAffineTransformIdentity
+            case .enterUp:
+                self.view!().transform = CGAffineTransform.identity
+            case .enterDown:
+                self.view!().transform = CGAffineTransform.identity
+            case .enterLeft:
+                self.view!().transform = CGAffineTransform.identity
+            case .enterRight:
+                self.view!().transform = CGAffineTransform.identity
                 
-            case .LeaveUp:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(0, (-CGRectGetMaxY(from))-CGRectGetMinY(from))
-            case .LeaveDown:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(0, CGRectGetMaxY(window.frame)-CGRectGetMinY(from))
-            case .LeaveLeft:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation((-CGRectGetMaxX(from))-CGRectGetMinX(from), 0)
-            case .LeaveRight:
-                let window = UIApplication.sharedApplication().keyWindow!
-                let from = self.view!().superview!.convertRect(self.view!().frame, toView: window)
-                self.view!().transform = CGAffineTransformMakeTranslation(CGRectGetMaxX(window.frame)-CGRectGetMinX(from), 0)
+            case .leaveUp:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: 0, y: (-from.maxY)-from.minY)
+            case .leaveDown:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: 0, y: window.frame.maxY-from.minY)
+            case .leaveLeft:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: (-from.maxX)-from.minX, y: 0)
+            case .leaveRight:
+                let window = UIApplication.shared.keyWindow!
+                let from = self.view!().superview!.convert(self.view!().frame, to: window)
+                self.view!().transform = CGAffineTransform(translationX: window.frame.maxX-from.minX, y: 0)
             }
         }
     }
     
-    private func finishAnimationsClosure() -> (() -> Void) {
+    fileprivate func finishAnimationsClosure() -> (() -> Void) {
         return { () -> Void in
             self.view?().alpha = 1
-            self.view?().transform = CGAffineTransformIdentity
+            self.view?().transform = CGAffineTransform.identity
         }
     }
     
-    public init(start: NSTimeInterval = 0, duration: NSTimeInterval = 1,
-        view: (() -> UIView), toView: (() -> UIView)) {
+    public init(start: TimeInterval = 0, duration: TimeInterval = 1,
+        view: @escaping (() -> UIView), toView: @escaping (() -> UIView)) {
             self.view = view
             self.toView = toView
             self.actions = nil
-            self.type = .Match
+            self.type = .match
             self.start = start
             self.duration = duration
     }
     
-    public init(start: NSTimeInterval = 0, duration: NSTimeInterval = 1,
-        view: (() -> UIView), withType type: AnimationSegueTransitionType) {
+    public init(start: TimeInterval = 0, duration: TimeInterval = 1,
+        view: @escaping (() -> UIView), withType type: AnimationSegueTransitionType) {
             self.view = view
             self.toView = nil
             self.actions = nil
@@ -201,12 +201,12 @@ public class AnimationSegueTransition {
             self.duration = duration
     }
     
-    public init(start: NSTimeInterval = 0,
-        actions: (() -> Void)) {
+    public init(start: TimeInterval = 0,
+        actions: @escaping (() -> Void)) {
             self.view = nil
             self.toView = nil
             self.actions = actions
-            self.type = .Action
+            self.type = .action
             self.start = start
             self.duration = 0
     }

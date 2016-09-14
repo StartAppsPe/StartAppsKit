@@ -8,17 +8,17 @@
 
 import Foundation
 
-public class CacheLoadAction<T>: LoadAction<T> {
+open class CacheLoadAction<T>: LoadAction<T> {
     
-    public typealias UpdateCacheResult = (loadAction: CacheLoadAction<T>) throws -> Bool
-    public typealias SaveToCacheResult = (loadedValue: T, loadAction: CacheLoadAction<T>) throws -> Void
+    public typealias UpdateCacheResult = (_ loadAction: CacheLoadAction<T>) throws -> Bool
+    public typealias SaveToCacheResult = (_ loadedValue: T, _ loadAction: CacheLoadAction<T>) throws -> Void
     
-    public var cacheLoadAction:    LoadAction<T>
-    public var baseLoadAction:     LoadAction<T>
-    public var saveToCacheClosure: SaveToCacheResult?
-    public var updateCacheClosure: UpdateCacheResult
+    open var cacheLoadAction:    LoadAction<T>
+    open var baseLoadAction:     LoadAction<T>
+    open var saveToCacheClosure: SaveToCacheResult?
+    open var updateCacheClosure: UpdateCacheResult
     
-    private var useForcedNext: Bool = false
+    fileprivate var useForcedNext: Bool = false
     
     
     /**
@@ -27,16 +27,16 @@ public class CacheLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    public func load(forced forced: Bool, completion: LoadResultClosure?) {
+    open func load(forced: Bool, completion: LoadResultClosure?) {
         useForcedNext = forced
         load(completion: completion)
     }
     
-    public override func loadNew() {
+    open override func loadNew() {
         load(forced: true, completion: nil)
     }
     
-    private func loadInner(completion completion: LoadResultClosure) {
+    fileprivate func loadInner(completion: @escaping LoadResultClosure) {
         guard useForcedNext == false else {
             self.loadCache(completion: { (result) in
                 self.loadBase(completion: completion)
@@ -46,13 +46,13 @@ public class CacheLoadAction<T>: LoadAction<T> {
         }
         self.loadCache(completion: { (result) in
             do {
-                if try self.updateCacheClosure(loadAction: self) {
+                if try self.updateCacheClosure(self) {
                     self.loadBase(completion: completion)
                 } else {
-                    completion(result: result)
+                    completion(result)
                 }
             } catch(let error) {
-                completion(result: .Failure(error))
+                completion(.failure(error))
             }
         })
     }
@@ -62,16 +62,16 @@ public class CacheLoadAction<T>: LoadAction<T> {
      
      - parameter completion: Closure called when operation finished
      */
-    private func loadCache(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[Cache]", items: "Cache Load Began", level: .Info)
+    fileprivate func loadCache(completion: @escaping LoadResultClosure) {
+        print(owner: "LoadAction[Cache]", items: "Cache Load Began", level: .info)
         cacheLoadAction.load { (result) in
             switch result {
-            case .Success(_):
-                print(owner: "LoadAction[Cache]", items: "Cache Load Success", level: .Info)
-                completion(result: result)
-            case .Failure(let error):
-                print(owner: "LoadAction[Cache]", items: "Cache Load Failure. \(error)", level: .Error)
-                completion(result: result)
+            case .success(_):
+                print(owner: "LoadAction[Cache]", items: "Cache Load Success", level: .info)
+                completion(result)
+            case .failure(let error):
+                print(owner: "LoadAction[Cache]", items: "Cache Load Failure. \(error)", level: .error)
+                completion(result)
             }
         }
     }
@@ -81,30 +81,30 @@ public class CacheLoadAction<T>: LoadAction<T> {
      
      - parameter completion: Closure called when operation finished
      */
-    private func loadBase(completion completion: LoadResultClosure) {
-        print(owner: "LoadAction[Cache]", items: "Base Load Began", level: .Info)
+    fileprivate func loadBase(completion: @escaping LoadResultClosure) {
+        print(owner: "LoadAction[Cache]", items: "Base Load Began", level: .info)
         baseLoadAction.load { (result) in
             switch result {
-            case .Success(let value):
+            case .success(let value):
                 if let saveToCacheClosure = self.saveToCacheClosure {
-                    print(owner: "LoadAction[Cache]", items: "Save to Cache Began", level: .Info)
+                    print(owner: "LoadAction[Cache]", items: "Save to Cache Began", level: .info)
                     do {
-                        try saveToCacheClosure(loadedValue: value, loadAction: self)
-                        print(owner: "LoadAction[Cache]", items: "Save to Cache Success", level: .Info)
-                        print(owner: "LoadAction[Cache]", items: "Base Load Success", level: .Info)
-                        completion(result: result)
+                        try saveToCacheClosure(value, self)
+                        print(owner: "LoadAction[Cache]", items: "Save to Cache Success", level: .info)
+                        print(owner: "LoadAction[Cache]", items: "Base Load Success", level: .info)
+                        completion(result)
                     } catch(let error) {
-                        print(owner: "LoadAction[Cache]", items: "Save to Cache Failure. \(error)", level: .Error)
-                        print(owner: "LoadAction[Cache]", items: "Base Load Failure. \(error)", level: .Error)
-                        completion(result: .Failure(error))
+                        print(owner: "LoadAction[Cache]", items: "Save to Cache Failure. \(error)", level: .error)
+                        print(owner: "LoadAction[Cache]", items: "Base Load Failure. \(error)", level: .error)
+                        completion(.failure(error))
                     }
                 } else {
-                    print(owner: "LoadAction[Cache]", items: "Base Load Success", level: .Info)
-                    completion(result: result)
+                    print(owner: "LoadAction[Cache]", items: "Base Load Success", level: .info)
+                    completion(result)
                 }
-            case .Failure(let error):
-                print(owner: "LoadAction[Cache]", items: "Base Load Failure. \(error)", level: .Error)
-                completion(result: result)
+            case .failure(let error):
+                print(owner: "LoadAction[Cache]", items: "Base Load Failure. \(error)", level: .error)
+                completion(result)
             }
         }
     }
@@ -122,7 +122,7 @@ public class CacheLoadAction<T>: LoadAction<T> {
         baseLoadAction:  LoadAction<T>,
         cacheLoadAction: LoadAction<T>,
         saveToCache:     SaveToCacheResult?,
-        updateCache:     UpdateCacheResult,
+        updateCache:     @escaping UpdateCacheResult,
         dummy:           (() -> ())? = nil)
     {
         self.baseLoadAction     = baseLoadAction

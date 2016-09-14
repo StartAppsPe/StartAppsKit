@@ -10,22 +10,22 @@
 import Foundation
 
 public enum GroupLoadOrder {
-    case Parallel, Sequential, SequentialForced
+    case parallel, sequential, sequentialForced
 }
 
 public struct IgnoreValue { }
 
-public class GroupLoadAction<T>: LoadAction<T> {
+open class GroupLoadAction<T>: LoadAction<T> {
     
-    public typealias ProcessValue  = (actions: [LoadActionLoadableType]) -> T?
-    public typealias ProcessError  = (actions: [LoadActionLoadableType]) -> ErrorType?
+    public typealias ProcessValue  = (_ actions: [LoadActionLoadableType]) -> T?
+    public typealias ProcessError  = (_ actions: [LoadActionLoadableType]) -> Error?
     
-    public var processValueClosure: ProcessValue
-    public var processErrorClosure: ProcessError
+    open var processValueClosure: ProcessValue
+    open var processErrorClosure: ProcessError
     
-    public  var order:          GroupLoadOrder
-    public  var actions:       [LoadActionLoadableType]
-    private var actionsToLoad: [LoadActionLoadableType] = []
+    open  var order:          GroupLoadOrder
+    open  var actions:       [LoadActionLoadableType]
+    fileprivate var actionsToLoad: [LoadActionLoadableType] = []
     
     /**
      Loads data giving the option of paging or loading new.
@@ -33,16 +33,16 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadInner(completion completion: LoadAction<T>.LoadedResultClosure) {
+    fileprivate func loadInner(completion: @escaping LoadAction<T>.LoadedResultClosure) {
         
         // Copy load actions
         actionsToLoad = actions
         
         // choose loading function
         switch order {
-        case .Sequential, .SequentialForced:
+        case .sequential, .sequentialForced:
             loadSequential(completion: completion)
-        case .Parallel:
+        case .parallel:
             loadParallel(completion: completion)
         }
         
@@ -54,30 +54,30 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadSequential(completion completion: LoadAction<T>.LoadedResultClosure) {
+    fileprivate func loadSequential(completion: @escaping LoadAction<T>.LoadedResultClosure) {
         if let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny() { (result) -> Void in
                 self.updateValueAndError()
-                if result.isSuccess || self.order != .SequentialForced {
+                if result.isSuccess || self.order != .sequentialForced {
                     if self.actionsToLoad.count > 0 { self.sendDelegateUpdates() }
                     self.loadSequential(completion: completion)
                 } else {
                     self.actionsToLoad = []
                     if let error = self.error {
-                        completion(result: .Failure(error))
+                        completion(.failure(error))
                     } else {
                         let error = NSError(domain: "LoadAction[Group]", code: 2913, description: "Sequential load no error processed")
-                        completion(result: .Failure(error))
+                        completion(.failure(error))
                     }
                 }
             }
         } else {
             self.updateValueAndError()
             if let value = self.value {
-                completion(result: .Success(value))
+                completion(.success(value))
             } else {
                 let error = NSError(domain: "LoadAction[Group]", code: 2914, description: "Sequential load no value processed")
-                completion(result: .Failure(error))
+                completion(.failure(error))
             }
         }
     }
@@ -88,18 +88,18 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter forced: If true forces main load
      - parameter completion: Closure called when operation finished
      */
-    private func loadParallel(completion completion: LoadAction<T>.LoadedResultClosure) {
+    fileprivate func loadParallel(completion: @escaping LoadAction<T>.LoadedResultClosure) {
         while let actionToLoad = actionsToLoad.popFirst() {
             actionToLoad.loadAny() { (result) -> Void in
                 self.updateValueAndError()
-                if self.actions.find({ $0.status != .Ready }) == nil {
+                if self.actions.find({ $0.status != .ready }) == nil {
                     if let error = self.error { // self.actions.find({ $0.error != nil }) == nil
-                        completion(result: .Failure(error))
+                        completion(.failure(error))
                     } else if let value = self.value {
-                        completion(result: .Success(value))
+                        completion(.success(value))
                     } else {
                         let error = NSError(domain: "LoadAction[Group]", code: 2915, description: "Parallel load no value processed")
-                        completion(result: .Failure(error))
+                        completion(.failure(error))
                     }
                 } else {
                     self.sendDelegateUpdates()
@@ -108,9 +108,9 @@ public class GroupLoadAction<T>: LoadAction<T> {
         }
     }
     
-    private func updateValueAndError() {
-        error = processErrorClosure(actions: actions)
-        value = processValueClosure(actions: actions)
+    fileprivate func updateValueAndError() {
+        error = processErrorClosure(actions)
+        value = processValueClosure(actions)
     }
     
     /**
@@ -123,7 +123,7 @@ public class GroupLoadAction<T>: LoadAction<T> {
      - parameter delegates: Array containing objects that react to updated data
      */
     public init(
-        order:             GroupLoadOrder = .Parallel,
+        order:             GroupLoadOrder = .parallel,
         actions:          [LoadActionLoadableType],
         processValue:      ProcessValue? = nil,
         processError:      ProcessError? = nil,
@@ -149,19 +149,19 @@ public class GroupLoadAction<T>: LoadAction<T> {
         }
     }
     
-    private class func defaultProcessErrorFirst() -> ProcessError {
-        return { (actions: [LoadActionLoadableType]) -> ErrorType? in
+    fileprivate class func defaultProcessErrorFirst() -> ProcessError {
+        return { (actions: [LoadActionLoadableType]) -> Error? in
             return actions.find({ $0.error != nil })?.error
         }
     }
     
-    private class func defaultProcessValueLast() -> ProcessValue {
+    fileprivate class func defaultProcessValueLast() -> ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
-            return actions.reverse().find({ $0.valueAny as? T != nil })?.valueAny as? T
+            return actions.reversed().find({ $0.valueAny as? T != nil })?.valueAny as? T
         }
     }
     
-    private class func defaultProcessValueIgnore() -> ProcessValue {
+    fileprivate class func defaultProcessValueIgnore() -> ProcessValue {
         return { (actions: [LoadActionLoadableType]) -> T? in
             return (IgnoreValue() as! T)
         }

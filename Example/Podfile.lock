@@ -1,33 +1,24 @@
 PODS:
-  - AEXML (3.0.0)
-  - CommonCrypto (1.1)
-  - StartAppsKit (0.7.0):
-    - StartAppsKit/Default (= 0.7.0)
-  - StartAppsKit/Animations (0.7.0)
-  - StartAppsKit/Default (0.7.0):
+  - AEXML (4.0.0)
+  - StartAppsKit (0.8.4):
+    - StartAppsKit/Default (= 0.8.4)
+  - StartAppsKit/Animations (0.8.4)
+  - StartAppsKit/Default (0.8.4):
     - StartAppsKit/Animations
     - StartAppsKit/Extensions
     - StartAppsKit/LoadActions
     - StartAppsKit/Logging
-  - StartAppsKit/Extensions (0.7.0)
-  - StartAppsKit/Hashing (0.7.0):
-    - CommonCrypto (~> 1.1)
-  - StartAppsKit/JSON (0.7.0):
-    - StartAppsKit/LoadActions
-    - SwiftyJSON (~> 2.3)
-  - StartAppsKit/LoadActions (0.7.0):
+  - StartAppsKit/Extensions (0.8.4)
+  - StartAppsKit/LoadActions (0.8.4):
     - StartAppsKit/Extensions
     - StartAppsKit/Logging
-  - StartAppsKit/Logging (0.7.0)
-  - StartAppsKit/XML (0.7.0):
-    - AEXML (~> 3.0)
+  - StartAppsKit/Logging (0.8.4)
+  - StartAppsKit/XML (0.8.4):
+    - AEXML (~> 4.0)
     - StartAppsKit/LoadActions
-  - SwiftyJSON (2.3.2)
 
 DEPENDENCIES:
   - StartAppsKit (from `../`)
-  - StartAppsKit/Hashing (from `../`)
-  - StartAppsKit/JSON (from `../`)
   - StartAppsKit/XML (from `../`)
 
 EXTERNAL SOURCES:
@@ -35,11 +26,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AEXML: 716fb0a8decba4a3517324a71fee3685b30233d2
-  CommonCrypto: e18c8416332cca5efe80c197f2a522d471c42626
-  StartAppsKit: 4ded1f4b45847aba59448f761ccc7029cb93889d
-  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
+  AEXML: 6fc6433aa35bdc15dd8eb8d54eb7aa4520a010eb
+  StartAppsKit: 8e9cb9917949a902430e7ca28e16be77107de75e
 
-PODFILE CHECKSUM: 1c32f080e3a4cd225dacb698929fc1376a522a55
+PODFILE CHECKSUM: 34170371fc270b24c7891b3922696268854a9fbc
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.1.0.rc.2

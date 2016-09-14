@@ -9,6 +9,6 @@
 import Foundation
 import AEXML
 
-public func XmlProcess(loadedValue: NSData) throws -> AEXMLDocument {
-    return try AEXMLDocument(xmlData: loadedValue)
+public func XmlProcess(_ loadedValue: Data) throws -> AEXMLDocument {
+    return try AEXMLDocument(xml: loadedValue)
 }

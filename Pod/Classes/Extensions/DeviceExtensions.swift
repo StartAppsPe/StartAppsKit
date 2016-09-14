@@ -13,9 +13,9 @@ public extension UIDevice {
     public static var platform: String {
         var size: Int = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
-        var machine = [CChar](count: Int(size), repeatedValue: 0)
+        var machine = [CChar](repeating: 0, count: Int(size))
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
-        return String.fromCString(machine)!
+        return String(cString: machine)
     }
     
     public static var platformString: String {

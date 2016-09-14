@@ -13,11 +13,11 @@ s.summary          = 'A library that does everything.'
 s.description      = <<-DESC
 A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.
 DESC
-s.homepage         = 'https://github.com/StartAppsPe/StartAppsKit'
+s.homepage         = 'https://gitlab.com/StartAppsPe/StartAppsKit'
 s.license          = 'MIT'
 s.author           = { 'Gabriel Lanata' => 'gabriellanata@gmail.com' }
 
-s.source           = { :git => 'https://github.com/StartAppsPe/StartAppsKit.git', :tag => s.version.to_s }
+s.source           = { :git => 'https://gitlab.com/StartAppsPe/StartAppsKit.git', :tag => s.version.to_s }
 s.module_name      = 'StartAppsKit'
 s.platform     = :ios, '8.0'
 s.requires_arc = true
@@ -66,13 +66,13 @@ end
 s.subspec 'JSON' do |sp|
 sp.source_files = 'Pod/Classes/JSON'
 sp.dependency 'StartAppsKit/LoadActions'
-sp.dependency 'SwiftyJSON', '~> 2.3'
+sp.dependency 'Gloss', '~> 0.7'
 end
 
 s.subspec 'XML' do |sp|
 sp.source_files = 'Pod/Classes/XML'
 sp.dependency 'StartAppsKit/LoadActions'
-sp.dependency 'AEXML', '~> 3.0'
+sp.dependency 'AEXML', '~> 4.0'
 end
 
 s.subspec 'Hashing' do |sp|

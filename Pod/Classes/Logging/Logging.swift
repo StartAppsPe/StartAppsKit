@@ -8,12 +8,12 @@
 
 import Foundation
 
-public var _PrintLevelCurrent = PrintLevel.Debug
+public var _PrintLevelCurrent = PrintLevel.debug
 public var _PrintIndentation1 = 25
 public var _PrintIndentation2 = 100
 
 public enum PrintLevel: Int {
-    case None = 0, Fatal, Error, Warning, Info, Debug, Verbose
+    case none = 0, fatal, error, warning, info, debug, verbose
     public static var current: PrintLevel {
         set { _PrintLevelCurrent = newValue }
         get { return _PrintLevelCurrent }
@@ -28,18 +28,18 @@ public enum PrintLevel: Int {
     }
 }
 
-public func print(owner owner: String, items: Any..., separator: String = ", ", terminator: String = "\n", level: PrintLevel) {
+public func print(owner: String, items: Any..., separator: String = ", ", terminator: String = "\n", level: PrintLevel) {
     guard level.rawValue <= PrintLevel.current.rawValue else { return }
     var printString = "\(owner): "
     let indentationCount = max(PrintLevel.indentation1-printString.length, 0)
-    let indentation = String(count: indentationCount, repeatedValue: " " as Character)
-    var itemsString = String(items[0])
-    for i in 1..<items.count { itemsString.appendContentsOf("\(separator)\(String(items[i]))") }
-    printString.appendContentsOf("\(indentation)\(itemsString)")
-    if level.rawValue <= PrintLevel.Warning.rawValue {
+    let indentation = String(repeating: " ", count: indentationCount)
+    var itemsString = String(describing: items[0])
+    for i in 1..<items.count { itemsString.append("\(separator)\(String(describing: items[i]))") }
+    printString.append("\(indentation)\(itemsString)")
+    if level.rawValue <= PrintLevel.warning.rawValue {
         let indentation2Count = max(PrintLevel.indentation2-printString.length, 0)
-        let indentation2 = String(count: indentation2Count, repeatedValue: " " as Character)
-        printString.appendContentsOf("\(indentation2)\(level)")
+        let indentation2 = String(repeating: " ", count: indentation2Count)
+        printString.append("\(indentation2)\(level)")
     }
     print(printString, terminator: terminator)
 }
