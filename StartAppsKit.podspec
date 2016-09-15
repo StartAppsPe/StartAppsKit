@@ -11,7 +11,7 @@ s.name             = 'StartAppsKit'
 s.version          = '0.9.0'
 s.summary          = 'A library that does everything.'
 s.description      = <<-DESC
-A library that does everything. Central class is LoadAction and it helps you work with asyncronus loading of data from any Source.
+A library that does everything. Central class is LoadAction and it helps you work with asynchronous loading of data from any Source.
 DESC
 s.homepage         = 'https://gitlab.com/StartAppsPe/StartAppsKit'
 s.license          = 'MIT'
@@ -19,8 +19,8 @@ s.author           = { 'Gabriel Lanata' => 'gabriellanata@gmail.com' }
 
 s.source           = { :git => 'https://gitlab.com/StartAppsPe/StartAppsKit.git', :tag => s.version.to_s }
 s.module_name      = 'StartAppsKit'
-s.platform     = :ios, '8.0'
-s.requires_arc = true
+s.platform         = :ios, '8.0'
+s.requires_arc     = true
 
 s.resource_bundles = {
     'StartAppsKit' => ['Pod/Assets/*']
@@ -63,11 +63,11 @@ end
 # Optional dependancies
 #
 
-s.subspec 'JSON' do |sp|
-sp.source_files = 'Pod/Classes/JSON'
-sp.dependency 'StartAppsKit/LoadActions'
-sp.dependency 'Gloss', '~> 0.7'
-end
+#s.subspec 'JSON' do |sp|
+#sp.source_files = 'Pod/Classes/JSON'
+#sp.dependency 'StartAppsKit/LoadActions'
+#sp.dependency 'Gloss', '~> 0.7'
+#end
 
 s.subspec 'XML' do |sp|
 sp.source_files = 'Pod/Classes/XML'
@@ -75,19 +75,19 @@ sp.dependency 'StartAppsKit/LoadActions'
 sp.dependency 'AEXML', '~> 4.0'
 end
 
-s.subspec 'Hashing' do |sp|
-sp.source_files = 'Pod/Classes/Hashing'
-sp.dependency 'CommonCrypto', '~> 1.1'
-end
+#s.subspec 'Hashing' do |sp|
+#sp.source_files = 'Pod/Classes/Hashing'
+#sp.dependency 'CommonCrypto', '~> 1.1'
+#end
 
 #
 # Deprecated dependancies
 #
 
-s.subspec 'Legacy' do |sp|
-sp.source_files = 'Pod/Classes/ViewControllers'
-sp.dependency 'StartAppsKit/LoadActions'
-sp.frameworks = 'UIKit'
-end
+#s.subspec 'Legacy' do |sp|
+#sp.source_files = 'Pod/Classes/ViewControllers'
+#sp.dependency 'StartAppsKit/LoadActions'
+#sp.frameworks = 'UIKit'
+#end
 
 end

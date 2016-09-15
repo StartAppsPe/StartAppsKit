@@ -54,7 +54,7 @@ public extension Date {
         }
     }
     
-    public func stringWithFormat(_ format: String, locale: String? = nil) -> String {
+    public func string(format format: String, locale: String? = nil) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format;
         if let locale = locale {
@@ -63,7 +63,7 @@ public extension Date {
         return formatter.string(from: self)
     }
     
-    public func stringWithFormat(dateStyle: DateFormatter.Style? = nil, timeStyle: DateFormatter.Style? = nil, locale: String? = nil) -> String {
+    public func string(dateStyle: DateFormatter.Style? = nil, timeStyle: DateFormatter.Style? = nil, locale: String? = nil) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle ?= dateStyle;
         formatter.timeStyle ?= timeStyle;
@@ -74,24 +74,24 @@ public extension Date {
     }
     
     public func shortDateString(locale: String? = nil) -> String {
-        //return stringWithFormat(dateStyle: .ShortStyle, locale: locale)
-        return stringWithFormat((locale?.contains("es") ?? false ? "dd/MM/yyyy" : "MM/dd/yyyy"), locale: locale)
+        //return string(format: dateStyle: .ShortStyle, locale: locale)
+        return string(format: (locale?.contains("es") ?? false ? "dd/MM/yyyy" : "MM/dd/yyyy"), locale: locale)
     }
     
     public func mediumDateString(locale: String? = nil) -> String {
-        return stringWithFormat("EEEE d MMM", locale: locale)
+        return string(format: "EEEE d MMM", locale: locale)
     }
     
     public func longDateString(locale: String? = nil) -> String {
-        return stringWithFormat((locale?.contains("es") ?? false ? "EEEE d 'de' MMMM" : "EEEE d MMMM"), locale: locale)
+        return string(format: (locale?.contains("es") ?? false ? "EEEE d 'de' MMMM" : "EEEE d MMMM"), locale: locale)
     }
     
     public func timeString(locale: String? = nil) -> String {
-        return stringWithFormat("h:mm a", locale: locale)
+        return string(format: "h:mm a", locale: locale)
     }
     
     public func time24String(locale: String? = nil) -> String {
-        return stringWithFormat("H:mm", locale: locale)
+        return string(format: "H:mm", locale: locale)
     }
     
     public func timeAgoString(exact: Bool = false, locale: String? = nil) -> String {
@@ -355,7 +355,7 @@ public extension Date {
     }
     
     public func monthName(locale: String? = nil) -> String {
-        return stringWithFormat("MMMM", locale: locale)
+        return string(format: "MMMM", locale: locale)
     }
     
     public func year(locale: String? = nil) -> Int {

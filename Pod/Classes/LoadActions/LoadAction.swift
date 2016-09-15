@@ -21,8 +21,7 @@ public var LoadActionAllStatus: LoadingStatus {
 
 open class LoadAction<T>: LoadActionType {
     
-    public typealias LoadResultType     = Result<T>
-    public typealias LoadResultClosure  = (_ result: LoadResultType) -> Void
+    public typealias LoadResultClosure  = (_ result: Result<T>) -> Void
     public typealias LoadResult         = (_ completion: @escaping LoadResultClosure) -> Void
     
     open var updatedProperties: Set<LoadActionProperties> = []
