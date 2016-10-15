@@ -1,6 +1,0 @@
-framework module Pods_StartAppsKit_Example {
-  umbrella header "Pods-StartAppsKit_Example-umbrella.h"
-
-  export *
-  module * { export * }
-}

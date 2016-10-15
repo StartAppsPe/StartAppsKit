@@ -8,86 +8,64 @@
 
 Pod::Spec.new do |s|
 s.name             = 'StartAppsKit'
-s.version          = '0.9.0'
+s.version          = '0.9.1'
 s.summary          = 'A library that does everything.'
 s.description      = <<-DESC
 A library that does everything. Central class is LoadAction and it helps you work with asynchronous loading of data from any Source.
 DESC
-s.homepage         = 'https://gitlab.com/StartAppsPe/StartAppsKit'
+s.homepage         = 'https://github.com/StartAppsPe/'+s.name
 s.license          = 'MIT'
 s.author           = { 'Gabriel Lanata' => 'gabriellanata@gmail.com' }
 
-s.source           = { :git => 'https://gitlab.com/StartAppsPe/StartAppsKit.git', :tag => s.version.to_s }
-s.module_name      = 'StartAppsKit'
+s.source           = { :git => 'https://github.com/StartAppsPe/'+s.name+'.git', :tag => s.version.to_s }
+s.module_name      = s.name
 s.platform         = :ios, '8.0'
 s.requires_arc     = true
-
-s.resource_bundles = {
-    'StartAppsKit' => ['Pod/Assets/*']
-}
 
 s.default_subspec = 'Default'
 
 s.subspec 'Default' do |sp|
-sp.dependency 'StartAppsKit/LoadActions'
+sp.dependency 'StartAppsKit/LoadAction'
 sp.dependency 'StartAppsKit/Extensions'
 sp.dependency 'StartAppsKit/Animations'
-sp.dependency 'StartAppsKit/Logging'
+sp.dependency 'StartAppsKit/Alerts'
+sp.dependency 'StartAppsKit/Logger'
 end
 
 #
 # Default dependancies
 #
 
+s.subspec 'LoadAction' do |sp|
+sp.dependency 'StartAppsKitLoadAction', '~> 1.0'
+end
+
 s.subspec 'Extensions' do |sp|
-sp.source_files = 'Pod/Classes/Extensions'
-sp.frameworks = 'UIKit'
+sp.dependency 'StartAppsKitExtensions', '~> 1.0'
 end
 
 s.subspec 'Animations' do |sp|
-sp.source_files = 'Pod/Classes/Animations'
-sp.frameworks = 'UIKit'
+sp.dependency 'StartAppsKitAnimations', '~> 0.9'
 end
 
-s.subspec 'Logging' do |sp|
-sp.source_files = 'Pod/Classes/Logging'
+s.subspec 'Alerts' do |sp|
+sp.dependency 'StartAppsKitAlerts', '~> 0.9'
 end
 
-s.subspec 'LoadActions' do |sp|
-sp.source_files = 'Pod/Classes/LoadActions'
-sp.dependency 'StartAppsKit/Extensions'
-sp.dependency 'StartAppsKit/Logging'
+s.subspec 'Logger' do |sp|
+sp.dependency 'StartAppsKitLogger', '~> 0.9'
 end
 
 #
 # Optional dependancies
 #
 
-#s.subspec 'JSON' do |sp|
-#sp.source_files = 'Pod/Classes/JSON'
-#sp.dependency 'StartAppsKit/LoadActions'
-#sp.dependency 'Gloss', '~> 0.7'
-#end
-
-s.subspec 'XML' do |sp|
-sp.source_files = 'Pod/Classes/XML'
-sp.dependency 'StartAppsKit/LoadActions'
-sp.dependency 'AEXML', '~> 4.0'
+s.subspec 'JSON' do |sp|
+sp.dependency 'StartAppsKitJson', '~> 0.9'
 end
 
-#s.subspec 'Hashing' do |sp|
-#sp.source_files = 'Pod/Classes/Hashing'
-#sp.dependency 'CommonCrypto', '~> 1.1'
-#end
-
-#
-# Deprecated dependancies
-#
-
-#s.subspec 'Legacy' do |sp|
-#sp.source_files = 'Pod/Classes/ViewControllers'
-#sp.dependency 'StartAppsKit/LoadActions'
-#sp.frameworks = 'UIKit'
-#end
+s.subspec 'XML' do |sp|
+sp.dependency 'StartAppsKitXml', '~> 0.9'
+end
 
 end

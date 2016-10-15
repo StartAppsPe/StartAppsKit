@@ -1,6 +1,0 @@
-framework module StartAppsKit {
-  umbrella header "StartAppsKit-umbrella.h"
-
-  export *
-  module * { export * }
-}
