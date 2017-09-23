@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'StartAppsKit'
-s.version          = '1.0.3'
+s.version          = '2.0.0'
 s.summary          = 'A library that does everything.'
 s.description      = <<-DESC
 A library that does everything. Central class is LoadAction and it helps you work with asynchronous loading of data from any Source.
@@ -31,7 +31,6 @@ sp.source_files = 'Sources'
 sp.dependency 'StartAppsKit/LoadAction'
 sp.dependency 'StartAppsKit/Extensions'
 sp.dependency 'StartAppsKit/Animations'
-sp.dependency 'StartAppsKit/Alerts'
 sp.dependency 'StartAppsKit/Logger'
 end
 
@@ -40,35 +39,35 @@ end
 #
 
 s.subspec 'LoadAction' do |sp|
-sp.dependency 'StartAppsKitLoadAction', '~> 1'
+sp.dependency 'StartAppsKitLoadAction', '~> 2'
 end
 
 s.subspec 'Extensions' do |sp|
-sp.dependency 'StartAppsKitExtensions', '~> 1'
+sp.dependency 'StartAppsKitExtensions', '~> 2'
 end
 
 s.subspec 'Animations' do |sp|
-sp.dependency 'StartAppsKitAnimations', '~> 0.9'
-end
-
-s.subspec 'Alerts' do |sp|
-sp.dependency 'StartAppsKitAlerts', '~> 1'
+sp.dependency 'StartAppsKitAnimations', '~> 2'
 end
 
 s.subspec 'Logger' do |sp|
-sp.dependency 'StartAppsKitLogger', '~> 1'
+sp.dependency 'StartAppsKitLogger', '~> 2'
 end
 
 #
 # Optional dependancies
 #
 
+s.subspec 'Alerts' do |sp|
+sp.dependency 'StartAppsKitAlerts', '~> 2'
+end
+
 s.subspec 'JSON' do |sp|
-sp.dependency 'StartAppsKitJson', '~> 1'
+sp.dependency 'StartAppsKitJson', '~> 2'
 end
 
 s.subspec 'XML' do |sp|
-sp.dependency 'StartAppsKitXml', '~> 1'
+sp.dependency 'StartAppsKitXml', '~> 2'
 end
 
 end

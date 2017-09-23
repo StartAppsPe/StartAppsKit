@@ -1,0 +1,43 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "StartAppsKitAnimations",
+        "repositoryURL": "https://github.com/StartAppsPe/StartAppsKitAnimations.git",
+        "state": {
+          "branch": null,
+          "revision": "de6b62fdcc346d1b996b831effe2eacf7573f7db",
+          "version": "2.0.1"
+        }
+      },
+      {
+        "package": "StartAppsKitExtensions",
+        "repositoryURL": "https://github.com/StartAppsPe/StartAppsKitExtensions.git",
+        "state": {
+          "branch": null,
+          "revision": "56a28baf77a94558de1398a6e6dac842442d711d",
+          "version": "2.0.6"
+        }
+      },
+      {
+        "package": "StartAppsKitLoadAction",
+        "repositoryURL": "https://github.com/StartAppsPe/StartAppsKitLoadAction.git",
+        "state": {
+          "branch": null,
+          "revision": "66f5aeb9520c8f958175d50bdefb39fba3061ca4",
+          "version": "2.0.0"
+        }
+      },
+      {
+        "package": "StartAppsKitLogger",
+        "repositoryURL": "https://github.com/StartAppsPe/StartAppsKitLogger.git",
+        "state": {
+          "branch": null,
+          "revision": "c02ebb0ddbff51972ac40d39b4f33677ba403bd6",
+          "version": "2.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
